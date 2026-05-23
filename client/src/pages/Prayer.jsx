@@ -46,7 +46,7 @@ export default function Prayer() {
         <div className="container">
           <div className="prayer-grid">
             <div className="prayer-form-card">
-              <h3 className="prayer-form-title">🙏 Submit a Prayer Request</h3>
+              <h3 className="prayer-form-title">Submit a Prayer Request</h3>
               {submitted && <div className="alert alert-ok">Your prayer has been submitted. The body of Christ is with you!</div>}
               <form onSubmit={handleSubmit}>
                 <div className="form-row">
@@ -69,7 +69,10 @@ export default function Prayer() {
                   <label className="form-label">Prayer Request *</label>
                   <textarea className="form-textarea" style={{ minHeight: 120 }} placeholder="Share what is on your heart…" required value={form.text} onChange={e=>setForm(f=>({...f,text:e.target.value}))} />
                 </div>
-                <button type="submit" className="btn btn-orange" style={{ width: '100%', justifyContent: 'center' }}>Submit Prayer Request</button>
+                <button type="submit" className="btn btn-orange" style={{ width: '100%', justifyContent: 'center' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                  Submit Prayer Request
+                </button>
               </form>
             </div>
             <div>

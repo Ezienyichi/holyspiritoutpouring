@@ -34,7 +34,10 @@ export default function Give() {
                 <div className="give-tier">{t.name}</div>
                 <div className="give-amount">{t.display}</div>
                 <p className="give-desc">{t.desc}</p>
-                <button className="btn btn-orange" style={{ width: '100%', justifyContent: 'center' }} onClick={() => give(t.amount, t.name)}>Give Now</button>
+                <button className="btn btn-orange" style={{ width: '100%', justifyContent: 'center' }} onClick={() => give(t.amount, t.name)}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                Give Now
+              </button>
               </div>
             ))}
           </div>
@@ -50,7 +53,10 @@ export default function Give() {
             </div>
             <div className="give-custom">
               <input placeholder="Amount in ₦" value={form.amount} onChange={e=>setForm(f=>({...f,amount:e.target.value}))} />
-              <button className="btn btn-outline" style={{ color: 'white', borderColor: 'rgba(255,255,255,0.5)' }} onClick={() => form.amount && give(Number(form.amount), 'Custom')}>Give</button>
+              <button className="btn btn-outline" style={{ color: 'white', borderColor: 'rgba(255,255,255,0.5)' }} onClick={() => form.amount && give(Number(form.amount), 'Custom')}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                Give
+              </button>
             </div>
           </div>
         </div>

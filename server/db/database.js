@@ -328,14 +328,60 @@ function seed() {
 
   if (store.media.length === 0) {
     [
-      ['Conference Hall', 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=400&fit=crop', 'photo', 'The main hall during worship'],
-      ['Hands Raised', 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=600&h=800&fit=crop', 'photo', 'Hands lifted in praise'],
-      ['Night Session', 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=600&h=400&fit=crop', 'photo', 'Evening session crowd'],
-      ['Ministry Time', 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=600&h=600&fit=crop', 'video', 'Prayer and ministry time highlight'],
-      ['Outdoor Praise', 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=400&fit=crop', 'photo', 'Outdoor praise session'],
-      ['Altar Call', 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&h=500&fit=crop', 'video', 'Altar call moments from Outpouring 2024'],
-    ].forEach(([title, url, type, caption]) => {
-      store.media.push({ id: nextId('media'), title, url, type, caption, createdAt: now() });
+      ['Conference Hall', 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=400&fit=crop', 'photo', 'The main hall during worship', null],
+      ['Hands Raised', 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=600&h=800&fit=crop', 'photo', 'Hands lifted in praise', null],
+      ['Night Session', 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=600&h=400&fit=crop', 'photo', 'Evening session crowd', null],
+      ['Outdoor Praise', 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=400&fit=crop', 'photo', 'Outdoor praise session', null],
+      ['Altar Call', 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&h=500&fit=crop', 'photo', 'Altar call moments', null],
+      // YouTube videos
+      ['Min Moses Bliss — High Praise at the HolySpirit Outpouring', 'https://img.youtube.com/vi/MRZT865hYZc/maxresdefault.jpg', 'video', 'Min Moses Bliss', 'https://www.youtube.com/watch?v=MRZT865hYZc'],
+      ['Min GUC — Deep Worship during the HolySpirit Outpouring', 'https://img.youtube.com/vi/-grmFq9vEL4/maxresdefault.jpg', 'video', 'Min GUC', 'https://www.youtube.com/watch?v=-grmFq9vEL4'],
+      ['Identify Dimensions in Man | Micheal Orokpo', 'https://img.youtube.com/vi/fFZ4-1OdNGA/maxresdefault.jpg', 'video', 'Micheal Orokpo', 'https://www.youtube.com/watch?v=fFZ4-1OdNGA'],
+      ['Micah (Praise Prophet) — High Praise at the HolySpirit Outpouring', 'https://img.youtube.com/vi/SAdpDo04EFI/maxresdefault.jpg', 'video', 'Min Micah', 'https://www.youtube.com/watch?v=SAdpDo04EFI'],
+      ['Young Teenagers in deep Worship | Generation of Light', 'https://img.youtube.com/vi/hQ_vo1u9QLY/maxresdefault.jpg', 'video', 'Generation of Light', 'https://www.youtube.com/watch?v=hQ_vo1u9QLY'],
+      ['Why You NEED God\'s Spirit | Rev Ikechukwu', 'https://img.youtube.com/vi/DMsrcXV50Yk/maxresdefault.jpg', 'video', 'Rev Ikechukwu', 'https://www.youtube.com/watch?v=DMsrcXV50Yk'],
+      ['Min Judikay — High Praise during the HolySpirit Outpouring', 'https://img.youtube.com/vi/mM-fmYIdhTU/maxresdefault.jpg', 'video', 'Min Judikay', 'https://www.youtube.com/watch?v=mM-fmYIdhTU'],
+      ['Min Empraiz with High at the HolySpirit Outpouring', 'https://img.youtube.com/vi/kqZ0nryrDjU/maxresdefault.jpg', 'video', 'Min Empraiz', 'https://www.youtube.com/watch?v=kqZ0nryrDjU'],
+      ['High Traditional Praise at HolySpirit Outpouring | Min Elekwu', 'https://img.youtube.com/vi/T2_rseKY9Tg/maxresdefault.jpg', 'video', 'Min Elekwu', 'https://www.youtube.com/watch?v=T2_rseKY9Tg'],
+      ['SHOCKED at the Generation of Power at the Holy Spirit Outpouring', 'https://img.youtube.com/vi/K4dnGEVBHkI/maxresdefault.jpg', 'video', 'Generation of Power', 'https://www.youtube.com/watch?v=K4dnGEVBHkI'],
+      ['HolySpirit Outpouring | Deep Worship with Min GP Samz', 'https://img.youtube.com/vi/IcqTnYpLArc/maxresdefault.jpg', 'video', 'Min GP Samz', 'https://www.youtube.com/watch?v=IcqTnYpLArc'],
+      ['HolySpirit Outpouring | Deep Worship with Min DFO', 'https://img.youtube.com/vi/-lF45IFHtvA/maxresdefault.jpg', 'video', 'Min DFO', 'https://www.youtube.com/watch?v=-lF45IFHtvA'],
+      ['HolySpirit Outpouring | Min Sax', 'https://img.youtube.com/vi/JAfHTjb3_r0/maxresdefault.jpg', 'video', 'Min Sax', 'https://www.youtube.com/watch?v=JAfHTjb3_r0'],
+      ['Min Wealth — Deep Worship during the HolySpirit Outpouring', 'https://img.youtube.com/vi/BsV05k71cnM/maxresdefault.jpg', 'video', 'Min Wealth', 'https://www.youtube.com/watch?v=BsV05k71cnM'],
+      ['CASOR with High at the HolySpirit Outpouring', 'https://img.youtube.com/vi/DRDzLU1Dc68/maxresdefault.jpg', 'video', 'CASOR', 'https://www.youtube.com/watch?v=DRDzLU1Dc68'],
+      ['Deep Saxophone HolySpirit Outpouring', 'https://img.youtube.com/vi/yx1Igevlkwg/maxresdefault.jpg', 'video', 'Deep Saxophone', 'https://www.youtube.com/watch?v=yx1Igevlkwg'],
+      ['Min Caleb with High at the HolySpirit Outpouring Conference', 'https://img.youtube.com/vi/IvKj7z8v6rk/maxresdefault.jpg', 'video', 'Min Caleb', 'https://www.youtube.com/watch?v=IvKj7z8v6rk'],
+    ].forEach(([title, url, type, caption, youtubeUrl]) => {
+      const item = { id: nextId('media'), title, url, type, caption, createdAt: now() };
+      if (youtubeUrl) { item.youtubeUrl = youtubeUrl; item.thumbnailUrl = url; }
+      store.media.push(item);
+    });
+    save();
+  }
+
+  // Migration: add YouTube videos to existing installs that only have photos
+  if (store.media.length > 0 && !store.media.some(m => m.youtubeUrl)) {
+    const ytVideos = [
+      ['Min Moses Bliss — High Praise at the HolySpirit Outpouring', 'https://img.youtube.com/vi/MRZT865hYZc/maxresdefault.jpg', 'https://www.youtube.com/watch?v=MRZT865hYZc'],
+      ['Min GUC — Deep Worship during the HolySpirit Outpouring', 'https://img.youtube.com/vi/-grmFq9vEL4/maxresdefault.jpg', 'https://www.youtube.com/watch?v=-grmFq9vEL4'],
+      ['Identify Dimensions in Man | Micheal Orokpo', 'https://img.youtube.com/vi/fFZ4-1OdNGA/maxresdefault.jpg', 'https://www.youtube.com/watch?v=fFZ4-1OdNGA'],
+      ['Micah (Praise Prophet) — High Praise at the HolySpirit Outpouring', 'https://img.youtube.com/vi/SAdpDo04EFI/maxresdefault.jpg', 'https://www.youtube.com/watch?v=SAdpDo04EFI'],
+      ['Young Teenagers in deep Worship | Generation of Light', 'https://img.youtube.com/vi/hQ_vo1u9QLY/maxresdefault.jpg', 'https://www.youtube.com/watch?v=hQ_vo1u9QLY'],
+      ['Why You NEED God\'s Spirit | Rev Ikechukwu', 'https://img.youtube.com/vi/DMsrcXV50Yk/maxresdefault.jpg', 'https://www.youtube.com/watch?v=DMsrcXV50Yk'],
+      ['Min Judikay — High Praise during the HolySpirit Outpouring', 'https://img.youtube.com/vi/mM-fmYIdhTU/maxresdefault.jpg', 'https://www.youtube.com/watch?v=mM-fmYIdhTU'],
+      ['Min Empraiz with High at the HolySpirit Outpouring', 'https://img.youtube.com/vi/kqZ0nryrDjU/maxresdefault.jpg', 'https://www.youtube.com/watch?v=kqZ0nryrDjU'],
+      ['High Traditional Praise at HolySpirit Outpouring | Min Elekwu', 'https://img.youtube.com/vi/T2_rseKY9Tg/maxresdefault.jpg', 'https://www.youtube.com/watch?v=T2_rseKY9Tg'],
+      ['SHOCKED at the Generation of Power at the Holy Spirit Outpouring', 'https://img.youtube.com/vi/K4dnGEVBHkI/maxresdefault.jpg', 'https://www.youtube.com/watch?v=K4dnGEVBHkI'],
+      ['HolySpirit Outpouring | Deep Worship with Min GP Samz', 'https://img.youtube.com/vi/IcqTnYpLArc/maxresdefault.jpg', 'https://www.youtube.com/watch?v=IcqTnYpLArc'],
+      ['HolySpirit Outpouring | Deep Worship with Min DFO', 'https://img.youtube.com/vi/-lF45IFHtvA/maxresdefault.jpg', 'https://www.youtube.com/watch?v=-lF45IFHtvA'],
+      ['HolySpirit Outpouring | Min Sax', 'https://img.youtube.com/vi/JAfHTjb3_r0/maxresdefault.jpg', 'https://www.youtube.com/watch?v=JAfHTjb3_r0'],
+      ['Min Wealth — Deep Worship during the HolySpirit Outpouring', 'https://img.youtube.com/vi/BsV05k71cnM/maxresdefault.jpg', 'https://www.youtube.com/watch?v=BsV05k71cnM'],
+      ['CASOR with High at the HolySpirit Outpouring', 'https://img.youtube.com/vi/DRDzLU1Dc68/maxresdefault.jpg', 'https://www.youtube.com/watch?v=DRDzLU1Dc68'],
+      ['Deep Saxophone HolySpirit Outpouring', 'https://img.youtube.com/vi/yx1Igevlkwg/maxresdefault.jpg', 'https://www.youtube.com/watch?v=yx1Igevlkwg'],
+      ['Min Caleb with High at the HolySpirit Outpouring Conference', 'https://img.youtube.com/vi/IvKj7z8v6rk/maxresdefault.jpg', 'https://www.youtube.com/watch?v=IvKj7z8v6rk'],
+    ];
+    ytVideos.forEach(([title, thumbUrl, youtubeUrl]) => {
+      store.media.push({ id: nextId('media'), title, url: thumbUrl, thumbnailUrl: thumbUrl, youtubeUrl, type: 'video', caption: title, createdAt: now() });
     });
     save();
   }

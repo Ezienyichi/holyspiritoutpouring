@@ -31,10 +31,18 @@ export default function Schedule() {
       </div>
       <section className="section section-dark">
         <div className="container">
-          <div className="schedule-tabs" style={{ marginBottom: '2rem' }}>
-            {DAYS.map(t => (
-              <button key={t.day} className={`sch-tab${activeDay === t.day ? ' active' : ''}`} onClick={() => setActiveDay(t.day)}>{t.label}</button>
-            ))}
+          <div className="schedule-tabs">
+            <div className="schedule-tabs-inner">
+              {DAYS.map(t => (
+                <button
+                  key={t.day}
+                  className={`sch-tab${activeDay === t.day ? ' active' : ''}`}
+                  onClick={() => setActiveDay(t.day)}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
           </div>
           {loading ? <div className="loading-state">Loading…</div> : (
             <div className="session-list">
@@ -44,9 +52,9 @@ export default function Schedule() {
                     <SessionRow session={s} />
                   </div>
                   {expanded === s.id && s.description && (
-                    <div style={{ background: 'var(--navy-light)', border: '1px solid var(--navy-border)', borderTop: 'none', borderRadius: '0 0 12px 12px', padding: '1rem 1.5rem', marginBottom: '0.6rem' }}>
+                    <div className="session-expand-panel">
                       <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: 1.7 }}>{s.description}</p>
-                      {s.speaker && <p style={{ fontSize: '0.8rem', color: 'var(--orange)', marginTop: '0.5rem', fontWeight: 600 }}>🎙️ {s.speaker}</p>}
+                      {s.speaker && <p style={{ fontSize: '0.8rem', color: 'var(--orange)', marginTop: '0.5rem', fontWeight: 600 }}>{s.speaker}</p>}
                     </div>
                   )}
                 </div>
