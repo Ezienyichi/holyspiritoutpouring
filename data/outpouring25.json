@@ -1,0 +1,385 @@
+{
+  "config": [
+    {
+      "id": 1,
+      "key": "title",
+      "value": "Holy Spirit Outpouring Conference"
+    },
+    {
+      "id": 2,
+      "key": "dates",
+      "value": "August 15–17, 2025"
+    },
+    {
+      "id": 3,
+      "key": "location",
+      "value": "The Arena, Victoria Island, Lagos, Nigeria"
+    },
+    {
+      "id": 4,
+      "key": "countdownDate",
+      "value": "2025-08-15T18:00:00"
+    },
+    {
+      "id": 5,
+      "key": "isLive",
+      "value": "false"
+    },
+    {
+      "id": 6,
+      "key": "streamUrl",
+      "value": ""
+    },
+    {
+      "id": 7,
+      "key": "streamTitle",
+      "value": "Opening Night — Holy Spirit Outpouring Conference"
+    },
+    {
+      "id": 8,
+      "key": "heroVideoUrl",
+      "value": ""
+    },
+    {
+      "id": 9,
+      "key": "aboutText1",
+      "value": "The Holy Spirit Outpouring Conference is more than an event — it's a movement. For three transformative days, believers from every nation will gather to seek the face of God, receive fresh fire, and be equipped for end-time harvest."
+    },
+    {
+      "id": 10,
+      "key": "aboutText2",
+      "value": "Whether you attend in person in Lagos or join our global livestream, prepare for an encounter that will ignite your faith, restore your passion, and release the supernatural in your life."
+    },
+    {
+      "id": 11,
+      "key": "contactEmail",
+      "value": "info@outpouring25.org"
+    },
+    {
+      "id": 12,
+      "key": "contactPhone",
+      "value": "+234 800 000 0000"
+    },
+    {
+      "id": 13,
+      "key": "contactAddress",
+      "value": "The Arena, Victoria Island, Lagos, Nigeria"
+    }
+  ],
+  "speakers": [
+    {
+      "id": 1,
+      "name": "Pastor David Okonkwo",
+      "title": "Lead Minister",
+      "church": "Revival Fire Church",
+      "topic": "The Fire Must Not Go Out",
+      "bio": "Pastor David Okonkwo is a revivalist and apostolic leader with over 20 years of ministry. Known for his fiery preaching and passion for the Holy Spirit, he has ministered in over 40 nations.",
+      "photoUrl": "",
+      "socialYoutube": "",
+      "socialInstagram": "",
+      "socialFacebook": "",
+      "displayOrder": 1
+    },
+    {
+      "id": 2,
+      "name": "Dr. Jonathan Mitchell",
+      "title": "Bible Teacher",
+      "church": "Word Foundation",
+      "topic": "Doctrine of the Holy Spirit",
+      "bio": "Dr. Jonathan Mitchell is a renowned Bible teacher and theologian whose systematic teaching on the Holy Spirit has transformed thousands of believers worldwide.",
+      "photoUrl": "",
+      "socialYoutube": "",
+      "socialInstagram": "",
+      "socialFacebook": "",
+      "displayOrder": 2
+    },
+    {
+      "id": 3,
+      "name": "Evang. Grace Adeyemi",
+      "title": "Evangelist",
+      "church": "Nations Outreach",
+      "topic": "Evening Revival Service",
+      "bio": "Evangelist Grace Adeyemi carries a powerful evangelistic anointing with documented signs and wonders. Her altar calls have led tens of thousands to salvation across West Africa.",
+      "photoUrl": "",
+      "socialYoutube": "",
+      "socialInstagram": "",
+      "socialFacebook": "",
+      "displayOrder": 3
+    },
+    {
+      "id": 4,
+      "name": "Minister Carlos Rivera",
+      "title": "Worship Leader",
+      "church": "Global Praise",
+      "topic": "Worship & Praise",
+      "bio": "Minister Carlos Rivera is an internationally recognized worship leader whose music ushers congregations into deep encounters with God. He has released 8 worship albums.",
+      "photoUrl": "",
+      "socialYoutube": "",
+      "socialInstagram": "",
+      "socialFacebook": "",
+      "displayOrder": 4
+    }
+  ],
+  "sessions": [
+    {
+      "id": 1,
+      "day": 1,
+      "time": "6:00 PM",
+      "title": "Opening Ceremony",
+      "speaker": "",
+      "type": "worship",
+      "description": "The official commencement of Outpouring '25. Welcoming thousands to this historic gathering.",
+      "isCurrentlyLive": 0
+    },
+    {
+      "id": 2,
+      "day": 1,
+      "time": "7:00 PM",
+      "title": "Worship Night",
+      "speaker": "Minister Carlos Rivera",
+      "type": "worship",
+      "description": "An evening of unhindered, Spirit-led worship that ushers us into the presence of God.",
+      "isCurrentlyLive": 0
+    },
+    {
+      "id": 3,
+      "day": 1,
+      "time": "8:30 PM",
+      "title": "Keynote: \"Fresh Fire\"",
+      "speaker": "Ps. David Okonkwo",
+      "type": "preaching",
+      "description": "The opening message — a prophetic call to the Church to return to the fire of the Holy Spirit.",
+      "isCurrentlyLive": 0
+    },
+    {
+      "id": 4,
+      "day": 2,
+      "time": "8:00 AM",
+      "title": "Morning Prayer",
+      "speaker": "",
+      "type": "prayer",
+      "description": "Corporate intercession to set the spiritual atmosphere for the day.",
+      "isCurrentlyLive": 0
+    },
+    {
+      "id": 5,
+      "day": 2,
+      "time": "9:30 AM",
+      "title": "Worship",
+      "speaker": "Minister Carlos Rivera",
+      "type": "worship",
+      "description": "Morning praise and worship session.",
+      "isCurrentlyLive": 0
+    },
+    {
+      "id": 6,
+      "day": 2,
+      "time": "11:00 AM",
+      "title": "Teaching: \"Doctrine of the Holy Spirit\"",
+      "speaker": "Dr. Jonathan Mitchell",
+      "type": "teaching",
+      "description": "An in-depth biblical examination of the person, work, and gifts of the Holy Spirit.",
+      "isCurrentlyLive": 0
+    },
+    {
+      "id": 7,
+      "day": 2,
+      "time": "2:00 PM",
+      "title": "Workshop Sessions",
+      "speaker": "",
+      "type": "workshop",
+      "description": "Breakout sessions: Gifts of the Spirit | Prayer & Intercession | Evangelism & Outreach",
+      "isCurrentlyLive": 0
+    },
+    {
+      "id": 8,
+      "day": 2,
+      "time": "5:00 PM",
+      "title": "Evening Revival",
+      "speaker": "Evang. Grace Adeyemi",
+      "type": "preaching",
+      "description": "A powerful revival service with extended altar calls and ministry time.",
+      "isCurrentlyLive": 0
+    },
+    {
+      "id": 9,
+      "day": 3,
+      "time": "9:00 AM",
+      "title": "Prayer & Devotion",
+      "speaker": "",
+      "type": "prayer",
+      "description": "Final morning of corporate prayer and personal devotion before God.",
+      "isCurrentlyLive": 0
+    },
+    {
+      "id": 10,
+      "day": 3,
+      "time": "10:30 AM",
+      "title": "Final Teaching",
+      "speaker": "Dr. Jonathan Mitchell",
+      "type": "teaching",
+      "description": "The concluding word — equipping believers to carry the fire back to their nations.",
+      "isCurrentlyLive": 0
+    },
+    {
+      "id": 11,
+      "day": 3,
+      "time": "12:00 PM",
+      "title": "Commissioning Service",
+      "speaker": "",
+      "type": "worship",
+      "description": "A solemn commissioning of all attendees to go forth as carriers of Holy Spirit revival.",
+      "isCurrentlyLive": 0
+    },
+    {
+      "id": 12,
+      "day": 3,
+      "time": "3:00 PM",
+      "title": "Closing Worship & Altar Call",
+      "speaker": "",
+      "type": "worship",
+      "description": "The grand finale — extended worship, final altar call, and sending prayer.",
+      "isCurrentlyLive": 0
+    }
+  ],
+  "prayers": [
+    {
+      "id": 1,
+      "name": "Sister Comfort Obi",
+      "email": "",
+      "category": "Healing",
+      "text": "Please pray for complete healing from the fibroid condition I have been dealing with for years. I believe God will show Himself strong at this conference.",
+      "prayCount": 34,
+      "approved": 1,
+      "createdAt": "2025-07-10 08:00:00"
+    },
+    {
+      "id": 2,
+      "name": "Bro. Emeka Eze",
+      "email": "",
+      "category": "Salvation",
+      "text": "Pray for my brother Emmanuel who has been far from God for 10 years. I believe this is his year of return to the Father.",
+      "prayCount": 21,
+      "approved": 1,
+      "createdAt": "2025-07-12 10:30:00"
+    },
+    {
+      "id": 3,
+      "name": "Pastor Funmi Adeyemi",
+      "email": "",
+      "category": "Direction",
+      "text": "I need divine direction for a major ministry decision. Please stand with me in prayer as I seek God's perfect will for this season.",
+      "prayCount": 45,
+      "approved": 1,
+      "createdAt": "2025-07-14 14:00:00"
+    },
+    {
+      "id": 4,
+      "name": "Anonymous",
+      "email": "",
+      "category": "Family",
+      "text": "Please pray for my marriage. We are going through a very difficult season and only God can restore what the enemy has stolen from us.",
+      "prayCount": 67,
+      "approved": 1,
+      "createdAt": "2025-07-15 09:00:00"
+    }
+  ],
+  "media": [
+    {
+      "id": 1,
+      "title": "Conference Hall",
+      "url": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=400&fit=crop",
+      "type": "photo",
+      "caption": "The main hall during worship",
+      "createdAt": "2026-05-23 11:38:03"
+    },
+    {
+      "id": 2,
+      "title": "Hands Raised",
+      "url": "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=600&h=800&fit=crop",
+      "type": "photo",
+      "caption": "Hands lifted in praise",
+      "createdAt": "2026-05-23 11:38:03"
+    },
+    {
+      "id": 3,
+      "title": "Night Session",
+      "url": "https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=600&h=400&fit=crop",
+      "type": "photo",
+      "caption": "Evening session crowd",
+      "createdAt": "2026-05-23 11:38:03"
+    },
+    {
+      "id": 4,
+      "title": "Ministry Time",
+      "url": "https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=600&h=600&fit=crop",
+      "type": "video",
+      "caption": "Prayer and ministry time highlight",
+      "createdAt": "2026-05-23 11:38:03"
+    },
+    {
+      "id": 5,
+      "title": "Outdoor Praise",
+      "url": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=400&fit=crop",
+      "type": "photo",
+      "caption": "Outdoor praise session",
+      "createdAt": "2026-05-23 11:38:03"
+    },
+    {
+      "id": 6,
+      "title": "Altar Call",
+      "url": "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&h=500&fit=crop",
+      "type": "video",
+      "caption": "Altar call moments from Outpouring 2024",
+      "createdAt": "2026-05-23 11:38:03"
+    }
+  ],
+  "giving": [],
+  "registrations": [],
+  "chat": [
+    {
+      "id": 1,
+      "username": "PrayerWarrior",
+      "message": "Praying for everyone here! 🙏",
+      "createdAt": "2025-08-15 17:45:00"
+    },
+    {
+      "id": 2,
+      "username": "FireStarter",
+      "message": "The worship last night was incredible! Ready for today 🔥",
+      "createdAt": "2025-08-15 17:50:00"
+    },
+    {
+      "id": 3,
+      "username": "Overcomer22",
+      "message": "I drove 6 hours to be here and it's worth every mile!",
+      "createdAt": "2025-08-15 17:55:00"
+    },
+    {
+      "id": 4,
+      "username": "GlobalMission",
+      "message": "Joining from Tokyo! God's presence has no borders 🌍",
+      "createdAt": "2025-08-15 17:58:00"
+    },
+    {
+      "id": 5,
+      "username": "PraiseKing",
+      "message": "The Holy Spirit is moving right now! 🙌",
+      "createdAt": "2025-08-15 18:00:00"
+    },
+    {
+      "id": 6,
+      "username": "RevivalFire",
+      "message": "First time at Outpouring and I'm already transformed ❤️",
+      "createdAt": "2025-08-15 18:02:00"
+    }
+  ],
+  "_seqs": {
+    "config": 13,
+    "speakers": 4,
+    "sessions": 12,
+    "prayers": 4,
+    "media": 6,
+    "chat": 6
+  }
+}
