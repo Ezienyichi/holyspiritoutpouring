@@ -38,7 +38,14 @@ export default function Footer() {
               </p>
               <p>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                The Arena, Victoria Island,<br />Lagos, Nigeria
+                <a
+                  href="https://www.bing.com/maps/default.aspx?v=2&pc=FACEBK&mid=8100&where1=%237A%20Covenant%20Avenue%2C%20off%20Stadium%20Road%2C%20Port%20Harcourt%2C%20Nigeria%2C%20500201"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="footer-address-link"
+                >
+                  #7A Covenant Avenue, off Stadium Road,<br />Port Harcourt, Nigeria, 500201
+                </a>
               </p>
             </div>
           </div>

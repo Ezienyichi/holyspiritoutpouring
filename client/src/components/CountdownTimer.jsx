@@ -28,15 +28,13 @@ export default function CountdownTimer({ targetDate = '2025-08-15T18:00:00' }) {
 
   return (
     <div className="countdown">
-      {units.map((u, i) => (
-        <div key={u.label} style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-          <div className="countdown-box">
-            <span className="countdown-num">{String(u.value).padStart(2, '0')}</span>
-            <span className="countdown-lbl">{u.label}</span>
-          </div>
-          {i < units.length - 1 && <span className="countdown-sep">:</span>}
-        </div>
-      ))}
+      {units.flatMap((u, i) => [
+        i > 0 ? <div key={`div-${i}`} className="countdown-divider" /> : null,
+        <div key={u.label} className="countdown-unit">
+          <span className="countdown-num">{String(u.value).padStart(2, '0')}</span>
+          <span className="countdown-lbl">{u.label.toUpperCase()}</span>
+        </div>,
+      ]).filter(Boolean)}
     </div>
   )
 }

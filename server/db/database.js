@@ -264,7 +264,7 @@ function seed() {
     const pairs = [
       ['title', 'Holy Spirit Outpouring Conference'],
       ['dates', 'August 15–17, 2025'],
-      ['location', 'The Arena, Victoria Island, Lagos, Nigeria'],
+      ['location', '#7A Covenant Avenue, off Stadium Road, Port Harcourt, Nigeria, 500201'],
       ['countdownDate', '2025-08-15T18:00:00'],
       ['isLive', 'false'],
       ['streamUrl', ''],
@@ -274,7 +274,7 @@ function seed() {
       ['aboutText2', 'Whether you attend in person in Lagos or join our global livestream, prepare for an encounter that will ignite your faith, restore your passion, and release the supernatural in your life.'],
       ['contactEmail', 'info@outpouring25.org'],
       ['contactPhone', '+234 800 000 0000'],
-      ['contactAddress', 'The Arena, Victoria Island, Lagos, Nigeria'],
+      ['contactAddress', '#7A Covenant Avenue, off Stadium Road, Port Harcourt, Nigeria, 500201'],
     ];
     pairs.forEach(([key, value]) => {
       store.config.push({ id: nextId('config'), key, value });
@@ -385,6 +385,14 @@ function seed() {
     });
     save();
   }
+
+  // Migration: update old placeholder address to real address
+  const newAddress = '#7A Covenant Avenue, off Stadium Road, Port Harcourt, Nigeria, 500201';
+  const oldAddress = 'The Arena, Victoria Island, Lagos, Nigeria';
+  ['location', 'contactAddress'].forEach(key => {
+    const entry = store.config.find(c => c.key === key && c.value === oldAddress);
+    if (entry) { entry.value = newAddress; save(); }
+  });
 
   if (store.chat.length === 0) {
     [
