@@ -12,8 +12,8 @@ export default function AdminGiving() {
   const total = gifts.reduce((s, g) => s + (g.amount || 0), 0)
 
   function exportCsv() {
-    const headers = ['ID', 'Name', 'Email', 'Amount', 'Tier', 'Date']
-    const rows = gifts.map(g => [g.id, g.name || '', g.email || '', g.amount || 0, g.tier || '', g.createdAt || ''])
+    const headers = ['ID', 'Name', 'Email', 'Amount', 'Tier', 'Reason', 'Date']
+    const rows = gifts.map(g => [g.id, g.name || '', g.email || '', g.amount || 0, g.tier || '', g.reason_for_giving || '', g.createdAt || ''])
     const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n')
     const blob = new Blob([csv], { type: 'text/csv' })
     const url = URL.createObjectURL(blob)
@@ -53,11 +53,11 @@ export default function AdminGiving() {
         <div className="admin-card" style={{ overflowX: 'auto' }}>
           <table className="admin-table">
             <thead>
-              <tr><th>#</th><th>Name</th><th>Email</th><th>Amount</th><th>Tier</th><th>Date</th></tr>
+              <tr><th>#</th><th>Name</th><th>Email</th><th>Amount</th><th>Tier</th><th>Reason</th><th>Date</th></tr>
             </thead>
             <tbody>
               {gifts.length === 0 && (
-                <tr><td colSpan={6} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>No gifts yet.</td></tr>
+                <tr><td colSpan={7} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>No gifts yet.</td></tr>
               )}
               {gifts.map(g => (
                 <tr key={g.id}>
@@ -66,6 +66,7 @@ export default function AdminGiving() {
                   <td style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{g.email || '—'}</td>
                   <td style={{ color: 'var(--orange)', fontWeight: 600 }}>₦{(g.amount || 0).toLocaleString()}</td>
                   <td style={{ fontSize: '0.85rem' }}>{g.tier}</td>
+                  <td style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{g.reason_for_giving || '—'}</td>
                   <td style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{g.createdAt ? new Date(g.createdAt).toLocaleDateString() : '—'}</td>
                 </tr>
               ))}

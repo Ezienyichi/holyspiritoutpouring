@@ -8,9 +8,9 @@ router.get('/', requireAuth, (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { firstName, lastName, email, phone, attendanceType } = req.body;
+  const { firstName, lastName, email, phone, location, church, attendanceType } = req.body;
   if (!firstName || !lastName || !email) return res.status(400).json({ error: 'firstName, lastName, email required' });
-  const r = db.prepare('INSERT INTO registrations (firstName,lastName,email,phone,attendanceType) VALUES (?,?,?,?,?)').run(firstName,lastName,email,phone||'',attendanceType||'online');
+  const r = db.prepare('INSERT INTO registrations (firstName,lastName,email,phone,location,church,attendanceType) VALUES (?,?,?,?,?,?,?)').run(firstName,lastName,email,phone||'',location||'',church||'',attendanceType||'online');
   res.status(201).json({ success: true, id: r.lastInsertRowid });
 });
 

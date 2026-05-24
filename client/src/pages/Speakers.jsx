@@ -10,10 +10,18 @@ const CONVENING_TEAM = [
 ]
 
 const SUB_TEAM_HEADS = [
-  { id: 's1', name: 'To Be Announced', role: 'Worship Team Lead', photoUrl: '' },
-  { id: 's2', name: 'To Be Announced', role: 'Prayer Team Lead', photoUrl: '' },
-  { id: 's3', name: 'To Be Announced', role: 'Media Team Lead', photoUrl: '' },
-  { id: 's4', name: 'To Be Announced', role: 'Hospitality Lead', photoUrl: '' },
+  { id: 's1', name: 'Team Lead 1', role: 'Worship Team Lead', photoUrl: '' },
+  { id: 's2', name: 'Team Lead 2', role: 'Prayer Team Lead', photoUrl: '' },
+  { id: 's3', name: 'Team Lead 3', role: 'Media & Tech Lead', photoUrl: '' },
+  { id: 's4', name: 'Team Lead 4', role: 'Hospitality Lead', photoUrl: '' },
+  { id: 's5', name: 'Team Lead 5', role: 'Ushering Team Lead', photoUrl: '' },
+  { id: 's6', name: 'Team Lead 6', role: 'Creative Arts Lead', photoUrl: '' },
+  { id: 's7', name: 'Team Lead 7', role: 'Security Team Lead', photoUrl: '' },
+  { id: 's8', name: 'Team Lead 8', role: 'Registration Lead', photoUrl: '' },
+  { id: 's9', name: 'Team Lead 9', role: 'Children Ministry Lead', photoUrl: '' },
+  { id: 's10', name: 'Team Lead 10', role: 'Welfare Team Lead', photoUrl: '' },
+  { id: 's11', name: 'Team Lead 11', role: 'Transport & Logistics Lead', photoUrl: '' },
+  { id: 's12', name: 'Team Lead 12', role: 'Communications Lead', photoUrl: '' },
 ]
 
 const VOLUNTEERS = [
@@ -30,6 +38,27 @@ const VOLUNTEERS = [
 ]
 
 const TEAM_COLORS = ['#E8622A','#7C3AED','#0891B2','#059669','#DC2626','#D97706']
+
+function SubTeamCard({ member, index }) {
+  const color = TEAM_COLORS[index % TEAM_COLORS.length]
+  const initials = member.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+  return (
+    <div className="sub-team-card">
+      <div className="sub-team-card-img">
+        {member.photoUrl
+          ? <img src={member.photoUrl} alt={member.name} />
+          : <div className="sub-team-card-fallback" style={{ background: `linear-gradient(135deg, ${color}22, ${color}44)` }}>
+              <span style={{ color, fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.8rem' }}>{initials}</span>
+            </div>
+        }
+      </div>
+      <div className="sub-team-card-body">
+        <div className="sub-team-card-name">{member.name}</div>
+        <div className="sub-team-card-role">{member.role}</div>
+      </div>
+    </div>
+  )
+}
 
 function TeamCard({ member, index, size = 'regular' }) {
   const color = TEAM_COLORS[index % TEAM_COLORS.length]
@@ -117,8 +146,8 @@ export default function Speakers() {
             <h2 className="section-title">Sub Team Heads</h2>
             <div className="gold-line centered" />
           </div>
-          <HoverGrid className="team-grid-sub">
-            {SUB_TEAM_HEADS.map((m, i) => <TeamCard key={m.id} member={m} index={i} size="regular" />)}
+          <HoverGrid className="team-grid-sub-6">
+            {SUB_TEAM_HEADS.map((m, i) => <SubTeamCard key={m.id} member={m} index={i} />)}
           </HoverGrid>
         </div>
       </section>

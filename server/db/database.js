@@ -271,7 +271,7 @@ function seed() {
       ['streamTitle', 'Opening Night — Holy Spirit Outpouring Conference'],
       ['heroVideoUrl', ''],
       ['aboutText1', "The Holy Spirit Outpouring Conference is more than an event — it's a movement. For three transformative days, believers from every nation will gather to seek the face of God, receive fresh fire, and be equipped for end-time harvest."],
-      ['aboutText2', 'Whether you attend in person in Lagos or join our global livestream, prepare for an encounter that will ignite your faith, restore your passion, and release the supernatural in your life.'],
+      ['aboutText2', 'Whether you attend in person in Port Harcourt or join our global livestream, prepare for an encounter that will ignite your faith, restore your passion, and release the supernatural in your life.'],
       ['contactEmail', 'info@outpouring25.org'],
       ['contactPhone', '+234 800 000 0000'],
       ['contactAddress', '#7A Covenant Avenue, off Stadium Road, Port Harcourt, Nigeria, 500201'],
@@ -393,6 +393,10 @@ function seed() {
     const entry = store.config.find(c => c.key === key && c.value === oldAddress);
     if (entry) { entry.value = newAddress; save(); }
   });
+
+  // Migration: update aboutText2 Lagos → Port Harcourt
+  const at2 = store.config.find(c => c.key === 'aboutText2' && c.value && c.value.includes('in person in Lagos'));
+  if (at2) { at2.value = at2.value.replace('in person in Lagos', 'in person in Port Harcourt'); save(); }
 
   if (store.chat.length === 0) {
     [

@@ -11,8 +11,8 @@ export default function AdminRegistrations() {
   }, [])
 
   function exportCsv() {
-    const headers = ['ID', 'First Name', 'Last Name', 'Email', 'Phone', 'Attendance Type', 'Date']
-    const rows = regs.map(r => [r.id, r.firstName || '', r.lastName || '', r.email || '', r.phone || '', r.attendanceType || '', r.createdAt || ''])
+    const headers = ['ID', 'First Name', 'Last Name', 'Email', 'Phone', 'Location', 'Church', 'Attendance Type', 'Date']
+    const rows = regs.map(r => [r.id, r.firstName || '', r.lastName || '', r.email || '', r.phone || '', r.location || '', r.church || '', r.attendanceType || '', r.createdAt || ''])
     const csv = [headers, ...rows].map(row => row.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n')
     const blob = new Blob([csv], { type: 'text/csv' })
     const url = URL.createObjectURL(blob)
@@ -52,28 +52,29 @@ export default function AdminRegistrations() {
         <div className="admin-card" style={{ overflowX: 'auto' }}>
           <table className="admin-table">
             <thead>
-              <tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>City</th><th>Type</th><th>Date</th></tr>
+              <tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Location</th><th>Church</th><th>Type</th><th>Date</th></tr>
             </thead>
             <tbody>
               {filtered.length === 0 && (
-                <tr><td colSpan={7} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>
+                <tr><td colSpan={8} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>
                   {search ? 'No results found.' : 'No registrations yet.'}
                 </td></tr>
               )}
               {filtered.map(r => (
                 <tr key={r.id}>
-                  <td style={{ color: 'var(--text-muted)' }}>{r.id}</td>
+                  <td style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{r.id}</td>
                   <td style={{ fontWeight: 600 }}>{r.firstName} {r.lastName}</td>
                   <td style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{r.email}</td>
                   <td style={{ fontSize: '0.85rem' }}>{r.phone || '—'}</td>
-                  <td style={{ fontSize: '0.85rem' }}>{r.city || '—'}</td>
+                  <td style={{ fontSize: '0.85rem' }}>{r.location || '—'}</td>
+                  <td style={{ fontSize: '0.85rem' }}>{r.church || '—'}</td>
                   <td>
                     <span style={{
-                      background: r.attendanceType === 'in-person' ? 'rgba(74,247,138,0.15)' : 'rgba(124,106,247,0.15)',
-                      color: r.attendanceType === 'in-person' ? '#4af78a' : '#7c6af7',
-                      borderRadius: 6, padding: '0.15rem 0.5rem', fontSize: '0.75rem'
+                      background: r.attendanceType === 'onsite' ? 'rgba(74,247,138,0.15)' : 'rgba(124,106,247,0.15)',
+                      color: r.attendanceType === 'onsite' ? '#4af78a' : '#7c6af7',
+                      borderRadius: 6, padding: '0.15rem 0.5rem', fontSize: '0.75rem', fontWeight: 600
                     }}>
-                      {r.attendanceType || 'online'}
+                      {r.attendanceType === 'onsite' ? 'Onsite' : r.attendanceType === 'virtual' ? 'Virtual' : r.attendanceType || 'online'}
                     </span>
                   </td>
                   <td style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>

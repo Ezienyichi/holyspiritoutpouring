@@ -22,7 +22,7 @@ function HeroSection({ config }) {
       </div>
       <div className="hero-video-overlay" />
       <div className="hero-content">
-        <span className="hero-eyebrow">✦ Lagos, Nigeria &bull; August 15–17, 2025 ✦</span>
+        <span className="hero-eyebrow">✦ Port Harcourt, Rivers State, Nigeria &bull; August 15–17, 2025 ✦</span>
         <h1>
           <span className="hero-title-holy">Holy Spirit</span>
           <span className="hero-title-outpouring">Outpouring</span>
@@ -60,7 +60,7 @@ function AboutSection({ config }) {
             </h2>
             <div className="gold-line" />
             <p className="about-body">{config.aboutText1 || "The Holy Spirit Outpouring Conference is more than an event — it's a movement. For three transformative days, believers from every nation will gather to seek the face of God, receive fresh fire, and be equipped for end-time harvest."}</p>
-            <p className="about-body">{config.aboutText2 || 'Whether you attend in person in Lagos or join our global livestream, prepare for an encounter that will ignite your faith, restore your passion, and release the supernatural in your life.'}</p>
+            <p className="about-body">{config.aboutText2 || 'Whether you attend in person in Port Harcourt or join our global livestream, prepare for an encounter that will ignite your faith, restore your passion, and release the supernatural in your life.'}</p>
             <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <Link to="/speakers" className="btn btn-orange">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -217,7 +217,7 @@ function ScheduleSection() {
 /* ── TESTIMONIALS — AUTO CAROUSEL ────────────── */
 function TestimonialsSection() {
   const items = [
-    { quote: 'I came broken and empty, but the Holy Spirit filled me to overflowing. My life has never been the same since Outpouring 2024.', name: 'Sister Amara O.', loc: 'Lagos, Nigeria', bg: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500&h=700&fit=crop' },
+    { quote: 'I came broken and empty, but the Holy Spirit filled me to overflowing. My life has never been the same since Outpouring 2024.', name: 'Sister Amara O.', loc: 'Port Harcourt, Nigeria', bg: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500&h=700&fit=crop' },
     { quote: "The worship at this conference is unlike anything I've experienced. Heaven literally comes down. I received healing during the evening service.", name: 'Brother James K.', loc: 'Nairobi, Kenya', bg: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=500&h=700&fit=crop' },
     { quote: "As a pastor, I was running on empty. Outpouring reignited my fire and gave me a fresh vision for ministry. I bring my entire team every year.", name: 'Pastor Rebecca M.', loc: 'Accra, Ghana', bg: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=500&h=700&fit=crop' },
     { quote: 'Three days of heaven on earth. I came for one session and stayed for all three days. The presence of God was tangible.', name: 'Deacon Samuel T.', loc: 'Abuja, Nigeria', bg: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=500&h=700&fit=crop' },

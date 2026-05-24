@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 export default function Navbar() {
   const { pathname } = useLocation()
+  const navigate = useNavigate()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -25,19 +26,20 @@ export default function Navbar() {
     { to: '/media', label: 'Media' },
     { to: '/prayer', label: 'Prayer' },
     { to: '/give', label: 'Give' },
+    { to: '/register', label: 'Register', register: true },
     { to: '/live', label: 'Live', live: true },
   ]
 
   function handleRegister(e) {
     e.preventDefault()
     setMenuOpen(false)
-    document.getElementById('register-section')?.scrollIntoView({ behavior: 'smooth' })
+    navigate('/register')
   }
 
   return (
     <header className={`nav-wrapper${scrolled ? ' scrolled' : ''}`}>
       <div className="nav-topbar">
-        <span className="nav-topbar-pill">August 15–17, 2025 &bull; Lagos, Nigeria</span>
+        <span className="nav-topbar-pill">August 15–17, 2025 &bull; Port Harcourt, Rivers State, Nigeria</span>
       </div>
       <div className="navbar">
         <Link to="/" className="nav-logo" onClick={() => setMenuOpen(false)}>
@@ -53,7 +55,7 @@ export default function Navbar() {
             <Link
               key={l.to}
               to={l.to}
-              className={`nav-link${pathname === l.to ? ' active' : ''}${l.live ? ' nav-link-live' : ''}`}
+              className={`nav-link${pathname === l.to ? ' active' : ''}${l.live ? ' nav-link-live' : ''}${l.register ? ' nav-link-register' : ''}`}
             >
               {l.live && <span className="live-pulse" />}
               {l.label}

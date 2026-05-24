@@ -8,9 +8,9 @@ router.get('/', requireAuth, (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { name, email, amount, tier } = req.body;
+  const { name, email, amount, tier, reason_for_giving } = req.body;
   if (!amount || isNaN(amount)) return res.status(400).json({ error: 'Valid amount required' });
-  const r = db.prepare('INSERT INTO giving (name,email,amount,tier) VALUES (?,?,?,?)').run(name||'',email||'',Number(amount),tier||'Custom');
+  const r = db.prepare('INSERT INTO giving (name,email,amount,tier,reason_for_giving) VALUES (?,?,?,?,?)').run(name||'',email||'',Number(amount),tier||'Custom',reason_for_giving||'');
   res.status(201).json({ success: true, id: r.lastInsertRowid });
 });
 

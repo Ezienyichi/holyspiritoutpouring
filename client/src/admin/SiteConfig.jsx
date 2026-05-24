@@ -7,7 +7,7 @@ const FIELDS = [
   { key: 'heroTitle', label: 'Hero Title', placeholder: 'Holy Spirit Outpouring Conference 2025' },
   { key: 'heroSubtitle', label: 'Hero Subtitle', placeholder: 'Three days of worship, prayer, and revival' },
   { key: 'eventDates', label: 'Event Dates', placeholder: 'August 15–17, 2025' },
-  { key: 'eventLocation', label: 'Event Location', placeholder: 'Lagos, Nigeria' },
+  { key: 'eventLocation', label: 'Event Location', placeholder: 'Port Harcourt, Rivers State, Nigeria' },
   { key: 'targetDate', label: 'Countdown Target (ISO)', placeholder: '2025-08-15T18:00:00' },
   { key: 'streamUrl', label: 'Stream URL', placeholder: 'https://www.youtube.com/embed/...' },
   { key: 'streamTitle', label: 'Stream Title', placeholder: 'Holy Spirit Outpouring Conference' },

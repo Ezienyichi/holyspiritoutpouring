@@ -9,11 +9,11 @@ const TIERS = [
 ]
 
 export default function Give() {
-  const [form, setForm] = useState({ name: '', email: '', amount: '', tier: '' })
+  const [form, setForm] = useState({ name: '', email: '', amount: '', tier: '', reason: '' })
   const [success, setSuccess] = useState(false)
 
-  async function give(amount, tier) {
-    await fetch('/api/giving', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, amount, tier }) })
+  async function give(amount, tier, reason) {
+    await fetch('/api/giving', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, amount, tier, reason_for_giving: reason || form.reason }) })
     setSuccess(true)
     setTimeout(() => setSuccess(false), 6000)
   }
@@ -51,13 +51,22 @@ export default function Give() {
                 <input className="form-input" type="email" placeholder="Email address" value={form.email} onChange={e=>setForm(f=>({...f,email:e.target.value}))} style={{ background: 'rgba(255,255,255,0.15)', borderColor: 'rgba(255,255,255,0.3)', color: 'white' }} />
               </div>
             </div>
-            <div className="give-custom">
-              <input placeholder="Amount in ₦" value={form.amount} onChange={e=>setForm(f=>({...f,amount:e.target.value}))} />
-              <button className="btn btn-outline" style={{ color: 'white', borderColor: 'rgba(255,255,255,0.5)' }} onClick={() => form.amount && give(Number(form.amount), 'Custom')}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                Give
-              </button>
+            <div style={{ marginBottom: '0.85rem' }}>
+              <input className="give-amount-input" placeholder="Amount in ₦" value={form.amount} onChange={e=>setForm(f=>({...f,amount:e.target.value}))} />
             </div>
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.7)', display: 'block', marginBottom: 6 }}>Reason for Giving</label>
+              <input
+                className="give-reason-input"
+                placeholder="e.g. Tithe, Offering, Conference Support, Broadcast Sponsorship..."
+                value={form.reason}
+                onChange={e => setForm(f => ({ ...f, reason: e.target.value }))}
+              />
+            </div>
+            <button className="btn btn-outline" style={{ width: '100%', justifyContent: 'center', color: 'white', borderColor: 'rgba(255,255,255,0.5)' }} onClick={() => form.amount && give(Number(form.amount), 'Custom', form.reason)}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              Give
+            </button>
           </div>
         </div>
       </section>

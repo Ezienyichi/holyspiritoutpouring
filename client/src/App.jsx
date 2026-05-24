@@ -5,6 +5,7 @@ import Schedule from './pages/Schedule'
 import Media from './pages/Media'
 import Prayer from './pages/Prayer'
 import Give from './pages/Give'
+import Register from './pages/Register'
 import Live from './pages/Live'
 import AdminLogin from './admin/AdminLogin'
 import AdminLayout from './admin/AdminLayout'
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/media" element={<Media />} />
         <Route path="/prayer" element={<Prayer />} />
         <Route path="/give" element={<Give />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/live" element={<Live />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminLayout />}>
