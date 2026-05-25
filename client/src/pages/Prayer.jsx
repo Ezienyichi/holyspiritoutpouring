@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
+
+const API_BASE = import.meta.env.VITE_API_URL || ''
 import Footer from '../components/Footer'
 import PrayerCard from '../components/PrayerCard'
 
@@ -15,7 +17,7 @@ export default function Prayer() {
   })
 
   useEffect(() => {
-    fetch('/api/prayers').then(r => r.json()).then(d => { setPrayers(d); setLoading(false) })
+    fetch(API_BASE + '/api/prayers').then(r => r.json()).then(d => { setPrayers(d); setLoading(false) }).catch(() => setLoading(false))
   }, [])
 
   function onPray(id) {
@@ -26,7 +28,7 @@ export default function Prayer() {
 
   async function handleSubmit(e) {
     e.preventDefault()
-    const res = await fetch('/api/prayers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+    const res = await fetch(API_BASE + '/api/prayers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
     const newPrayer = await res.json()
     setSubmitted(true)
     setForm({ name: '', email: '', category: 'Other', text: '' })

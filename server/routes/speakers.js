@@ -8,15 +8,15 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', requireAuth, (req, res) => {
-  const { name, title, church, topic, bio, photoUrl, socialYoutube, socialInstagram, socialFacebook, displayOrder } = req.body;
+  const { name, title, church, topic, bio, photoUrl, socialYoutube, socialInstagram, socialFacebook, displayOrder, role } = req.body;
   if (!name) return res.status(400).json({ error: 'Name is required' });
-  const r = db.prepare('INSERT INTO speakers (name,title,church,topic,bio,photoUrl,socialYoutube,socialInstagram,socialFacebook,displayOrder) VALUES (?,?,?,?,?,?,?,?,?,?)').run(name,title||'',church||'',topic||'',bio||'',photoUrl||'',socialYoutube||'',socialInstagram||'',socialFacebook||'',displayOrder||0);
+  const r = db.prepare('INSERT INTO speakers (name,title,church,topic,bio,photoUrl,socialYoutube,socialInstagram,socialFacebook,displayOrder,role) VALUES (?,?,?,?,?,?,?,?,?,?,?)').run(name,title||'',church||'',topic||'',bio||'',photoUrl||'',socialYoutube||'',socialInstagram||'',socialFacebook||'',displayOrder||0,role||'minister');
   res.status(201).json(db.prepare('SELECT * FROM speakers WHERE id=?').get(r.lastInsertRowid));
 });
 
 router.put('/:id', requireAuth, (req, res) => {
-  const { name, title, church, topic, bio, photoUrl, socialYoutube, socialInstagram, socialFacebook, displayOrder } = req.body;
-  const r = db.prepare('UPDATE speakers SET name=?,title=?,church=?,topic=?,bio=?,photoUrl=?,socialYoutube=?,socialInstagram=?,socialFacebook=?,displayOrder=? WHERE id=?').run(name,title||'',church||'',topic||'',bio||'',photoUrl||'',socialYoutube||'',socialInstagram||'',socialFacebook||'',displayOrder||0,req.params.id);
+  const { name, title, church, topic, bio, photoUrl, socialYoutube, socialInstagram, socialFacebook, displayOrder, role } = req.body;
+  const r = db.prepare('UPDATE speakers SET name=?,title=?,church=?,topic=?,bio=?,photoUrl=?,socialYoutube=?,socialInstagram=?,socialFacebook=?,displayOrder=?,role=? WHERE id=?').run(name,title||'',church||'',topic||'',bio||'',photoUrl||'',socialYoutube||'',socialInstagram||'',socialFacebook||'',displayOrder||0,role||'minister',req.params.id);
   if (!r.changes) return res.status(404).json({ error: 'Not found' });
   res.json(db.prepare('SELECT * FROM speakers WHERE id=?').get(req.params.id));
 });

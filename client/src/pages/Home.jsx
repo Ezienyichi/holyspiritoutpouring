@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+
+const API_BASE = import.meta.env.VITE_API_URL || ''
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import CountdownTimer from '../components/CountdownTimer'
@@ -173,7 +175,7 @@ function ScheduleSection() {
 
   useEffect(() => {
     setLoading(true)
-    fetch(`/api/sessions?day=${day}`).then(r => r.json()).then(d => { setSessions(d); setLoading(false) })
+    fetch(API_BASE + `/api/sessions?day=${day}`).then(r => r.json()).then(d => { setSessions(d); setLoading(false) })
   }, [day])
 
   const tabs = [
@@ -276,7 +278,7 @@ function PrayerSection({ prayers }) {
   async function handleSubmit(e) {
     e.preventDefault()
     if (!form.text.trim()) return
-    await fetch('/api/prayers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+    await fetch(API_BASE + '/api/prayers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
     setSubmitted(true)
     setForm({ name: '', email: '', category: 'Other', text: '' })
   }
@@ -378,7 +380,7 @@ function GiveSection() {
     { name: 'Vision Partner', amount: '₦100,000', desc: 'Sponsor the global broadcast reaching thousands online.' },
   ]
   async function giveAmount(amount, tier) {
-    await fetch('/api/giving', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount, tier }) })
+    await fetch(API_BASE + '/api/giving', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount, tier }) })
     alert(`Thank you! Your gift of ${amount} has been received. God bless you!`)
   }
   return (
@@ -421,10 +423,10 @@ export default function Home() {
   const [media, setMedia] = useState([])
 
   useEffect(() => {
-    fetch('/api/config').then(r => r.json()).then(setConfig)
-    fetch('/api/speakers').then(r => r.json()).then(setSpeakers)
-    fetch('/api/prayers').then(r => r.json()).then(setPrayers)
-    fetch('/api/media').then(r => r.json()).then(setMedia)
+    fetch(API_BASE + '/api/config').then(r => r.json()).then(setConfig).catch(() => {})
+    fetch(API_BASE + '/api/speakers').then(r => r.json()).then(setSpeakers).catch(() => {})
+    fetch(API_BASE + '/api/prayers').then(r => r.json()).then(setPrayers).catch(() => {})
+    fetch(API_BASE + '/api/media').then(r => r.json()).then(setMedia).catch(() => {})
   }, [])
 
   return (

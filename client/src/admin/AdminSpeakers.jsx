@@ -2,7 +2,14 @@ import { useState, useEffect } from 'react'
 import { api } from '../api'
 import { useToast } from '../context/ToastContext'
 
-const EMPTY = { name: '', title: '', church: '', topic: '', bio: '', photoUrl: '', instagram: '', twitter: '', displayOrder: 0 }
+const EMPTY = { name: '', title: '', church: '', topic: '', bio: '', photoUrl: '', instagram: '', twitter: '', displayOrder: 0, role: 'minister' }
+
+const ROLES = [
+  { value: 'minister', label: 'Featured Speaker / Minister' },
+  { value: 'convening_team', label: 'Convening Team' },
+  { value: 'sub_team_head', label: 'Sub Team Head' },
+  { value: 'volunteer', label: 'Volunteer' },
+]
 
 export default function AdminSpeakers() {
   const toast = useToast()
@@ -13,8 +20,8 @@ export default function AdminSpeakers() {
   const [saving, setSaving] = useState(false)
 
   async function load() {
-    const d = await fetch('/api/speakers').then(r => r.json())
-    setSpeakers(d)
+    const d = await api.get('/speakers')
+    setSpeakers(Array.isArray(d) ? d : [])
     setLoading(false)
   }
 
@@ -59,7 +66,7 @@ export default function AdminSpeakers() {
         <div className="admin-card" style={{ overflowX: 'auto' }}>
           <table className="admin-table">
             <thead>
-              <tr><th>#</th><th>Photo</th><th>Name</th><th>Title / Church</th><th>Topic</th><th>Actions</th></tr>
+              <tr><th>#</th><th>Photo</th><th>Name</th><th>Title / Church</th><th>Role</th><th>Topic</th><th>Actions</th></tr>
             </thead>
             <tbody>
               {speakers.map(s => (
@@ -73,6 +80,7 @@ export default function AdminSpeakers() {
                   </td>
                   <td style={{ fontWeight: 600 }}>{s.name}</td>
                   <td style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{s.title}<br />{s.church}</td>
+                  <td style={{ fontSize: '0.8rem', color: 'var(--orange)' }}>{ROLES.find(r => r.value === (s.role || 'minister'))?.label || s.role}</td>
                   <td style={{ fontSize: '0.85rem' }}>{s.topic}</td>
                   <td>
                     <button className="admin-btn-edit" onClick={() => openEdit(s)}>Edit</button>
@@ -112,6 +120,12 @@ export default function AdminSpeakers() {
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label">Display Order</label>
                   <input className="form-input" type="number" value={form.displayOrder||0} onChange={e=>f('displayOrder',Number(e.target.value))} />
+                </div>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Role / Category</label>
+                  <select className="form-select" value={form.role||'minister'} onChange={e=>f('role',e.target.value)}>
+                    {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+                  </select>
                 </div>
               </div>
               <div className="form-group">

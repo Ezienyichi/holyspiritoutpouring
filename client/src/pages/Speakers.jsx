@@ -3,39 +3,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import SpeakerCard from '../components/SpeakerCard'
 
-const CONVENING_TEAM = [
-  { id: 'c1', name: 'To Be Announced', role: 'Conference Convener', photoUrl: '' },
-  { id: 'c2', name: 'To Be Announced', role: 'Operations Lead', photoUrl: '' },
-  { id: 'c3', name: 'To Be Announced', role: 'Creative Director', photoUrl: '' },
-]
-
-const SUB_TEAM_HEADS = [
-  { id: 's1', name: 'Team Lead 1', role: 'Worship Team Lead', photoUrl: '' },
-  { id: 's2', name: 'Team Lead 2', role: 'Prayer Team Lead', photoUrl: '' },
-  { id: 's3', name: 'Team Lead 3', role: 'Media & Tech Lead', photoUrl: '' },
-  { id: 's4', name: 'Team Lead 4', role: 'Hospitality Lead', photoUrl: '' },
-  { id: 's5', name: 'Team Lead 5', role: 'Ushering Team Lead', photoUrl: '' },
-  { id: 's6', name: 'Team Lead 6', role: 'Creative Arts Lead', photoUrl: '' },
-  { id: 's7', name: 'Team Lead 7', role: 'Security Team Lead', photoUrl: '' },
-  { id: 's8', name: 'Team Lead 8', role: 'Registration Lead', photoUrl: '' },
-  { id: 's9', name: 'Team Lead 9', role: 'Children Ministry Lead', photoUrl: '' },
-  { id: 's10', name: 'Team Lead 10', role: 'Welfare Team Lead', photoUrl: '' },
-  { id: 's11', name: 'Team Lead 11', role: 'Transport & Logistics Lead', photoUrl: '' },
-  { id: 's12', name: 'Team Lead 12', role: 'Communications Lead', photoUrl: '' },
-]
-
-const VOLUNTEERS = [
-  { id: 'v1', name: 'Volunteer', role: 'Ushering' },
-  { id: 'v2', name: 'Volunteer', role: 'Registration' },
-  { id: 'v3', name: 'Volunteer', role: 'Prayer Ministry' },
-  { id: 'v4', name: 'Volunteer', role: 'Technical Support' },
-  { id: 'v5', name: 'Volunteer', role: 'Children Ministry' },
-  { id: 'v6', name: 'Volunteer', role: 'Security' },
-  { id: 'v7', name: 'Volunteer', role: 'First Aid' },
-  { id: 'v8', name: 'Volunteer', role: 'Photography' },
-  { id: 'v9', name: 'Volunteer', role: 'Guest Relations' },
-  { id: 'v10', name: 'Volunteer', role: 'Worship Support' },
-]
+const API_BASE = import.meta.env.VITE_API_URL || ''
 
 const TEAM_COLORS = ['#E8622A','#7C3AED','#0891B2','#059669','#DC2626','#D97706']
 
@@ -54,7 +22,7 @@ function SubTeamCard({ member, index }) {
       </div>
       <div className="sub-team-card-body">
         <div className="sub-team-card-name">{member.name}</div>
-        <div className="sub-team-card-role">{member.role}</div>
+        <div className="sub-team-card-role">{member.title || member.role}</div>
       </div>
     </div>
   )
@@ -72,7 +40,7 @@ function TeamCard({ member, index, size = 'regular' }) {
         }
       </div>
       <div className="team-card-name">{member.name}</div>
-      <div className="team-card-role">{member.role}</div>
+      <div className="team-card-role">{member.title || member.role}</div>
     </div>
   )
 }
@@ -105,14 +73,30 @@ function HoverGrid({ children, className = '' }) {
   )
 }
 
+function EmptyState({ message }) {
+  return (
+    <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+      {message}
+    </div>
+  )
+}
+
 export default function Speakers() {
   const [speakers, setSpeakers] = useState([])
   const [loading, setLoading] = useState(true)
   const [openBioId, setOpenBioId] = useState(null)
 
   useEffect(() => {
-    fetch('/api/speakers').then(r => r.json()).then(d => { setSpeakers(d); setLoading(false) })
+    fetch(API_BASE + '/api/speakers')
+      .then(r => r.json())
+      .then(d => { setSpeakers(Array.isArray(d) ? d : []); setLoading(false) })
+      .catch(() => setLoading(false))
   }, [])
+
+  const ministers = speakers.filter(s => !s.role || s.role === 'minister')
+  const conveningTeam = speakers.filter(s => s.role === 'convening_team')
+  const subTeamHeads = speakers.filter(s => s.role === 'sub_team_head')
+  const volunteers = speakers.filter(s => s.role === 'volunteer')
 
   return (
     <>
@@ -124,49 +108,7 @@ export default function Speakers() {
         </div>
       </div>
 
-      {/* Convening Team */}
-      <section className="section section-dark">
-        <div className="container">
-          <div className="text-center" style={{ marginBottom: '2.5rem' }}>
-            <span className="section-label">Leadership</span>
-            <h2 className="section-title">Convening Team</h2>
-            <div className="gold-line centered" />
-          </div>
-          <HoverGrid className="team-grid-convening">
-            {CONVENING_TEAM.map((m, i) => <TeamCard key={m.id} member={m} index={i} size="large" />)}
-          </HoverGrid>
-        </div>
-      </section>
-
-      {/* Sub Team Heads */}
-      <section className="section section-mid">
-        <div className="container">
-          <div className="text-center" style={{ marginBottom: '2.5rem' }}>
-            <span className="section-label">Coordination</span>
-            <h2 className="section-title">Sub Team Heads</h2>
-            <div className="gold-line centered" />
-          </div>
-          <HoverGrid className="team-grid-sub-6">
-            {SUB_TEAM_HEADS.map((m, i) => <SubTeamCard key={m.id} member={m} index={i} />)}
-          </HoverGrid>
-        </div>
-      </section>
-
-      {/* Volunteers */}
-      <section className="section section-dark">
-        <div className="container">
-          <div className="text-center" style={{ marginBottom: '2.5rem' }}>
-            <span className="section-label">Serving With Love</span>
-            <h2 className="section-title">Our Volunteers</h2>
-            <div className="gold-line centered" />
-          </div>
-          <HoverGrid className="team-grid-volunteers">
-            {VOLUNTEERS.map((m, i) => <TeamCard key={m.id} member={m} index={i} size="small" />)}
-          </HoverGrid>
-        </div>
-      </section>
-
-      {/* Featured Speakers */}
+      {/* Featured Speakers / Ministers */}
       <section className="section section-mid">
         <div className="container">
           <div className="text-center" style={{ marginBottom: '2.5rem' }}>
@@ -177,15 +119,79 @@ export default function Speakers() {
               God's chosen vessels bringing prophetic insight, powerful teaching, and Spirit-filled worship.
             </p>
           </div>
-          {loading ? <div className="loading-state">Loading speakers…</div> : (
+          {loading ? (
+            <div className="loading-state">Loading speakers…</div>
+          ) : ministers.length === 0 ? (
+            <EmptyState message="Speakers will be announced soon. Check back closer to the conference." />
+          ) : (
             <HoverGrid className="speakers-grid-new">
-              {speakers.map((s, i) => (
+              {ministers.map((s, i) => (
                 <SpeakerCard key={s.id} speaker={s} index={i} openBioId={openBioId} setOpenBioId={setOpenBioId} />
               ))}
             </HoverGrid>
           )}
         </div>
       </section>
+
+      {/* Convening Team — only shown when populated */}
+      {(loading || conveningTeam.length > 0) && (
+        <section className="section section-dark">
+          <div className="container">
+            <div className="text-center" style={{ marginBottom: '2.5rem' }}>
+              <span className="section-label">Leadership</span>
+              <h2 className="section-title">Convening Team</h2>
+              <div className="gold-line centered" />
+            </div>
+            {loading ? (
+              <div className="loading-state">Loading…</div>
+            ) : (
+              <HoverGrid className="team-grid-convening">
+                {conveningTeam.map((m, i) => <TeamCard key={m.id} member={m} index={i} size="large" />)}
+              </HoverGrid>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* Sub Team Heads — only shown when populated */}
+      {(loading || subTeamHeads.length > 0) && (
+        <section className="section section-mid">
+          <div className="container">
+            <div className="text-center" style={{ marginBottom: '2.5rem' }}>
+              <span className="section-label">Coordination</span>
+              <h2 className="section-title">Sub Team Heads</h2>
+              <div className="gold-line centered" />
+            </div>
+            {loading ? (
+              <div className="loading-state">Loading…</div>
+            ) : (
+              <HoverGrid className="team-grid-sub-6">
+                {subTeamHeads.map((m, i) => <SubTeamCard key={m.id} member={m} index={i} />)}
+              </HoverGrid>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* Volunteers — only shown when populated */}
+      {(loading || volunteers.length > 0) && (
+        <section className="section section-dark">
+          <div className="container">
+            <div className="text-center" style={{ marginBottom: '2.5rem' }}>
+              <span className="section-label">Serving With Love</span>
+              <h2 className="section-title">Our Volunteers</h2>
+              <div className="gold-line centered" />
+            </div>
+            {loading ? (
+              <div className="loading-state">Loading…</div>
+            ) : (
+              <HoverGrid className="team-grid-volunteers">
+                {volunteers.map((m, i) => <TeamCard key={m.id} member={m} index={i} size="small" />)}
+              </HoverGrid>
+            )}
+          </div>
+        </section>
+      )}
 
       <Footer />
     </>
