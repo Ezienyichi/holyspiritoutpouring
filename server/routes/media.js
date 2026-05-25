@@ -17,8 +17,8 @@ router.post('/', requireAuth, (req, res) => {
 });
 
 router.post('/upload', requireAuth, (req, res) => {
-  if (!process.env.CLOUDINARY_CLOUD_NAME) {
-    return res.status(503).json({ error: 'Cloudinary not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET env vars.' });
+  if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+    return res.status(500).json({ error: 'Cloudinary not configured' });
   }
   let multerLib, cldLib;
   try {
