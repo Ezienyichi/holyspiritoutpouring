@@ -34,6 +34,10 @@ app.use('/api/registrations', require('./routes/registrations'));
 app.use('/api/chat', require('./routes/chat'));
 app.use('/api/users', require('./routes/users'));
 
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'Backend is running', timestamp: new Date().toISOString() });
+});
+
 if (require.main === module) {
   app.listen(PORT, () => console.log(`Outpouring '25 server → http://localhost:${PORT}`));
 }
