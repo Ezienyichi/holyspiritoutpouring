@@ -2,13 +2,14 @@
 // Replaces better-sqlite3 to avoid native compilation on Windows.
 const fs = require('fs');
 const path = require('path');
+const bcrypt = require('bcryptjs');
 
-const DATA_DIR = path.join(__dirname, '../../data');
+const DATA_DIR = process.env.VERCEL ? '/tmp' : path.join(__dirname, '../../data');
 const DB_FILE = path.join(DATA_DIR, 'outpouring25.json');
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
-const TABLES = ['config', 'speakers', 'sessions', 'prayers', 'media', 'giving', 'registrations', 'chat'];
+const TABLES = ['config', 'speakers', 'sessions', 'prayers', 'media', 'giving', 'registrations', 'chat', 'users'];
 
 let store = {};
 TABLES.forEach(t => { store[t] = []; });
@@ -67,6 +68,12 @@ function parseWhere(sql, params) {
   if (idGt) {
     const since = Number(params[0]);
     return row => row.id > since;
+  }
+  // WHERE username=?
+  const usernameEq = s.match(/where\s+username\s*=\s*\?/);
+  if (usernameEq) {
+    const username = params[0];
+    return row => row.username === username;
   }
   return null;
 }
@@ -180,6 +187,10 @@ function executeRun(sql, params) {
     if (low.includes('insert or ignore')) {
       // Check uniqueness by key if config
       if (table === 'config' && store.config.some(r => r.key === record.key)) {
+        return { changes: 0, lastInsertRowid: 0 };
+      }
+      // Check uniqueness by username if users
+      if (table === 'users' && store.users.some(r => r.username === record.username)) {
         return { changes: 0, lastInsertRowid: 0 };
       }
     }
@@ -333,7 +344,6 @@ function seed() {
       ['Night Session', 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=600&h=400&fit=crop', 'photo', 'Evening session crowd', null],
       ['Outdoor Praise', 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=400&fit=crop', 'photo', 'Outdoor praise session', null],
       ['Altar Call', 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&h=500&fit=crop', 'photo', 'Altar call moments', null],
-      // YouTube videos
       ['Min Moses Bliss — High Praise at the HolySpirit Outpouring', 'https://img.youtube.com/vi/MRZT865hYZc/maxresdefault.jpg', 'video', 'Min Moses Bliss', 'https://www.youtube.com/watch?v=MRZT865hYZc'],
       ['Min GUC — Deep Worship during the HolySpirit Outpouring', 'https://img.youtube.com/vi/-grmFq9vEL4/maxresdefault.jpg', 'video', 'Min GUC', 'https://www.youtube.com/watch?v=-grmFq9vEL4'],
       ['Identify Dimensions in Man | Micheal Orokpo', 'https://img.youtube.com/vi/fFZ4-1OdNGA/maxresdefault.jpg', 'video', 'Micheal Orokpo', 'https://www.youtube.com/watch?v=fFZ4-1OdNGA'],
@@ -408,6 +418,17 @@ function seed() {
       ['RevivalFire', "First time at Outpouring and I'm already transformed ❤️", '2025-08-15 18:02:00'],
     ].forEach(([username, message, createdAt]) => {
       store.chat.push({ id: nextId('chat'), username, message, createdAt });
+    });
+    save();
+  }
+
+  // Seed default admin users
+  if (store.users.length === 0) {
+    [
+      ['admin', bcrypt.hashSync('outpouring2025', 10), 'Administrator', 'super_admin'],
+      ['manager', bcrypt.hashSync('outpouring@media', 10), 'Content Manager', 'content_manager'],
+    ].forEach(([username, password, name, role]) => {
+      store.users.push({ id: nextId('users'), username, password, name, role, createdAt: now() });
     });
     save();
   }

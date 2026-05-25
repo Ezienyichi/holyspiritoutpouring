@@ -18,6 +18,7 @@ import AdminMedia from './admin/AdminMedia'
 import AdminGiving from './admin/AdminGiving'
 import AdminRegistrations from './admin/AdminRegistrations'
 import AdminLivestream from './admin/AdminLivestream'
+import AdminUsers from './admin/AdminUsers'
 
 export default function App() {
   return (
@@ -42,6 +43,7 @@ export default function App() {
           <Route path="giving" element={<AdminGiving />} />
           <Route path="registrations" element={<AdminRegistrations />} />
           <Route path="livestream" element={<AdminLivestream />} />
+          <Route path="users" element={<AdminUsers />} />
         </Route>
       </Routes>
     </BrowserRouter>

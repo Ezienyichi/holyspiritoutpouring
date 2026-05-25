@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { setToken } from '../api'
 
+const API_BASE = import.meta.env.VITE_API_URL || ''
+
 export default function AdminLogin() {
-  const [form, setForm] = useState({ username: '', password: '' })
+  const [form, setForm] = useState({ username: '', password: '', rememberMe: false })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
@@ -13,7 +15,7 @@ export default function AdminLogin() {
     setLoading(true)
     setError('')
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch(API_BASE + '/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -61,6 +63,14 @@ export default function AdminLogin() {
                 required
               />
             </div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1rem', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={form.rememberMe}
+                onChange={e => setForm(f => ({ ...f, rememberMe: e.target.checked }))}
+              />
+              Remember me for 7 days
+            </label>
             <button
               type="submit"
               className="btn btn-orange"

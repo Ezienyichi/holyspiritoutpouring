@@ -1,4 +1,5 @@
 const TOKEN_KEY = 'op25_token'
+const API_BASE = import.meta.env.VITE_API_URL || ''
 
 export const getToken = () => localStorage.getItem(TOKEN_KEY)
 export const setToken = (t) => localStorage.setItem(TOKEN_KEY, t)
@@ -8,7 +9,7 @@ async function request(path, options = {}) {
   const token = getToken()
   const headers = { 'Content-Type': 'application/json', ...options.headers }
   if (token) headers['Authorization'] = `Bearer ${token}`
-  const res = await fetch('/api' + path, { ...options, headers })
+  const res = await fetch(API_BASE + '/api' + path, { ...options, headers })
   if (res.status === 401) { clearToken(); throw new Error('Unauthorized') }
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))

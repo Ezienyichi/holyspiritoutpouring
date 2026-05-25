@@ -13,7 +13,7 @@
     {
       "id": 3,
       "key": "location",
-      "value": "The Arena, Victoria Island, Lagos, Nigeria"
+      "value": "#7A Covenant Avenue, off Stadium Road, Port Harcourt, Nigeria, 500201"
     },
     {
       "id": 4,
@@ -48,7 +48,7 @@
     {
       "id": 10,
       "key": "aboutText2",
-      "value": "Whether you attend in person in Lagos or join our global livestream, prepare for an encounter that will ignite your faith, restore your passion, and release the supernatural in your life."
+      "value": "Whether you attend in person in Port Harcourt or join our global livestream, prepare for an encounter that will ignite your faith, restore your passion, and release the supernatural in your life."
     },
     {
       "id": 11,
@@ -63,7 +63,7 @@
     {
       "id": 13,
       "key": "contactAddress",
-      "value": "The Arena, Victoria Island, Lagos, Nigeria"
+      "value": "#7A Covenant Avenue, off Stadium Road, Port Harcourt, Nigeria, 500201"
     }
   ],
   "speakers": [
@@ -332,6 +332,176 @@
       "type": "video",
       "caption": "Altar call moments from Outpouring 2024",
       "createdAt": "2026-05-23 11:38:03"
+    },
+    {
+      "id": 7,
+      "title": "Min Moses Bliss — High Praise at the HolySpirit Outpouring",
+      "url": "https://img.youtube.com/vi/MRZT865hYZc/maxresdefault.jpg",
+      "thumbnailUrl": "https://img.youtube.com/vi/MRZT865hYZc/maxresdefault.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=MRZT865hYZc",
+      "type": "video",
+      "caption": "Min Moses Bliss — High Praise at the HolySpirit Outpouring",
+      "createdAt": "2026-05-25 11:13:43"
+    },
+    {
+      "id": 8,
+      "title": "Min GUC — Deep Worship during the HolySpirit Outpouring",
+      "url": "https://img.youtube.com/vi/-grmFq9vEL4/maxresdefault.jpg",
+      "thumbnailUrl": "https://img.youtube.com/vi/-grmFq9vEL4/maxresdefault.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=-grmFq9vEL4",
+      "type": "video",
+      "caption": "Min GUC — Deep Worship during the HolySpirit Outpouring",
+      "createdAt": "2026-05-25 11:13:43"
+    },
+    {
+      "id": 9,
+      "title": "Identify Dimensions in Man | Micheal Orokpo",
+      "url": "https://img.youtube.com/vi/fFZ4-1OdNGA/maxresdefault.jpg",
+      "thumbnailUrl": "https://img.youtube.com/vi/fFZ4-1OdNGA/maxresdefault.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=fFZ4-1OdNGA",
+      "type": "video",
+      "caption": "Identify Dimensions in Man | Micheal Orokpo",
+      "createdAt": "2026-05-25 11:13:43"
+    },
+    {
+      "id": 10,
+      "title": "Micah (Praise Prophet) — High Praise at the HolySpirit Outpouring",
+      "url": "https://img.youtube.com/vi/SAdpDo04EFI/maxresdefault.jpg",
+      "thumbnailUrl": "https://img.youtube.com/vi/SAdpDo04EFI/maxresdefault.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=SAdpDo04EFI",
+      "type": "video",
+      "caption": "Micah (Praise Prophet) — High Praise at the HolySpirit Outpouring",
+      "createdAt": "2026-05-25 11:13:43"
+    },
+    {
+      "id": 11,
+      "title": "Young Teenagers in deep Worship | Generation of Light",
+      "url": "https://img.youtube.com/vi/hQ_vo1u9QLY/maxresdefault.jpg",
+      "thumbnailUrl": "https://img.youtube.com/vi/hQ_vo1u9QLY/maxresdefault.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=hQ_vo1u9QLY",
+      "type": "video",
+      "caption": "Young Teenagers in deep Worship | Generation of Light",
+      "createdAt": "2026-05-25 11:13:43"
+    },
+    {
+      "id": 12,
+      "title": "Why You NEED God's Spirit | Rev Ikechukwu",
+      "url": "https://img.youtube.com/vi/DMsrcXV50Yk/maxresdefault.jpg",
+      "thumbnailUrl": "https://img.youtube.com/vi/DMsrcXV50Yk/maxresdefault.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=DMsrcXV50Yk",
+      "type": "video",
+      "caption": "Why You NEED God's Spirit | Rev Ikechukwu",
+      "createdAt": "2026-05-25 11:13:43"
+    },
+    {
+      "id": 13,
+      "title": "Min Judikay — High Praise during the HolySpirit Outpouring",
+      "url": "https://img.youtube.com/vi/mM-fmYIdhTU/maxresdefault.jpg",
+      "thumbnailUrl": "https://img.youtube.com/vi/mM-fmYIdhTU/maxresdefault.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=mM-fmYIdhTU",
+      "type": "video",
+      "caption": "Min Judikay — High Praise during the HolySpirit Outpouring",
+      "createdAt": "2026-05-25 11:13:43"
+    },
+    {
+      "id": 14,
+      "title": "Min Empraiz with High at the HolySpirit Outpouring",
+      "url": "https://img.youtube.com/vi/kqZ0nryrDjU/maxresdefault.jpg",
+      "thumbnailUrl": "https://img.youtube.com/vi/kqZ0nryrDjU/maxresdefault.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=kqZ0nryrDjU",
+      "type": "video",
+      "caption": "Min Empraiz with High at the HolySpirit Outpouring",
+      "createdAt": "2026-05-25 11:13:43"
+    },
+    {
+      "id": 15,
+      "title": "High Traditional Praise at HolySpirit Outpouring | Min Elekwu",
+      "url": "https://img.youtube.com/vi/T2_rseKY9Tg/maxresdefault.jpg",
+      "thumbnailUrl": "https://img.youtube.com/vi/T2_rseKY9Tg/maxresdefault.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=T2_rseKY9Tg",
+      "type": "video",
+      "caption": "High Traditional Praise at HolySpirit Outpouring | Min Elekwu",
+      "createdAt": "2026-05-25 11:13:43"
+    },
+    {
+      "id": 16,
+      "title": "SHOCKED at the Generation of Power at the Holy Spirit Outpouring",
+      "url": "https://img.youtube.com/vi/K4dnGEVBHkI/maxresdefault.jpg",
+      "thumbnailUrl": "https://img.youtube.com/vi/K4dnGEVBHkI/maxresdefault.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=K4dnGEVBHkI",
+      "type": "video",
+      "caption": "SHOCKED at the Generation of Power at the Holy Spirit Outpouring",
+      "createdAt": "2026-05-25 11:13:43"
+    },
+    {
+      "id": 17,
+      "title": "HolySpirit Outpouring | Deep Worship with Min GP Samz",
+      "url": "https://img.youtube.com/vi/IcqTnYpLArc/maxresdefault.jpg",
+      "thumbnailUrl": "https://img.youtube.com/vi/IcqTnYpLArc/maxresdefault.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=IcqTnYpLArc",
+      "type": "video",
+      "caption": "HolySpirit Outpouring | Deep Worship with Min GP Samz",
+      "createdAt": "2026-05-25 11:13:43"
+    },
+    {
+      "id": 18,
+      "title": "HolySpirit Outpouring | Deep Worship with Min DFO",
+      "url": "https://img.youtube.com/vi/-lF45IFHtvA/maxresdefault.jpg",
+      "thumbnailUrl": "https://img.youtube.com/vi/-lF45IFHtvA/maxresdefault.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=-lF45IFHtvA",
+      "type": "video",
+      "caption": "HolySpirit Outpouring | Deep Worship with Min DFO",
+      "createdAt": "2026-05-25 11:13:43"
+    },
+    {
+      "id": 19,
+      "title": "HolySpirit Outpouring | Min Sax",
+      "url": "https://img.youtube.com/vi/JAfHTjb3_r0/maxresdefault.jpg",
+      "thumbnailUrl": "https://img.youtube.com/vi/JAfHTjb3_r0/maxresdefault.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=JAfHTjb3_r0",
+      "type": "video",
+      "caption": "HolySpirit Outpouring | Min Sax",
+      "createdAt": "2026-05-25 11:13:43"
+    },
+    {
+      "id": 20,
+      "title": "Min Wealth — Deep Worship during the HolySpirit Outpouring",
+      "url": "https://img.youtube.com/vi/BsV05k71cnM/maxresdefault.jpg",
+      "thumbnailUrl": "https://img.youtube.com/vi/BsV05k71cnM/maxresdefault.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=BsV05k71cnM",
+      "type": "video",
+      "caption": "Min Wealth — Deep Worship during the HolySpirit Outpouring",
+      "createdAt": "2026-05-25 11:13:43"
+    },
+    {
+      "id": 21,
+      "title": "CASOR with High at the HolySpirit Outpouring",
+      "url": "https://img.youtube.com/vi/DRDzLU1Dc68/maxresdefault.jpg",
+      "thumbnailUrl": "https://img.youtube.com/vi/DRDzLU1Dc68/maxresdefault.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=DRDzLU1Dc68",
+      "type": "video",
+      "caption": "CASOR with High at the HolySpirit Outpouring",
+      "createdAt": "2026-05-25 11:13:43"
+    },
+    {
+      "id": 22,
+      "title": "Deep Saxophone HolySpirit Outpouring",
+      "url": "https://img.youtube.com/vi/yx1Igevlkwg/maxresdefault.jpg",
+      "thumbnailUrl": "https://img.youtube.com/vi/yx1Igevlkwg/maxresdefault.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=yx1Igevlkwg",
+      "type": "video",
+      "caption": "Deep Saxophone HolySpirit Outpouring",
+      "createdAt": "2026-05-25 11:13:43"
+    },
+    {
+      "id": 23,
+      "title": "Min Caleb with High at the HolySpirit Outpouring Conference",
+      "url": "https://img.youtube.com/vi/IvKj7z8v6rk/maxresdefault.jpg",
+      "thumbnailUrl": "https://img.youtube.com/vi/IvKj7z8v6rk/maxresdefault.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=IvKj7z8v6rk",
+      "type": "video",
+      "caption": "Min Caleb with High at the HolySpirit Outpouring Conference",
+      "createdAt": "2026-05-25 11:13:43"
     }
   ],
   "giving": [],
@@ -374,12 +544,31 @@
       "createdAt": "2025-08-15 18:02:00"
     }
   ],
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "$2a$10$VqoYPOQecG2JNzKMDojj7OxuJALgcKj5vLaOu2XOEkROQ5qZ0KvXi",
+      "name": "Administrator",
+      "role": "super_admin",
+      "createdAt": "2026-05-25 11:39:31"
+    },
+    {
+      "id": 2,
+      "username": "manager",
+      "password": "$2a$10$UdThqkQlMB1c7LYBGwB1weuxxjmA3W7dLnCKPkAyr3//jYN4Y40Ri",
+      "name": "Content Manager",
+      "role": "content_manager",
+      "createdAt": "2026-05-25 11:39:31"
+    }
+  ],
   "_seqs": {
     "config": 13,
     "speakers": 4,
     "sessions": 12,
     "prayers": 4,
-    "media": 6,
-    "chat": 6
+    "media": 23,
+    "chat": 6,
+    "users": 2
   }
 }
