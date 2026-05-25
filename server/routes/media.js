@@ -16,6 +16,41 @@ router.post('/', requireAuth, (req, res) => {
   res.status(201).json(db.prepare('SELECT * FROM media WHERE id=?').get(r.lastInsertRowid));
 });
 
+router.post('/upload-image', requireAuth, (req, res) => {
+  if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+    return res.status(500).json({ error: 'Cloudinary not configured' });
+  }
+  let multerLib, cldLib;
+  try {
+    multerLib = require('multer');
+    cldLib = require('cloudinary').v2;
+    cldLib.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+  } catch {
+    return res.status(503).json({ error: 'Upload dependencies not installed' });
+  }
+  const upload = multerLib({ storage: multerLib.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
+  upload.single('image')(req, res, async (err) => {
+    if (err) return res.status(400).json({ error: err.message });
+    if (!req.file) return res.status(400).json({ error: 'No file provided' });
+    try {
+      const result = await new Promise((resolve, reject) => {
+        const stream = cldLib.uploader.upload_stream(
+          { folder: 'outpouring25/speakers', resource_type: 'image' },
+          (uploadErr, uploadResult) => uploadErr ? reject(uploadErr) : resolve(uploadResult)
+        );
+        stream.end(req.file.buffer);
+      });
+      res.json({ url: result.secure_url, publicId: result.public_id });
+    } catch (e) {
+      res.status(500).json({ error: 'Upload failed: ' + e.message });
+    }
+  });
+});
+
 router.post('/upload', requireAuth, (req, res) => {
   if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
     return res.status(500).json({ error: 'Cloudinary not configured' });

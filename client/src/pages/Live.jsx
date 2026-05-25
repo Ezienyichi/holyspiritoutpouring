@@ -2,23 +2,29 @@ import { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
 import SessionRow from '../components/SessionRow'
 import LiveChat from '../components/LiveChat'
+import { useSiteConfig } from '../hooks/useSiteConfig'
+
+const API_BASE = import.meta.env.VITE_API_URL || ''
 
 export default function Live() {
-  const [config, setConfig] = useState({})
+  const { config } = useSiteConfig()
   const [sessions, setSessions] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/config').then(r => r.json()).then(setConfig)
-    // Show today's day (1/2/3) based on August 15/16/17 or default to day 1
     const dayMap = { '15': 1, '16': 2, '17': 3 }
     const today = new Date().getDate()
     const day = dayMap[String(today)] || 1
-    fetch(`/api/sessions?day=${day}`).then(r => r.json()).then(d => { setSessions(d); setLoading(false) })
+    fetch(`${API_BASE}/api/sessions?day=${day}`)
+      .then(r => r.json())
+      .then(d => { setSessions(d); setLoading(false) })
+      .catch(() => setLoading(false))
   }, [])
 
   const isLive = config.isLive === 'true' || config.isLive === true
-  const hasStream = config.streamUrl?.trim()
+  const channelId = config.youtube_channel_id?.trim()
+  const streamUrl = config.streamUrl?.trim() || (channelId ? `https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1` : '')
+  const hasStream = !!streamUrl
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
@@ -28,7 +34,7 @@ export default function Live() {
           <div className="live-video-wrap">
             {hasStream ? (
               <>
-                <iframe src={config.streamUrl} title="Live Stream" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+                <iframe src={streamUrl} title="Live Stream" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
                 {isLive && (
                   <div className="live-badge-wrap">
                     <div className="live-red-dot" />

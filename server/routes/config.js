@@ -15,7 +15,10 @@ router.put('/', requireAuth, (req, res) => {
   db.transaction(() => {
     Object.entries(req.body).forEach(([k, v]) => upsert.run(k, String(v)));
   })();
-  res.json({ success: true });
+  const rows = db.prepare('SELECT key, value FROM config').all();
+  const updated = {};
+  rows.forEach(r => { updated[r.key] = r.value; });
+  res.json(updated);
 });
 
 module.exports = router;

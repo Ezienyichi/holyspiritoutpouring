@@ -2,6 +2,9 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import { useSiteConfig } from '../hooks/useSiteConfig'
+
+const API_BASE = import.meta.env.VITE_API_URL || ''
 
 const ATTENDANCE_OPTIONS = [
   {
@@ -58,6 +61,7 @@ function SuccessState() {
 }
 
 export default function Register() {
+  const { config } = useSiteConfig()
   const [form, setForm] = useState({
     firstName: '', lastName: '', email: '', phone: '',
     location: '', church: '', attendanceType: '',
@@ -65,6 +69,8 @@ export default function Register() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  const registrationOpen = config.registration_open !== 'false'
 
   function set(field) { return e => setForm(f => ({ ...f, [field]: e.target.value })) }
 
@@ -74,7 +80,7 @@ export default function Register() {
     setLoading(true)
     setError('')
     try {
-      const res = await fetch('/api/registrations', {
+      const res = await fetch(`${API_BASE}/api/registrations`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -99,7 +105,22 @@ export default function Register() {
         </div>
       </div>
 
-      {submitted ? <SuccessState /> : (
+      {submitted ? <SuccessState /> : !registrationOpen ? (
+        <section className="section section-dark" style={{ minHeight: '50vh', display: 'flex', alignItems: 'center' }}>
+          <div className="container" style={{ textAlign: 'center' }}>
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" strokeWidth="1.5" strokeLinecap="round" style={{ marginBottom: '1.5rem' }}>
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <h2 style={{ fontFamily: 'var(--font-display)', color: 'var(--white)', fontSize: '2rem', marginBottom: '0.75rem' }}>Registration is Currently Closed</h2>
+            <p style={{ color: 'var(--text-muted)', maxWidth: 480, margin: '0 auto 2rem' }}>
+              {config.registration_deadline
+                ? `Registration closed on ${config.registration_deadline}. Check back for future events.`
+                : 'Registration for Outpouring \'25 is not open at this time. Please check back soon.'}
+            </p>
+            <Link to="/" className="btn btn-orange">Back to Home</Link>
+          </div>
+        </section>
+      ) : (
         <section className="section section-dark">
           <div className="container">
             <div className="register-form-card">

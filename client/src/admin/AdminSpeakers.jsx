@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react'
-import { api } from '../api'
+import { useState, useEffect, useRef } from 'react'
+import { api, getToken } from '../api'
 import { useToast } from '../context/ToastContext'
+
+const API_BASE = import.meta.env.VITE_API_URL || ''
 
 const EMPTY = { name: '', title: '', church: '', topic: '', bio: '', photoUrl: '', instagram: '', twitter: '', displayOrder: 0, role: 'minister' }
 
@@ -10,6 +12,111 @@ const ROLES = [
   { value: 'sub_team_head', label: 'Sub Team Head' },
   { value: 'volunteer', label: 'Volunteer' },
 ]
+
+function PhotoUploader({ value, onChange }) {
+  const [tab, setTab] = useState('upload')
+  const [preview, setPreview] = useState(value || '')
+  const [uploading, setUploading] = useState(false)
+  const [uploadErr, setUploadErr] = useState('')
+  const [dragOver, setDragOver] = useState(false)
+  const fileRef = useRef()
+
+  async function handleFile(file) {
+    if (!file) return
+    if (file.size > 5 * 1024 * 1024) { setUploadErr('File too large — max 5MB'); return }
+    setUploadErr('')
+    const localUrl = URL.createObjectURL(file)
+    setPreview(localUrl)
+    setUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('image', file)
+      const res = await fetch(API_BASE + '/api/media/upload-image', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${getToken()}` },
+        body: fd,
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Upload failed')
+      setPreview(data.url)
+      onChange(data.url)
+    } catch (e) {
+      setUploadErr(e.message)
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  function onUrlChange(e) {
+    const url = e.target.value
+    onChange(url)
+    setPreview(url)
+  }
+
+  return (
+    <div className="form-group" style={{ gridColumn: '1/-1', margin: 0 }}>
+      <label className="form-label">Speaker Photo</label>
+      <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.6rem' }}>
+        {['upload','url'].map(t => (
+          <button key={t} type="button" onClick={() => setTab(t)} style={{
+            padding: '0.3rem 0.8rem', fontSize: '0.78rem', fontWeight: 600,
+            borderRadius: 6, border: '1px solid',
+            background: tab === t ? 'var(--orange)' : 'transparent',
+            borderColor: tab === t ? 'var(--orange)' : 'var(--navy-border)',
+            color: tab === t ? 'white' : 'var(--text-muted)', cursor: 'pointer',
+          }}>{t === 'upload' ? 'Upload' : 'URL'}</button>
+        ))}
+      </div>
+
+      {tab === 'upload' && (
+        <div
+          onClick={() => fileRef.current?.click()}
+          onDragOver={e => { e.preventDefault(); setDragOver(true) }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={e => { e.preventDefault(); setDragOver(false); handleFile(e.dataTransfer.files[0]) }}
+          style={{
+            height: 160, border: `2px dashed ${dragOver ? 'var(--orange)' : 'var(--navy-border)'}`,
+            borderRadius: 10, display: 'flex', flexDirection: 'column', alignItems: 'center',
+            justifyContent: 'center', cursor: 'pointer', background: dragOver ? 'rgba(232,98,42,0.05)' : 'var(--navy)',
+            transition: 'all 0.2s', overflow: 'hidden', position: 'relative',
+          }}
+        >
+          {preview ? (
+            <img src={preview} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }} />
+          ) : (
+            <>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.5" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <div style={{ color: 'var(--text-light)', fontSize: '0.82rem', marginTop: '0.5rem' }}>Click to upload or drag photo here</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: '0.72rem', marginTop: '0.2rem' }}>JPG, PNG, WebP — up to 5MB</div>
+            </>
+          )}
+          {uploading && (
+            <div style={{ position: 'absolute', inset: 0, background: 'rgba(13,27,42,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.85rem' }}>Uploading…</div>
+          )}
+          <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" style={{ display: 'none' }} onChange={e => handleFile(e.target.files[0])} />
+        </div>
+      )}
+
+      {tab === 'url' && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <input
+            className="form-input"
+            placeholder="https://example.com/photo.jpg"
+            value={value || ''}
+            onChange={onUrlChange}
+            onBlur={onUrlChange}
+            style={{ flex: 1 }}
+          />
+          {preview && (
+            <img src={preview} alt="preview" style={{ width: 60, height: 60, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }}
+              onError={e => e.target.style.display = 'none'} />
+          )}
+        </div>
+      )}
+      {uploadErr && <div style={{ color: '#f44', fontSize: '0.78rem', marginTop: '0.3rem' }}>{uploadErr}</div>}
+    </div>
+  )
+}
 
 export default function AdminSpeakers() {
   const toast = useToast()
@@ -94,9 +201,9 @@ export default function AdminSpeakers() {
       )}
 
       {modal !== null && (
-        <div className="admin-modal-overlay" onClick={closeModal}>
-          <div className="admin-modal" onClick={e => e.stopPropagation()}>
-            <h3 className="admin-modal-title">{modal === 'new' ? 'Add Speaker' : 'Edit Speaker'}</h3>
+        <div className="modal-overlay" onClick={e => e.target === e.currentTarget && closeModal()}>
+          <div className="modal-box" style={{ maxWidth: 620, maxHeight: '90vh', overflowY: 'auto' }}>
+            <h3 className="modal-title">{modal === 'new' ? 'Add Speaker' : 'Edit Speaker'}</h3>
             <form onSubmit={save}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 {[['name','Name *'],['title','Title'],['church','Church/Ministry'],['topic','Session Topic']].map(([k,lbl]) => (
@@ -105,10 +212,7 @@ export default function AdminSpeakers() {
                     <input className="form-input" value={form[k]||''} onChange={e=>f(k,e.target.value)} required={k==='name'} />
                   </div>
                 ))}
-                <div className="form-group" style={{ margin: 0, gridColumn: '1/-1' }}>
-                  <label className="form-label">Photo URL</label>
-                  <input className="form-input" value={form.photoUrl||''} onChange={e=>f('photoUrl',e.target.value)} placeholder="https://…" />
-                </div>
+                <PhotoUploader value={form.photoUrl} onChange={url => f('photoUrl', url)} />
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label">Instagram</label>
                   <input className="form-input" value={form.instagram||''} onChange={e=>f('instagram',e.target.value)} placeholder="@handle" />
@@ -128,12 +232,12 @@ export default function AdminSpeakers() {
                   </select>
                 </div>
               </div>
-              <div className="form-group">
+              <div className="form-group" style={{ marginTop: '0.75rem' }}>
                 <label className="form-label">Bio</label>
                 <textarea className="form-textarea" value={form.bio||''} onChange={e=>f('bio',e.target.value)} rows={3} />
               </div>
-              <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
-                <button type="button" className="btn btn-outline" onClick={closeModal}>Cancel</button>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-navy" onClick={closeModal}>Cancel</button>
                 <button type="submit" className="btn btn-orange" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
               </div>
             </form>

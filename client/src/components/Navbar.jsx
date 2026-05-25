@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-
-const API_BASE = import.meta.env.VITE_API_URL || ''
+import { useSiteConfig } from '../hooks/useSiteConfig'
 
 export default function Navbar() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [config, setConfig] = useState({})
+  const { config } = useSiteConfig()
   const [dismissed, setDismissed] = useState(() => sessionStorage.getItem('op25_ann_dismissed') === '1')
 
   useEffect(() => {
@@ -18,14 +17,13 @@ export default function Navbar() {
   }, [])
 
   useEffect(() => {
-    fetch(API_BASE + '/api/config').then(r => r.json()).then(d => setConfig(d)).catch(() => {})
-  }, [])
-
-  useEffect(() => {
     if (menuOpen) document.body.style.overflow = 'hidden'
     else document.body.style.overflow = ''
     return () => { document.body.style.overflow = '' }
   }, [menuOpen])
+
+  const isLive = config.isLive === 'true' || config.isLive === true
+  const annActive = config.announcement_active === 'true' || config.announcement_active === true || config.announcement_active === '1' || Number(config.announcement_active) === 1
 
   const links = [
     { to: '/', label: 'About' },
@@ -35,7 +33,7 @@ export default function Navbar() {
     { to: '/prayer', label: 'Prayer' },
     { to: '/give', label: 'Give' },
     { to: '/register', label: 'Register', register: true },
-    { to: '/live', label: 'Live', live: true },
+    { to: '/live', label: 'Live', live: isLive },
   ]
 
   function dismiss() {
@@ -51,7 +49,7 @@ export default function Navbar() {
 
   return (
     <header className={`nav-wrapper${scrolled ? ' scrolled' : ''}`}>
-      {config.announcement_text && !dismissed && (
+      {config.announcement_text && annActive && !dismissed && (
         <div style={{
           width: '100%', background: '#E8622A', color: 'white',
           fontSize: 13, textAlign: 'center', padding: '8px 48px 8px 16px',

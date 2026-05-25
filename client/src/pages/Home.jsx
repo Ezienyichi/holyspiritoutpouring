@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useSiteConfig } from '../hooks/useSiteConfig'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 import Navbar from '../components/Navbar'
@@ -8,21 +9,53 @@ import CountdownTimer from '../components/CountdownTimer'
 import SpeakerCard from '../components/SpeakerCard'
 import SessionRow from '../components/SessionRow'
 import PrayerCard from '../components/PrayerCard'
-import MediaCard from '../components/MediaCard'
 
 /* ── HERO ────────────────────────────────────── */
 function HeroSection({ config }) {
+  const [isMuted, setIsMuted] = useState(true)
+  const [hasInteracted, setHasInteracted] = useState(false)
+
+  function toggleMute() {
+    setIsMuted(m => !m)
+    setHasInteracted(true)
+  }
+
+  const videoSrc = `https://www.youtube.com/embed/n3KjY4xroNw?autoplay=1&mute=${isMuted ? 1 : 0}&loop=1&playlist=n3KjY4xroNw&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1`
+
   return (
     <section className="hero">
       <div className="hero-video-bg">
         <iframe
-          src="https://www.youtube.com/embed/n3KjY4xroNw?autoplay=1&mute=1&loop=1&playlist=n3KjY4xroNw&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
+          key={isMuted ? 'muted' : 'unmuted'}
+          src={videoSrc}
           title="Conference Background"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         />
       </div>
       <div className="hero-video-overlay" />
+      <button
+        onClick={toggleMute}
+        style={{
+          position: 'absolute', bottom: '2rem', right: '2rem', zIndex: 10,
+          background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.3)',
+          borderRadius: 50, padding: '8px 16px', color: 'white', fontSize: 13,
+          display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer',
+          transition: 'all 0.2s ease',
+        }}
+      >
+        {isMuted ? (
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+        ) : (
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        )}
+        {isMuted ? 'Unmute' : 'Mute'}
+      </button>
+      {isMuted && !hasInteracted && (
+        <div style={{ position: 'absolute', bottom: '4.5rem', right: '2rem', zIndex: 10, fontSize: 11, color: 'rgba(255,255,255,0.45)', pointerEvents: 'none' }}>
+          Click to enable audio
+        </div>
+      )}
       <div className="hero-content">
         <span className="hero-eyebrow">Port Harcourt, Rivers State, Nigeria &bull; August 15–17, 2025</span>
         <h1>
@@ -50,6 +83,9 @@ function HeroSection({ config }) {
 
 /* ── ABOUT ───────────────────────────────────── */
 function AboutSection({ config }) {
+  const heading = config.about_heading || 'A Divine Gathering\nfor Such a Time'
+  const [headLine1, headLine2] = heading.includes('\n') ? heading.split('\n') : [heading, '']
+  const attendees = config.about_stats_attendees || '10K+'
   return (
     <section className="about-section" id="about-section">
       <div className="container">
@@ -57,8 +93,8 @@ function AboutSection({ config }) {
           <div>
             <span className="section-label">About the Conference</span>
             <h2 className="about-title">
-              A Divine Gathering<br />
-              <span>for</span> Such a Time
+              {headLine1}<br />
+              {headLine2 && <span>{headLine2}</span>}
             </h2>
             <div className="gold-line" />
             <p className="about-body">{config.aboutText1 || "The Holy Spirit Outpouring Conference is more than an event — it's a movement. For three transformative days, believers from every nation will gather to seek the face of God, receive fresh fire, and be equipped for end-time harvest."}</p>
@@ -85,7 +121,7 @@ function AboutSection({ config }) {
               </div>
             </div>
             <div className="about-stat-card">
-              <span className="stat-num">10K+</span>
+              <span className="stat-num">{attendees}</span>
               <div className="stat-lbl">Expected Attendees</div>
             </div>
           </div>
@@ -339,34 +375,74 @@ function PrayerSection({ prayers }) {
 }
 
 /* ── MEDIA ───────────────────────────────────── */
+function getYouTubeId(url) {
+  if (!url) return null
+  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/)
+  return m ? m[1] : null
+}
+
+function HomeVideoCard({ item }) {
+  const ytId = getYouTubeId(item.youtubeUrl || item.url)
+  const thumb = item.thumbnailUrl || (ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : item.url)
+  const watchUrl = item.youtubeUrl || (ytId ? `https://www.youtube.com/watch?v=${ytId}` : '#')
+  return (
+    <a
+      href={watchUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        display: 'block', position: 'relative', borderRadius: 12,
+        overflow: 'hidden', aspectRatio: '16/9', cursor: 'pointer',
+        transition: 'all 0.25s ease', textDecoration: 'none',
+      }}
+      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.5)' }}
+      onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '' }}
+    >
+      <img src={thumb} alt={item.title || item.caption} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 100%)' }} />
+      <div style={{
+        position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-60%)',
+        width: 56, height: 56, borderRadius: '50%', background: '#FF0000',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        transition: 'all 0.2s ease', boxShadow: '0 2px 12px rgba(0,0,0,0.4)',
+      }}
+        className="yt-play-btn"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </div>
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 12px 12px', color: 'white', fontSize: 13, fontWeight: 700, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+        {item.title || item.caption}
+      </div>
+    </a>
+  )
+}
+
 function MediaSection({ media }) {
-  const [filter, setFilter] = useState('all')
-  const filtered = filter === 'all' ? media : media.filter(m => m.type === filter)
+  const videos = media.filter(m => m.type === 'video').slice(0, 6)
   return (
     <section className="media-section">
       <div className="container">
         <div className="text-center" style={{ marginBottom: '3rem' }}>
           <span className="section-label">Gallery</span>
-          <h2 className="section-title">Media Gallery</h2>
+          <h2 className="section-title">Watch Our Videos</h2>
           <div className="gold-line centered" />
+          <p className="section-subtitle centered">Relive the moments from previous outpourings. Click any video to watch on YouTube.</p>
         </div>
-        <div className="media-filter-tabs" style={{ marginBottom: '2rem' }}>
-          {['all','photo','video'].map(f => (
-            <button key={f} className={`media-tab${filter===f?' active':''}`} onClick={() => setFilter(f)}>
-              {f === 'all' ? 'All' : f === 'photo' ? 'Photos' : 'Videos'}
-            </button>
-          ))}
-        </div>
-        <div className="media-masonry">
-          {filtered.map(item => <MediaCard key={item.id} item={item} />)}
-        </div>
+        {videos.length === 0 ? (
+          <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '3rem 0' }}>Gallery content coming soon.</div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+            {videos.map(v => <HomeVideoCard key={v.id} item={v} />)}
+          </div>
+        )}
         <div className="text-center" style={{ marginTop: '2.5rem' }}>
           <Link to="/media" className="btn btn-outline">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-            Load More Media
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            View All Videos
           </Link>
         </div>
       </div>
+      <style>{`.yt-play-btn:hover { transform: translate(-50%,-60%) scale(1.1) !important; box-shadow: 0 4px 20px rgba(255,0,0,0.5) !important; }`}</style>
     </section>
   )
 }
@@ -417,13 +493,12 @@ function GiveSection() {
 
 /* ── HOME (root) ─────────────────────────────── */
 export default function Home() {
-  const [config, setConfig] = useState({})
+  const { config } = useSiteConfig()
   const [speakers, setSpeakers] = useState([])
   const [prayers, setPrayers] = useState([])
   const [media, setMedia] = useState([])
 
   useEffect(() => {
-    fetch(API_BASE + '/api/config').then(r => r.json()).then(setConfig).catch(() => {})
     fetch(API_BASE + '/api/speakers').then(r => r.json()).then(setSpeakers).catch(() => {})
     fetch(API_BASE + '/api/prayers').then(r => r.json()).then(setPrayers).catch(() => {})
     fetch(API_BASE + '/api/media').then(r => r.json()).then(setMedia).catch(() => {})
