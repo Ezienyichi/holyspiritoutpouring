@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { api } from '../api'
+import { useToast } from '../context/ToastContext'
 
 export default function AdminPrayers() {
+  const toast = useToast()
   const [prayers, setPrayers] = useState([])
   const [filter, setFilter] = useState('pending')
   const [loading, setLoading] = useState(true)
@@ -17,12 +19,14 @@ export default function AdminPrayers() {
 
   async function approve(id) {
     await api.patch(`/prayers/${id}/approve`, { approved: true })
+    toast.success('Prayer Approved', 'The prayer request is now visible on the public prayer wall.')
     load()
   }
 
   async function del(id) {
     if (!confirm('Delete this prayer request?')) return
     await api.del(`/prayers/${id}`)
+    toast.info('Prayer Removed', 'The prayer request has been removed from the prayer wall.')
     load()
   }
 

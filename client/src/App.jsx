@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { ToastProvider } from './context/ToastContext'
 import Home from './pages/Home'
 import Speakers from './pages/Speakers'
 import Schedule from './pages/Schedule'
@@ -22,6 +23,7 @@ import AdminUsers from './admin/AdminUsers'
 
 export default function App() {
   return (
+    <ToastProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -47,5 +49,6 @@ export default function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </ToastProvider>
   )
 }

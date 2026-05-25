@@ -286,6 +286,7 @@ function seed() {
       ['contactEmail', 'info@outpouring25.org'],
       ['contactPhone', '+234 800 000 0000'],
       ['contactAddress', '#7A Covenant Avenue, off Stadium Road, Port Harcourt, Nigeria, 500201'],
+      ['announcement_text', ''],
     ];
     pairs.forEach(([key, value]) => {
       store.config.push({ id: nextId('config'), key, value });

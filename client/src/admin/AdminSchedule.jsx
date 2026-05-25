@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { api } from '../api'
+import { useToast } from '../context/ToastContext'
 
 const EMPTY = { day: 1, time: '', title: '', speaker: '', type: 'session', description: '', isCurrentlyLive: false }
 const TYPES = ['worship','session','prayer','break','special']
 const DAYS = [1, 2, 3]
 
 export default function AdminSchedule() {
+  const toast = useToast()
   const [sessions, setSessions] = useState([])
   const [activeDay, setActiveDay] = useState(1)
   const [loading, setLoading] = useState(true)
@@ -32,8 +34,10 @@ export default function AdminSchedule() {
     const body = { ...form, isCurrentlyLive: form.isCurrentlyLive ? 1 : 0 }
     if (modal === 'new') {
       await api.post('/sessions', body)
+      toast.success('Session Added', 'The new session has been added to the conference schedule.')
     } else {
       await api.put(`/sessions/${modal}`, body)
+      toast.success('Session Updated', 'Schedule changes have been saved successfully.')
     }
     setSaving(false)
     setModal(null)
@@ -43,6 +47,7 @@ export default function AdminSchedule() {
   async function del(id) {
     if (!confirm('Delete this session?')) return
     await api.del(`/sessions/${id}`)
+    toast.warning('Session Removed', 'The session has been removed from the schedule.')
     load(activeDay)
   }
 

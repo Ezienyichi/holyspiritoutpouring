@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { getToken, clearToken } from '../api'
+import { useToast } from '../context/ToastContext'
+import NotificationBell from './NotificationBell'
 
 function parseJwt(token) {
   try {
@@ -25,6 +27,9 @@ const ALL_NAV = [
 
 export default function AdminLayout() {
   const navigate = useNavigate()
+  const toast = useToast()
+  const toastRef = useRef(toast)
+  toastRef.current = toast
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [user, setUser] = useState(null)
   const [showExpiry, setShowExpiry] = useState(false)
@@ -44,7 +49,10 @@ export default function AdminLayout() {
       }
       const warnAt = msLeft - 5 * 60 * 1000
       if (warnAt > 0) {
-        const t = setTimeout(() => setShowExpiry(true), warnAt)
+        const t = setTimeout(() => {
+          setShowExpiry(true)
+          toastRef.current?.warning('Session Expiring Soon', 'Your session will expire in 5 minutes. Please save your work.')
+        }, warnAt)
         return () => clearTimeout(t)
       }
     }
@@ -114,9 +122,12 @@ export default function AdminLayout() {
           <button className="admin-menu-toggle" onClick={() => setSidebarOpen(o => !o)}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" width="20" height="20"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
           </button>
-          <a href="/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textDecoration: 'none' }}>
-            View Site
-          </a>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginLeft: 'auto' }}>
+            <a href="/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textDecoration: 'none' }}>
+              View Site
+            </a>
+            <NotificationBell />
+          </div>
         </div>
         <div className="admin-page">
           <Outlet context={{ user }} />

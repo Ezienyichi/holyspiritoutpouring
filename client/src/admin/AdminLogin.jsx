@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { setToken } from '../api'
+import { useToast } from '../context/ToastContext'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
 export default function AdminLogin() {
+  const toast = useToast()
   const [form, setForm] = useState({ username: '', password: '', rememberMe: false })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -21,10 +23,16 @@ export default function AdminLogin() {
         body: JSON.stringify(form),
       })
       const data = await res.json()
-      if (!res.ok) { setError(data.error || 'Invalid credentials'); return }
+      if (!res.ok) {
+        toast.error('Login Failed', data.error || 'Invalid username or password. Please try again.')
+        setError(data.error || 'Invalid credentials')
+        return
+      }
       setToken(data.token)
+      toast.success('Welcome Back', 'You are now logged in to the admin panel.')
       navigate('/admin')
     } catch {
+      toast.error('Login Failed', 'Network error. Please check your connection.')
       setError('Network error. Please try again.')
     } finally {
       setLoading(false)

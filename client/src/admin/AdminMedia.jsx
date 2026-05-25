@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import { api, getToken } from '../api'
+import { useToast } from '../context/ToastContext'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
 export default function AdminMedia() {
+  const toast = useToast()
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState('url')
@@ -27,6 +29,7 @@ export default function AdminMedia() {
     if (!urlForm.url.trim()) return
     setAdding(true)
     await api.post('/media', urlForm)
+    toast.success('Photo Added', 'Your image has been added to the gallery successfully.')
     setUrlForm({ url: '', type: 'photo', caption: '', title: '' })
     setAdding(false)
     loadItems()
@@ -51,6 +54,7 @@ export default function AdminMedia() {
       type: 'video',
       caption: ytForm.caption || ytForm.title,
     })
+    toast.success('Video Added', 'The YouTube video has been added to the gallery.')
     setYtForm({ youtubeUrl: '', title: '', caption: '' })
     setAdding(false)
     loadItems()
@@ -68,13 +72,21 @@ export default function AdminMedia() {
         body: formData,
       })
       const data = await res.json()
-      if (!res.ok) { alert(data.error || 'Upload failed'); return }
+      if (!res.ok) {
+        if (data.error && data.error.includes('not configured')) {
+          toast.error('Upload Failed', 'Media storage is not configured. Contact the administrator.')
+        } else {
+          toast.error('Upload Failed', 'Could not upload the image. Please check your connection and try again.')
+        }
+        return
+      }
       await api.post('/media', {
         title: file.name.replace(/\.[^/.]+$/, ''),
         url: data.url,
         type: file.type.startsWith('video') ? 'video' : 'photo',
         caption: '',
       })
+      toast.success('Photo Uploaded', 'Your image has been added to the gallery successfully.')
       loadItems()
     } finally {
       setUploading(false)
@@ -84,6 +96,7 @@ export default function AdminMedia() {
   async function del(id) {
     if (!confirm('Delete this media item?')) return
     await api.del(`/media/${id}`)
+    toast.success('Media Removed', 'The item has been deleted from the gallery.')
     loadItems()
   }
 

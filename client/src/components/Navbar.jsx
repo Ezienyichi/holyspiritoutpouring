@@ -1,16 +1,24 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 
+const API_BASE = import.meta.env.VITE_API_URL || ''
+
 export default function Navbar() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [config, setConfig] = useState({})
+  const [dismissed, setDismissed] = useState(() => sessionStorage.getItem('op25_ann_dismissed') === '1')
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 10)
     window.addEventListener('scroll', fn)
     return () => window.removeEventListener('scroll', fn)
+  }, [])
+
+  useEffect(() => {
+    fetch(API_BASE + '/api/config').then(r => r.json()).then(d => setConfig(d)).catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -30,6 +38,11 @@ export default function Navbar() {
     { to: '/live', label: 'Live', live: true },
   ]
 
+  function dismiss() {
+    setDismissed(true)
+    sessionStorage.setItem('op25_ann_dismissed', '1')
+  }
+
   function handleRegister(e) {
     e.preventDefault()
     setMenuOpen(false)
@@ -38,6 +51,20 @@ export default function Navbar() {
 
   return (
     <header className={`nav-wrapper${scrolled ? ' scrolled' : ''}`}>
+      {config.announcement_text && !dismissed && (
+        <div style={{
+          width: '100%', background: '#E8622A', color: 'white',
+          fontSize: 13, textAlign: 'center', padding: '8px 48px 8px 16px',
+          position: 'relative',
+        }}>
+          {config.announcement_text}
+          <button onClick={dismiss} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'white', display: 'flex', alignItems: 'center' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      )}
       <div className="nav-topbar">
         <span className="nav-topbar-pill">August 15–17, 2025 &bull; Port Harcourt, Rivers State, Nigeria</span>
       </div>

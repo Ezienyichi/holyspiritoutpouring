@@ -1,13 +1,27 @@
 import { useState, useEffect } from 'react'
 import { api } from '../api'
+import { useToast } from '../context/ToastContext'
+
+const LAST_SEEN_KEY = 'op25_admin_last_reg_count'
 
 export default function AdminRegistrations() {
+  const toast = useToast()
   const [regs, setRegs] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    api.get('/registrations').then(d => { setRegs(Array.isArray(d) ? d : []); setLoading(false) })
+    api.get('/registrations').then(d => {
+      const list = Array.isArray(d) ? d : []
+      setRegs(list)
+      setLoading(false)
+      const lastSeen = parseInt(localStorage.getItem(LAST_SEEN_KEY) || '0', 10)
+      if (lastSeen > 0 && list.length > lastSeen) {
+        const n = list.length - lastSeen
+        toast.info('New Registrations', `${n} new ${n === 1 ? 'person has' : 'people have'} registered since your last visit.`)
+      }
+      localStorage.setItem(LAST_SEEN_KEY, String(list.length))
+    })
   }, [])
 
   function exportCsv() {
@@ -19,6 +33,7 @@ export default function AdminRegistrations() {
     const a = document.createElement('a')
     a.href = url; a.download = 'registrations.csv'; a.click()
     URL.revokeObjectURL(url)
+    toast.success('Export Complete', 'Registration data has been downloaded as CSV.')
   }
 
   const filtered = search

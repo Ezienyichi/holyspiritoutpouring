@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { api } from '../api'
+import { useToast } from '../context/ToastContext'
 
 const EMPTY = { name: '', title: '', church: '', topic: '', bio: '', photoUrl: '', instagram: '', twitter: '', displayOrder: 0 }
 
 export default function AdminSpeakers() {
+  const toast = useToast()
   const [speakers, setSpeakers] = useState([])
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState(null)
@@ -27,8 +29,10 @@ export default function AdminSpeakers() {
     setSaving(true)
     if (modal === 'new') {
       await api.post('/speakers', form)
+      toast.success('Speaker Added', `${form.name} has been added to the speakers list.`)
     } else {
       await api.put(`/speakers/${modal}`, form)
+      toast.success('Speaker Updated', 'Speaker details have been saved successfully.')
     }
     setSaving(false)
     setModal(null)
@@ -38,6 +42,7 @@ export default function AdminSpeakers() {
   async function del(id) {
     if (!confirm('Delete this speaker?')) return
     await api.del(`/speakers/${id}`)
+    toast.warning('Speaker Removed', 'The speaker has been removed from the website.')
     load()
   }
 

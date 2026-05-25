@@ -1,12 +1,26 @@
 import { useState, useEffect } from 'react'
 import { api } from '../api'
+import { useToast } from '../context/ToastContext'
+
+const LAST_SEEN_KEY = 'op25_admin_last_giving_count'
 
 export default function AdminGiving() {
+  const toast = useToast()
   const [gifts, setGifts] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    api.get('/giving').then(d => { setGifts(Array.isArray(d) ? d : []); setLoading(false) })
+    api.get('/giving').then(d => {
+      const list = Array.isArray(d) ? d : []
+      setGifts(list)
+      setLoading(false)
+      const lastSeen = parseInt(localStorage.getItem(LAST_SEEN_KEY) || '0', 10)
+      if (lastSeen > 0 && list.length > lastSeen) {
+        const n = list.length - lastSeen
+        toast.info('New Gifts Received', `${n} new giving record${n !== 1 ? 's' : ''} since your last visit.`)
+      }
+      localStorage.setItem(LAST_SEEN_KEY, String(list.length))
+    })
   }, [])
 
   const total = gifts.reduce((s, g) => s + (g.amount || 0), 0)

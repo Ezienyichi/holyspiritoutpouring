@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { api } from '../api'
+import { useToast } from '../context/ToastContext'
 
 const FIELDS = [
+  { key: 'announcement_text', label: 'Announcement Banner (leave blank to hide)', placeholder: 'Outpouring 25 starts August 15. Register now to secure your place.' },
   { key: 'siteName', label: 'Site Name', placeholder: "Outpouring '25" },
   { key: 'tagline', label: 'Tagline', placeholder: 'A Move of the Holy Spirit' },
   { key: 'heroTitle', label: 'Hero Title', placeholder: 'Holy Spirit Outpouring Conference 2025' },
@@ -18,6 +20,7 @@ const FIELDS = [
 ]
 
 export default function SiteConfig() {
+  const toast = useToast()
   const [config, setConfig] = useState({})
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -34,6 +37,7 @@ export default function SiteConfig() {
     setSaving(false)
     setSaved(true)
     setTimeout(() => setSaved(false), 3000)
+    toast.success('Settings Saved', 'Your site configuration has been updated successfully.')
   }
 
   if (loading) return <div className="loading-state">Loading config…</div>

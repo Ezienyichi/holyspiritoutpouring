@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { api } from '../api'
+import { useToast } from '../context/ToastContext'
 
 export default function AdminLivestream() {
+  const toast = useToast()
   const [config, setConfig] = useState({})
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -22,6 +24,7 @@ export default function AdminLivestream() {
     setSaving(false)
     setSaved(true)
     setTimeout(() => setSaved(false), 3000)
+    toast.success('Stream Updated', 'Livestream settings have been saved. Changes are now live.')
   }
 
   async function toggleLive() {
@@ -30,6 +33,11 @@ export default function AdminLivestream() {
     await api.put('/config', { isLive: next })
     setConfig(c => ({ ...c, isLive: next }))
     setSaving(false)
+    if (next === 'true') {
+      toast.info('Stream is Live', 'The livestream is now active and visible to all visitors.')
+    } else {
+      toast.info('Stream Offline', 'The livestream has been set to offline.')
+    }
   }
 
   if (loading) return <div className="loading-state">Loading…</div>

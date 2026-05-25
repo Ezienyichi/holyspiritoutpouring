@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { api } from '../api'
+import { useToast } from '../context/ToastContext'
 
 const ROLES = [
   { value: 'super_admin', label: 'Super Admin' },
@@ -9,6 +10,7 @@ const ROLES = [
 const EMPTY_FORM = { username: '', password: '', name: '', role: 'content_manager' }
 
 export default function AdminUsers() {
+  const toast = useToast()
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState(null) // null | 'add' | { ...user }
@@ -48,10 +50,12 @@ export default function AdminUsers() {
     try {
       if (modal === 'add') {
         await api.post('/users', form)
+        toast.success('User Created', 'New admin user has been created successfully.')
       } else {
         const payload = { name: form.name, role: form.role }
         if (form.password) payload.password = form.password
         await api.put(`/users/${modal.id}`, payload)
+        toast.success('User Updated', 'User details have been updated.')
       }
       setModal(null)
       loadUsers()
@@ -66,9 +70,10 @@ export default function AdminUsers() {
     if (!confirm(`Delete user "${user.username}"? This cannot be undone.`)) return
     try {
       await api.del(`/users/${user.id}`)
+      toast.warning('User Removed', 'Admin access has been revoked for this user.')
       loadUsers()
     } catch (e) {
-      alert(e.message)
+      toast.error('Delete Failed', e.message)
     }
   }
 
