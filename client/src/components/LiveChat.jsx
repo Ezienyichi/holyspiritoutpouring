@@ -70,7 +70,6 @@ export default function LiveChat() {
   return (
     <div className="chat-panel">
       <div className="chat-header">
-        <span style={{ fontSize: '0.9rem' }}>💬</span>
         <span className="chat-header-title">Live Chat</span>
         {username && <span style={{ marginLeft: 'auto', fontSize: '0.72rem', color: 'var(--text-dim)' }}>@{username}</span>}
       </div>
@@ -89,17 +88,19 @@ export default function LiveChat() {
       {askName && (
         <form onSubmit={saveName} style={{ padding: '0.75rem', borderTop: '1px solid var(--navy-border)', display: 'flex', gap: '0.5rem' }}>
           <input name="name" className="chat-input" placeholder="Your display name…" autoFocus style={{ flex: 1 }} />
-          <button type="submit" className="chat-send-btn">✓</button>
+          <button type="submit" className="chat-send-btn">OK</button>
         </form>
       )}
       <div className="chat-reactions">
-        {['🔥','🙏','❤️','🙌','⚡','✨'].map(e => (
+        {['Fire','Pray','Love','Hands','Power','Shine'].map(e => (
           <button key={e} className="reaction-btn" onClick={() => handleReaction(e)}>{e}</button>
         ))}
       </div>
       <div className="chat-input-wrap">
         <input className="chat-input" placeholder="Say something…" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSend()} />
-        <button className="chat-send-btn" onClick={handleSend}>➤</button>
+        <button className="chat-send-btn" onClick={handleSend}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
       </div>
     </div>
   )

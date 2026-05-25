@@ -22,7 +22,7 @@ function HeroSection({ config }) {
       </div>
       <div className="hero-video-overlay" />
       <div className="hero-content">
-        <span className="hero-eyebrow">✦ Port Harcourt, Rivers State, Nigeria &bull; August 15–17, 2025 ✦</span>
+        <span className="hero-eyebrow">Port Harcourt, Rivers State, Nigeria &bull; August 15–17, 2025</span>
         <h1>
           <span className="hero-title-holy">Holy Spirit</span>
           <span className="hero-title-outpouring">Outpouring</span>
@@ -328,7 +328,7 @@ function PrayerSection({ prayers }) {
           </div>
           <div className="prayer-cards-col">
             {prayers.slice(0, 2).map(p => <PrayerCard key={p.id} prayer={p} prayedSet={prayedSet} onPray={onPray} />)}
-            <Link to="/prayer" className="prayer-view-all">View All Prayer Requests →</Link>
+            <Link to="/prayer" className="prayer-view-all">View All Prayer Requests</Link>
           </div>
         </div>
       </div>

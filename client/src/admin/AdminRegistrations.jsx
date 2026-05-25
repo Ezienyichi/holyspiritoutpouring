@@ -34,7 +34,7 @@ export default function AdminRegistrations() {
         <h2 className="admin-page-title" style={{ margin: 0 }}>Registrations</h2>
         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
           <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{regs.length} total</span>
-          <button className="btn btn-outline" onClick={exportCsv} style={{ fontSize: '0.85rem' }}>↓ Export CSV</button>
+          <button className="btn btn-outline" onClick={exportCsv} style={{ fontSize: '0.85rem' }}>Export CSV</button>
         </div>
       </div>
 

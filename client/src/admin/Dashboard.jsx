@@ -39,18 +39,18 @@ export default function Dashboard() {
   if (!user || loading) return <div className="loading-state">Loading dashboard…</div>
 
   const statCards = [
-    ...(isSuperAdmin ? [{ label: 'Registrations', value: stats.registrations, icon: '📋', color: 'var(--orange)' }] : []),
-    { label: 'Prayer Requests', value: stats.prayers, icon: '🙏', color: '#7c6af7' },
-    { label: 'Pending Prayers', value: stats.pendingPrayers, icon: '⏳', color: '#f7c26a' },
-    { label: 'Media Items', value: stats.media, icon: '📷', color: '#4af78a' },
-    ...(isSuperAdmin ? [{ label: 'Total Giving', value: `₦${stats.totalGifts.toLocaleString()}`, icon: '💛', color: '#f7a24a' }] : []),
+    ...(isSuperAdmin ? [{ label: 'Registrations', value: stats.registrations, color: 'var(--orange)' }] : []),
+    { label: 'Prayer Requests', value: stats.prayers, color: '#7c6af7' },
+    { label: 'Pending Prayers', value: stats.pendingPrayers, color: '#f7c26a' },
+    { label: 'Media Items', value: stats.media, color: '#4af78a' },
+    ...(isSuperAdmin ? [{ label: 'Total Giving', value: `₦${stats.totalGifts.toLocaleString()}`, color: '#f7a24a' }] : []),
   ]
 
   return (
     <div>
       <div style={{ marginBottom: '2rem' }}>
         <h2 className="admin-page-title" style={{ marginBottom: '0.25rem' }}>
-          Welcome back, {user?.name || user?.username || 'Admin'} 👋
+          Welcome back, {user?.name || user?.username || 'Admin'}
         </h2>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
           {role === 'super_admin' ? 'Super Admin' : role === 'content_manager' ? 'Content Manager' : 'Admin'} · Outpouring '25 Dashboard
@@ -60,7 +60,6 @@ export default function Dashboard() {
       <div className="admin-stat-grid">
         {statCards.map(s => (
           <div key={s.label} className="admin-stat-card">
-            <div style={{ fontSize: '1.8rem' }}>{s.icon}</div>
             <div style={{ fontSize: '1.8rem', fontWeight: 700, color: s.color, fontFamily: 'var(--font-display)' }}>{s.value}</div>
             <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{s.label}</div>
           </div>

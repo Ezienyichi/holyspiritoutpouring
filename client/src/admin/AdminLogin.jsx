@@ -35,7 +35,7 @@ export default function AdminLogin() {
     <div style={{ minHeight: '100vh', background: 'var(--navy)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
       <div style={{ width: '100%', maxWidth: 420 }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🔥</div>
+          <svg width="40" height="52" viewBox="0 0 22 28" fill="none" style={{ marginBottom: '0.5rem' }}><path d="M11 0C11 0 4 7 4 14C4 17.31 5.45 20.28 7.73 22.36C7.27 21.34 7 20.2 7 19C7 15.69 9.24 12.94 11 11C12.76 12.94 15 15.69 15 19C15 20.2 14.73 21.34 14.27 22.36C16.55 20.28 18 17.31 18 14C18 7 11 0 11 0Z" fill="#E8622A"/><path d="M11 14C11 14 8 17 8 20C8 21.66 9.34 23 11 23C12.66 23 14 21.66 14 20C14 17 11 14 11 14Z" fill="#C4501F"/></svg>
           <h1 style={{ fontFamily: 'var(--font-display)', color: 'var(--white)', fontSize: '1.8rem', marginBottom: '0.25rem' }}>Admin Panel</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Outpouring '25</p>
         </div>

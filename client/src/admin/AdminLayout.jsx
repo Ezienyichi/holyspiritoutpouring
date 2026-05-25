@@ -11,16 +11,16 @@ function parseJwt(token) {
 }
 
 const ALL_NAV = [
-  { to: '/admin', label: 'Dashboard', icon: '📊', end: true, roles: ['super_admin', 'content_manager', 'admin'] },
-  { to: '/admin/config', label: 'Site Config', icon: '⚙️', roles: ['super_admin', 'admin'] },
-  { to: '/admin/speakers', label: 'Speakers', icon: '🎤', roles: ['super_admin', 'content_manager', 'admin'] },
-  { to: '/admin/schedule', label: 'Schedule', icon: '📅', roles: ['super_admin', 'admin'] },
-  { to: '/admin/prayers', label: 'Prayers', icon: '🙏', roles: ['super_admin', 'content_manager', 'admin'] },
-  { to: '/admin/media', label: 'Media', icon: '📷', roles: ['super_admin', 'content_manager', 'admin'] },
-  { to: '/admin/giving', label: 'Giving', icon: '💛', roles: ['super_admin', 'admin'] },
-  { to: '/admin/registrations', label: 'Registrations', icon: '📋', roles: ['super_admin', 'admin'] },
-  { to: '/admin/livestream', label: 'Livestream', icon: '🔴', roles: ['super_admin', 'admin'] },
-  { to: '/admin/users', label: 'Users', icon: '👥', roles: ['super_admin', 'admin'] },
+  { to: '/admin', label: 'Dashboard', end: true, roles: ['super_admin', 'content_manager', 'admin'] },
+  { to: '/admin/config', label: 'Site Config', roles: ['super_admin', 'admin'] },
+  { to: '/admin/speakers', label: 'Speakers', roles: ['super_admin', 'content_manager', 'admin'] },
+  { to: '/admin/schedule', label: 'Schedule', roles: ['super_admin', 'admin'] },
+  { to: '/admin/prayers', label: 'Prayers', roles: ['super_admin', 'content_manager', 'admin'] },
+  { to: '/admin/media', label: 'Media', roles: ['super_admin', 'content_manager', 'admin'] },
+  { to: '/admin/giving', label: 'Giving', roles: ['super_admin', 'admin'] },
+  { to: '/admin/registrations', label: 'Registrations', roles: ['super_admin', 'admin'] },
+  { to: '/admin/livestream', label: 'Livestream', roles: ['super_admin', 'admin'] },
+  { to: '/admin/users', label: 'Users', roles: ['super_admin', 'admin'] },
 ]
 
 export default function AdminLayout() {
@@ -66,7 +66,7 @@ export default function AdminLayout() {
       {showExpiry && (
         <div className="expiry-modal-overlay">
           <div className="expiry-modal">
-            <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>⏰</div>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" strokeWidth="2" strokeLinecap="round" style={{ marginBottom: '0.75rem' }}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             <h3 style={{ color: 'var(--white)', fontFamily: 'var(--font-display)', marginBottom: '0.5rem' }}>Session Expiring Soon</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '1.5rem' }}>Your session will expire in 5 minutes. Please save your work.</p>
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
@@ -79,7 +79,7 @@ export default function AdminLayout() {
 
       <aside className={`admin-sidebar${sidebarOpen ? ' open' : ''}`}>
         <div className="admin-sidebar-header">
-          <span style={{ fontSize: '1.5rem' }}>🔥</span>
+          <svg width="18" height="24" viewBox="0 0 22 28" fill="none"><path d="M11 0C11 0 4 7 4 14C4 17.31 5.45 20.28 7.73 22.36C7.27 21.34 7 20.2 7 19C7 15.69 9.24 12.94 11 11C12.76 12.94 15 15.69 15 19C15 20.2 14.73 21.34 14.27 22.36C16.55 20.28 18 17.31 18 14C18 7 11 0 11 0Z" fill="#E8622A"/><path d="M11 14C11 14 8 17 8 20C8 21.66 9.34 23 11 23C12.66 23 14 21.66 14 20C14 17 11 14 11 14Z" fill="#C4501F"/></svg>
           <span style={{ fontFamily: 'var(--font-display)', color: 'var(--white)', fontWeight: 700 }}>OP25 Admin</span>
         </div>
         <nav className="admin-nav">
@@ -91,7 +91,7 @@ export default function AdminLayout() {
               className={({ isActive }) => `admin-nav-item${isActive ? ' active' : ''}`}
               onClick={() => setSidebarOpen(false)}
             >
-              <span style={{ marginRight: '0.5rem' }}>{n.icon}</span>{n.label}
+              {n.label}
             </NavLink>
           ))}
         </nav>
@@ -106,14 +106,16 @@ export default function AdminLayout() {
             </div>
           </div>
         )}
-        <button className="admin-logout-btn" onClick={logout}>↩ Logout</button>
+        <button className="admin-logout-btn" onClick={logout}>Logout</button>
       </aside>
 
       <div className="admin-content">
         <div className="admin-topbar">
-          <button className="admin-menu-toggle" onClick={() => setSidebarOpen(o => !o)}>☰</button>
+          <button className="admin-menu-toggle" onClick={() => setSidebarOpen(o => !o)}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" width="20" height="20"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+          </button>
           <a href="/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textDecoration: 'none' }}>
-            ↗ View Site
+            View Site
           </a>
         </div>
         <div className="admin-page">

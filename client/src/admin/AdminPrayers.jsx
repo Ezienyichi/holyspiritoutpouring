@@ -40,7 +40,7 @@ export default function AdminPrayers() {
       </div>
 
       <div className="media-filter-tabs" style={{ marginBottom: '1.5rem' }}>
-        {[['pending','⏳ Pending'],['approved','✅ Approved'],['all','📋 All']].map(([val,lbl]) => (
+        {[['pending','Pending'],['approved','Approved'],['all','All']].map(([val,lbl]) => (
           <button key={val} className={`media-tab${filter===val?' active':''}`} onClick={()=>setFilter(val)}>{lbl}</button>
         ))}
       </div>
@@ -58,7 +58,7 @@ export default function AdminPrayers() {
                     ? <span style={{ background: '#1a3a2a', borderRadius: 6, padding: '0.15rem 0.5rem', fontSize: '0.75rem', color: '#4af78a' }}>Approved</span>
                     : <span style={{ background: '#3a2a1a', borderRadius: 6, padding: '0.15rem 0.5rem', fontSize: '0.75rem', color: '#f7c26a' }}>Pending</span>
                   }
-                  <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginLeft: 'auto' }}>🙏 {p.prayCount}</span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginLeft: 'auto' }}>{p.prayCount} prayed</span>
                 </div>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>{p.text}</p>
                 {p.email && <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.3rem' }}>{p.email}</p>}

@@ -48,11 +48,11 @@ export default function AdminLivestream() {
             background: isLive ? 'rgba(244,68,68,0.15)' : 'rgba(100,116,139,0.15)',
             border: `3px solid ${isLive ? '#f44444' : 'var(--navy-border)'}`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '3rem',
             boxShadow: isLive ? '0 0 40px rgba(244,68,68,0.4)' : 'none',
             transition: 'all 0.3s',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            {isLive ? '🔴' : '⚫'}
+            <div style={{ width: 40, height: 40, borderRadius: '50%', background: isLive ? '#f44444' : 'var(--navy-border)', transition: 'all 0.3s', boxShadow: isLive ? '0 0 16px rgba(244,68,68,0.7)' : 'none' }} />
           </div>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', color: isLive ? '#f44444' : 'var(--text-muted)', fontWeight: 700 }}>

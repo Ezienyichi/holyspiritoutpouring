@@ -410,12 +410,12 @@ function seed() {
 
   if (store.chat.length === 0) {
     [
-      ['PrayerWarrior', 'Praying for everyone here! 🙏', '2025-08-15 17:45:00'],
-      ['FireStarter', 'The worship last night was incredible! Ready for today 🔥', '2025-08-15 17:50:00'],
+      ['PrayerWarrior', 'Praying for everyone here!', '2025-08-15 17:45:00'],
+      ['FireStarter', 'The worship last night was incredible! Ready for today', '2025-08-15 17:50:00'],
       ['Overcomer22', "I drove 6 hours to be here and it's worth every mile!", '2025-08-15 17:55:00'],
-      ['GlobalMission', "Joining from Tokyo! God's presence has no borders 🌍", '2025-08-15 17:58:00'],
-      ['PraiseKing', 'The Holy Spirit is moving right now! 🙌', '2025-08-15 18:00:00'],
-      ['RevivalFire', "First time at Outpouring and I'm already transformed ❤️", '2025-08-15 18:02:00'],
+      ['GlobalMission', "Joining from Tokyo! God's presence has no borders", '2025-08-15 17:58:00'],
+      ['PraiseKing', 'The Holy Spirit is moving right now!', '2025-08-15 18:00:00'],
+      ['RevivalFire', "First time at Outpouring and I'm already transformed", '2025-08-15 18:02:00'],
     ].forEach(([username, message, createdAt]) => {
       store.chat.push({ id: nextId('chat'), username, message, createdAt });
     });
