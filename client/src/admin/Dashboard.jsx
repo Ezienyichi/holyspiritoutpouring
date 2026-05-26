@@ -7,7 +7,7 @@ export default function Dashboard() {
   const role = user?.role || 'admin'
   const isSuperAdmin = role === 'super_admin' || role === 'admin'
 
-  const [stats, setStats] = useState(null)
+  const [stats, setStats] = useState({ registrations: 0, prayers: 0, pendingPrayers: 0, media: 0, totalGifts: 0 })
   const [recentReg, setRecentReg] = useState([])
   const [recentGiving, setRecentGiving] = useState([])
   const [recentPrayers, setRecentPrayers] = useState([])
@@ -39,11 +39,11 @@ export default function Dashboard() {
   if (!user || loading) return <div className="loading-state">Loading dashboard…</div>
 
   const statCards = [
-    ...(isSuperAdmin ? [{ label: 'Registrations', value: stats.registrations, color: 'var(--orange)' }] : []),
-    { label: 'Prayer Requests', value: stats.prayers, color: '#7c6af7' },
-    { label: 'Pending Prayers', value: stats.pendingPrayers, color: '#f7c26a' },
-    { label: 'Media Items', value: stats.media, color: '#4af78a' },
-    ...(isSuperAdmin ? [{ label: 'Total Giving', value: `₦${stats.totalGifts.toLocaleString()}`, color: '#f7a24a' }] : []),
+    ...(isSuperAdmin ? [{ label: 'Registrations', value: stats?.registrations || 0, color: 'var(--orange)' }] : []),
+    { label: 'Prayer Requests', value: stats?.prayers || 0, color: '#7c6af7' },
+    { label: 'Pending Prayers', value: stats?.pendingPrayers || 0, color: '#f7c26a' },
+    { label: 'Media Items', value: stats?.media || 0, color: '#4af78a' },
+    ...(isSuperAdmin ? [{ label: 'Total Giving', value: `₦${(stats?.totalGifts || 0).toLocaleString()}`, color: '#f7a24a' }] : []),
   ]
 
   return (

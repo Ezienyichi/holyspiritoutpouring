@@ -44,4 +44,9 @@ router.post('/login', async (req, res) => {
 
 router.post('/logout', (req, res) => res.json({ success: true }));
 
+const requireAuth = require('../middleware/auth');
+router.get('/verify', requireAuth, (req, res) => {
+  res.json({ valid: true, user: req.user });
+});
+
 module.exports = router;

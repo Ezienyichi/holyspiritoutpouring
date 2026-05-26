@@ -36,6 +36,7 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/previous-events', require('./routes/previousEvents'));
 app.use('/api/past-ministers', require('./routes/pastMinisters'));
 app.use('/api/sponsors', require('./routes/sponsors'));
+app.use('/api/dashboard', require('./routes/dashboard'));
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Backend is running', timestamp: new Date().toISOString() });

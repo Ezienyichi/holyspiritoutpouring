@@ -109,7 +109,10 @@ export default function SiteConfig() {
   const [regCount, setRegCount] = useState(null)
 
   useEffect(() => {
-    fetch(API_BASE + '/api/config').then(r => r.json()).then(d => { setConfig(d); setLoading(false) })
+    fetch(API_BASE + '/api/config')
+      .then(r => r.json())
+      .then(d => { setConfig((d && typeof d === 'object' && !Array.isArray(d)) ? d : {}); setLoading(false) })
+      .catch(() => setLoading(false))
     api.get('/registrations').then(d => setRegCount(Array.isArray(d) ? d.length : null)).catch(() => {})
   }, [])
 

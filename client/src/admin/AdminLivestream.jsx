@@ -9,8 +9,13 @@ export default function AdminLivestream() {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
 
+  const API_BASE = import.meta.env.VITE_API_URL || ''
+
   useEffect(() => {
-    fetch('/api/config').then(r => r.json()).then(d => { setConfig(d); setLoading(false) })
+    fetch(API_BASE + '/api/config')
+      .then(r => r.json())
+      .then(d => { setConfig((d && typeof d === 'object' && !Array.isArray(d)) ? d : {}); setLoading(false) })
+      .catch(() => setLoading(false))
   }, [])
 
   async function save(e) {

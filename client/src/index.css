@@ -960,6 +960,7 @@ body { background: #FFFFFF; color: #040102; }
 .sponsor-track { animation: scrollLogos 20s linear infinite; width: max-content; }
 .sponsor-track:hover { animation-play-state: paused; }
 @keyframes scrollLogos { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* ===== TESTIMONIALS AUTO-SCROLL CAROUSEL ===== */
 .tscroll-outer { overflow: hidden; width: 100%; padding: 20px 0; }
