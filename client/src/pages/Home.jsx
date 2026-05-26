@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useSiteConfig } from '../hooks/useSiteConfig'
+import Carousel3D from '../components/Carousel3D'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 import Navbar from '../components/Navbar'
@@ -10,7 +11,7 @@ import SpeakerCard from '../components/SpeakerCard'
 import SessionRow from '../components/SessionRow'
 import PrayerCard from '../components/PrayerCard'
 
-/* ── HERO ────────────────────────────────────── */
+/* ── HERO ─────────────────────────────────────── */
 function HeroSection({ config }) {
   const [isMuted, setIsMuted] = useState(true)
   const [hasInteracted, setHasInteracted] = useState(false)
@@ -57,13 +58,23 @@ function HeroSection({ config }) {
         </div>
       )}
       <div className="hero-content">
-        <span className="hero-eyebrow">Port Harcourt, Rivers State, Nigeria &bull; August 15–17, 2025</span>
         <h1>
           <span className="hero-title-holy">Holy Spirit</span>
           <span className="hero-title-outpouring">Outpouring</span>
         </h1>
+        <div className="hero-location-date">
+          <span className="hl-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
+          </span>
+          Port Harcourt, Rivers State, Nigeria
+          <span className="hl-bullet">•</span>
+          <span className="hl-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+          </span>
+          August 15–17, 2025
+        </div>
         <p className="hero-subtitle">
-          Experience three days of powerful worship, anointed teachings, and a fresh encounter with the Holy Spirit. Come expecting the supernatural.
+          {config.aboutText1 ? config.aboutText1.slice(0, 140) + '…' : 'Experience three days of powerful worship, anointed teachings, and a fresh encounter with the Holy Spirit. Come expecting the supernatural.'}
         </p>
         <CountdownTimer targetDate={config.countdownDate || '2025-08-15T18:00:00'} />
         <div className="hero-cta">
@@ -81,11 +92,30 @@ function HeroSection({ config }) {
   )
 }
 
-/* ── ABOUT ───────────────────────────────────── */
+/* ── ABOUT (with embedded features) ──────────── */
+const FEATURES = [
+  {
+    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>,
+    title: 'Anointed Worship', body: 'Three nights of Spirit-led worship that will usher you into the very presence of God.'
+  },
+  {
+    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
+    title: 'Power-Packed Teaching', body: 'World-class ministers delivering fresh revelation directly from the throne room of God.'
+  },
+  {
+    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>,
+    title: 'Corporate Prayer', body: 'Join thousands in united intercession — heaven responds when believers pray together.'
+  },
+  {
+    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
+    title: 'Global Livestream', body: 'Join from anywhere in the world — the fire of revival has no borders.'
+  },
+]
+
 function AboutSection({ config }) {
-  const heading = config.about_heading || 'A Divine Gathering\nfor Such a Time'
-  const [headLine1, headLine2] = heading.includes('\n') ? heading.split('\n') : [heading, '']
+  const heading = config.about_heading || 'A Divine Gathering for Such a Time'
   const attendees = config.about_stats_attendees || '10K+'
+
   return (
     <section className="about-section" id="about-section">
       <div className="container">
@@ -93,13 +123,14 @@ function AboutSection({ config }) {
           <div>
             <span className="section-label">About the Conference</span>
             <h2 className="about-title">
-              {headLine1}<br />
-              {headLine2 && <span>{headLine2}</span>}
+              {heading.includes('\n') ? (
+                heading.split('\n').map((l, i) => i === 0 ? <span key={i}>{l}<br /></span> : <span key={i}>{l}</span>)
+              ) : heading}
             </h2>
             <div className="gold-line" />
             <p className="about-body">{config.aboutText1 || "The Holy Spirit Outpouring Conference is more than an event — it's a movement. For three transformative days, believers from every nation will gather to seek the face of God, receive fresh fire, and be equipped for end-time harvest."}</p>
             <p className="about-body">{config.aboutText2 || 'Whether you attend in person in Port Harcourt or join our global livestream, prepare for an encounter that will ignite your faith, restore your passion, and release the supernatural in your life.'}</p>
-            <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <Link to="/speakers" className="btn btn-orange">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 Meet the Speakers
@@ -109,13 +140,27 @@ function AboutSection({ config }) {
                 Watch Live
               </Link>
             </div>
+
+            {/* Embedded feature cards */}
+            <div className="about-features-grid">
+              {FEATURES.map(f => (
+                <div key={f.title} className="feature-card">
+                  <div className="feature-icon-wrap">
+                    <div className="feature-icon">{f.icon}</div>
+                  </div>
+                  <div className="feature-title">{f.title}</div>
+                  <div className="feature-body">{f.body}</div>
+                </div>
+              ))}
+            </div>
           </div>
+
           <div className="about-img-wrap">
             <div className="about-img">
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
                 <svg width="64" height="64" viewBox="0 0 22 28" fill="none">
-                  <path d="M11 0C11 0 4 7 4 14C4 17.31 5.45 20.28 7.73 22.36C7.27 21.34 7 20.2 7 19C7 15.69 9.24 12.94 11 11C12.76 12.94 15 15.69 15 19C15 20.2 14.73 21.34 14.27 22.36C16.55 20.28 18 17.31 18 14C18 7 11 0 11 0Z" fill="#E8622A" opacity="0.4"/>
-                  <path d="M11 14C11 14 8 17 8 20C8 21.66 9.34 23 11 23C12.66 23 14 21.66 14 20C14 17 11 14 11 14Z" fill="#C4501F" opacity="0.4"/>
+                  <path d="M11 0C11 0 4 7 4 14C4 17.31 5.45 20.28 7.73 22.36C7.27 21.34 7 20.2 7 19C7 15.69 9.24 12.94 11 11C12.76 12.94 15 15.69 15 19C15 20.2 14.73 21.34 14.27 22.36C16.55 20.28 18 17.31 18 14C18 7 11 0 11 0Z" fill="#c90505" opacity="0.3"/>
+                  <path d="M11 14C11 14 8 17 8 20C8 21.66 9.34 23 11 23C12.66 23 14 21.66 14 20C14 17 11 14 11 14Z" fill="#a00404" opacity="0.3"/>
                 </svg>
                 <span className="about-img-label">Conference photo coming soon</span>
               </div>
@@ -131,45 +176,36 @@ function AboutSection({ config }) {
   )
 }
 
-/* ── FEATURES ────────────────────────────────── */
-function FeaturesSection() {
-  const features = [
-    {
-      icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>,
-      title: 'Anointed Worship', body: 'Three nights of Spirit-led worship that will usher you into the very presence of God.'
-    },
-    {
-      icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
-      title: 'Power-Packed Teaching', body: 'World-class ministers delivering fresh revelation directly from the throne room of God.'
-    },
-    {
-      icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>,
-      title: 'Corporate Prayer', body: 'Join thousands in united intercession — heaven responds when believers pray together.'
-    },
-    {
-      icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
-      title: 'Global Livestream', body: 'Join from anywhere in the world — the fire of revival has no borders.'
-    },
-  ]
+/* ── PREVIOUS EVENTS CAROUSEL ─────────────────── */
+function PreviousEventsSection({ events }) {
+  if (!events.length) return null
   return (
-    <section className="features-section" id="features-section">
+    <section className="prev-events-section">
       <div className="container">
         <div className="text-center" style={{ marginBottom: '3rem' }}>
-          <span className="section-label">What to Expect</span>
-          <h2 className="section-title">Three Days of Heaven on Earth</h2>
+          <span className="section-label">Our Journey</span>
+          <h2 className="section-title" style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.8rem,3.5vw,2.8rem)', fontWeight: 700 }}>Outpouring Through the Years</h2>
           <div className="gold-line centered" />
+          <p className="section-subtitle centered">A legacy of encounters, revivals, and transformed lives since 2018.</p>
         </div>
-        <div className="features-grid">
-          {features.map(f => (
-            <div key={f.title} className="feature-card">
-              <div className="feature-icon-wrap">
-                <div className="feature-icon">{f.icon}</div>
+        <Carousel3D
+          items={events}
+          autoAdvanceMs={5000}
+          renderCard={(ev, isActive) => (
+            <div className="prev-events-card" style={{ boxShadow: isActive ? '0 24px 60px rgba(0,0,0,0.3)' : '0 8px 32px rgba(0,0,0,0.2)' }}>
+              <img src={ev.image_url || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=640&h=853&fit=crop'} alt={ev.title} loading="lazy" />
+              <div className="prev-events-overlay" />
+              <div className={`prev-events-year${String(ev.year) === '2025' ? ' current' : ''}`}>{ev.year}</div>
+              <div className="prev-events-content">
+                <div className="prev-events-title">{ev.title}</div>
+                <div className="prev-events-tagline">{ev.tagline}</div>
+                {ev.highlights_url && (
+                  <a href={ev.highlights_url} target="_blank" rel="noopener noreferrer" className="prev-events-btn">View Highlights</a>
+                )}
               </div>
-              <div className="feature-title">{f.title}</div>
-              <div className="feature-body">{f.body}</div>
             </div>
-          ))}
-        </div>
+          )}
+        />
       </div>
     </section>
   )
@@ -203,6 +239,38 @@ function SpeakersSection({ speakers }) {
   )
 }
 
+/* ── PAST MINISTERS CAROUSEL ─────────────────── */
+function PastMinistersSection({ ministers }) {
+  if (!ministers.length) return null
+  return (
+    <section className="ministers-section">
+      <div className="container">
+        <div className="text-center" style={{ marginBottom: '3rem' }}>
+          <span className="section-label">Past Ministers</span>
+          <h2 className="section-title">Anointed Voices Across the Years</h2>
+          <div className="gold-line centered" />
+          <p className="section-subtitle centered">Gospel ministers and worship leaders who have ministered at Outpouring.</p>
+        </div>
+        <Carousel3D
+          items={ministers}
+          autoAdvanceMs={4000}
+          renderCard={(m, isActive) => (
+            <div className="ministers-card" style={{ boxShadow: isActive ? '0 24px 60px rgba(0,0,0,0.3)' : '0 8px 32px rgba(0,0,0,0.2)' }}>
+              <img src={m.photo_url || 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=640&h=853&fit=crop'} alt={m.name} loading="lazy" />
+              <div className="ministers-overlay" />
+              <div className="ministers-year">{m.year}</div>
+              <div className="ministers-content">
+                <div className="ministers-name">{m.name}</div>
+                <div className="ministers-role">{m.ministry_role}</div>
+              </div>
+            </div>
+          )}
+        />
+      </div>
+    </section>
+  )
+}
+
 /* ── SCHEDULE ────────────────────────────────── */
 function ScheduleSection() {
   const [day, setDay] = useState(1)
@@ -211,7 +279,10 @@ function ScheduleSection() {
 
   useEffect(() => {
     setLoading(true)
-    fetch(API_BASE + `/api/sessions?day=${day}`).then(r => r.json()).then(d => { setSessions(d); setLoading(false) })
+    fetch(API_BASE + `/api/sessions?day=${day}`)
+      .then(r => r.json())
+      .then(d => { setSessions(d); setLoading(false) })
+      .catch(() => setLoading(false))
   }, [day])
 
   const tabs = [
@@ -252,46 +323,46 @@ function ScheduleSection() {
   )
 }
 
-/* ── TESTIMONIALS — AUTO CAROUSEL ────────────── */
-function TestimonialsSection() {
-  const items = [
-    { quote: 'I came broken and empty, but the Holy Spirit filled me to overflowing. My life has never been the same since Outpouring 2024.', name: 'Sister Amara O.', loc: 'Port Harcourt, Nigeria', bg: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500&h=700&fit=crop' },
-    { quote: "The worship at this conference is unlike anything I've experienced. Heaven literally comes down. I received healing during the evening service.", name: 'Brother James K.', loc: 'Nairobi, Kenya', bg: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=500&h=700&fit=crop' },
-    { quote: "As a pastor, I was running on empty. Outpouring reignited my fire and gave me a fresh vision for ministry. I bring my entire team every year.", name: 'Pastor Rebecca M.', loc: 'Accra, Ghana', bg: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=500&h=700&fit=crop' },
-    { quote: 'Three days of heaven on earth. I came for one session and stayed for all three days. The presence of God was tangible.', name: 'Deacon Samuel T.', loc: 'Abuja, Nigeria', bg: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=500&h=700&fit=crop' },
-    { quote: 'My teenage daughter gave her life to Christ at the youth session. This conference changed our family forever.', name: 'Mrs. Chioma E.', loc: 'Enugu, Nigeria', bg: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=500&h=700&fit=crop' },
-  ]
-  const doubled = [...items, ...items]
+/* ── TESTIMONIALS — 3D CAROUSEL ──────────────── */
+const TESTIMONIALS = [
+  { quote: 'I came broken and empty, but the Holy Spirit filled me to overflowing. My life has never been the same since Outpouring 2024.', name: 'Sister Amara O.', loc: 'Port Harcourt, Nigeria', bg: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=640&h=853&fit=crop', year: '2024' },
+  { quote: "The worship at this conference is unlike anything I've experienced. Heaven literally comes down. I received healing during the evening service.", name: 'Brother James K.', loc: 'Nairobi, Kenya', bg: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=640&h=853&fit=crop', year: '2023' },
+  { quote: "As a pastor, I was running on empty. Outpouring reignited my fire and gave me a fresh vision for ministry. I bring my entire team every year.", name: 'Pastor Rebecca M.', loc: 'Accra, Ghana', bg: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=640&h=853&fit=crop', year: '2023' },
+  { quote: 'Three days of heaven on earth. I came for one session and stayed for all three days. The presence of God was tangible.', name: 'Deacon Samuel T.', loc: 'Abuja, Nigeria', bg: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=640&h=853&fit=crop', year: '2022' },
+  { quote: 'My teenage daughter gave her life to Christ at the youth session. This conference changed our family forever.', name: 'Mrs. Chioma E.', loc: 'Enugu, Nigeria', bg: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=640&h=853&fit=crop', year: '2022' },
+]
 
+function TestimonialsSection() {
   return (
     <section className="testimonials-section">
       <div className="container">
-        <div className="text-center" style={{ marginBottom: '3rem' }}>
+        <div className="text-center" style={{ marginBottom: '3rem', position: 'relative', zIndex: 1 }}>
           <span className="section-label">Testimonies</span>
           <h2 className="section-title">Lives Transformed</h2>
           <div className="gold-line centered" />
         </div>
-      </div>
-      <div className="testimonials-carousel-outer">
-        <div className="testimonials-track">
-          {doubled.map((t, idx) => (
-            <div key={idx} className="testimonial-card">
-              <div className="testimonial-bg" style={{ backgroundImage: `url(${t.bg})` }} />
-              <div className="testimonial-overlay" />
-              <div className="testimonial-content">
-                <div className="testimonial-quote-mark">"</div>
-                <p className="testimonial-text">{t.quote}</p>
-                <div className="testimonial-author">
-                  <div className="testimonial-avatar">{t.name.split(' ').map(w => w[0]).join('').slice(0, 2)}</div>
+        <Carousel3D
+          items={TESTIMONIALS}
+          autoAdvanceMs={6000}
+          renderCard={(t, isActive) => (
+            <div className="testimonial-3d-card" style={{ boxShadow: isActive ? '0 24px 60px rgba(0,0,0,0.45)' : '0 8px 32px rgba(0,0,0,0.35)' }}>
+              <div className="testimonial-3d-bg" style={{ backgroundImage: `url(${t.bg})` }} />
+              <div className="testimonial-3d-overlay" />
+              <div className="testimonial-3d-year">{t.year}</div>
+              <div className="testimonial-3d-content">
+                <div className="testimonial-3d-quote">"</div>
+                <p className="testimonial-3d-text">{t.quote}</p>
+                <div className="testimonial-3d-author">
+                  <div className="testimonial-3d-avatar">{t.name.split(' ').map(w => w[0]).join('').slice(0, 2)}</div>
                   <div>
-                    <div className="testimonial-name">{t.name}</div>
-                    <div className="testimonial-location">{t.loc}</div>
+                    <div className="testimonial-3d-name">{t.name}</div>
+                    <div className="testimonial-3d-loc">{t.loc}</div>
                   </div>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          )}
+        />
       </div>
     </section>
   )
@@ -314,12 +385,12 @@ function PrayerSection({ prayers }) {
   async function handleSubmit(e) {
     e.preventDefault()
     if (!form.text.trim()) return
-    await fetch(API_BASE + '/api/prayers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+    await fetch(API_BASE + '/api/prayers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) }).catch(() => {})
     setSubmitted(true)
     setForm({ name: '', email: '', category: 'Other', text: '' })
   }
 
-  const cats = ['Healing','Salvation','Finances','Family','Direction','Other']
+  const cats = ['Healing', 'Salvation', 'Finances', 'Family', 'Direction', 'Other']
 
   return (
     <section className="prayer-section" id="prayer-section">
@@ -387,27 +458,14 @@ function HomeVideoCard({ item }) {
   const watchUrl = item.youtubeUrl || (ytId ? `https://www.youtube.com/watch?v=${ytId}` : '#')
   return (
     <a
-      href={watchUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{
-        display: 'block', position: 'relative', borderRadius: 12,
-        overflow: 'hidden', aspectRatio: '16/9', cursor: 'pointer',
-        transition: 'all 0.25s ease', textDecoration: 'none',
-      }}
-      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.5)' }}
+      href={watchUrl} target="_blank" rel="noopener noreferrer"
+      style={{ display: 'block', position: 'relative', borderRadius: 12, overflow: 'hidden', aspectRatio: '16/9', cursor: 'pointer', transition: 'all 0.25s ease', textDecoration: 'none' }}
+      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.25)' }}
       onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '' }}
     >
       <img src={thumb} alt={item.title || item.caption} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 100%)' }} />
-      <div style={{
-        position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-60%)',
-        width: 56, height: 56, borderRadius: '50%', background: '#FF0000',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        transition: 'all 0.2s ease', boxShadow: '0 2px 12px rgba(0,0,0,0.4)',
-      }}
-        className="yt-play-btn"
-      >
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.55) 100%)' }} />
+      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-60%)', width: 56, height: 56, borderRadius: '50%', background: '#FF0000', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 12px rgba(0,0,0,0.4)' }} className="yt-play-btn">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
       </div>
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 12px 12px', color: 'white', fontSize: 13, fontWeight: 700, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
@@ -429,14 +487,14 @@ function MediaSection({ media }) {
           <p className="section-subtitle centered">Relive the moments from previous outpourings. Click any video to watch on YouTube.</p>
         </div>
         {videos.length === 0 ? (
-          <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '3rem 0' }}>Gallery content coming soon.</div>
+          <div style={{ textAlign: 'center', color: '#666', padding: '3rem 0' }}>Gallery content coming soon.</div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
             {videos.map(v => <HomeVideoCard key={v.id} item={v} />)}
           </div>
         )}
         <div className="text-center" style={{ marginTop: '2.5rem' }}>
-          <Link to="/media" className="btn btn-outline">
+          <Link to="/media" className="btn btn-navy">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
             View All Videos
           </Link>
@@ -456,7 +514,7 @@ function GiveSection() {
     { name: 'Vision Partner', amount: '₦100,000', desc: 'Sponsor the global broadcast reaching thousands online.' },
   ]
   async function giveAmount(amount, tier) {
-    await fetch(API_BASE + '/api/giving', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount, tier }) })
+    await fetch(API_BASE + '/api/giving', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount, tier }) }).catch(() => {})
     alert(`Thank you! Your gift of ${amount} has been received. God bless you!`)
   }
   return (
@@ -480,9 +538,8 @@ function GiveSection() {
           ))}
         </div>
         <div className="give-custom">
-          <input placeholder="Custom amount (₦)" value={custom} onChange={e => setCustom(e.target.value)} />
-          <button className="btn btn-outline" style={{ color: 'white', borderColor: 'rgba(255,255,255,0.5)', whiteSpace: 'nowrap' }} onClick={() => custom && giveAmount(custom, 'Custom')}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <input placeholder="Custom amount (₦)" value={custom} onChange={e => setCustom(e.target.value)} style={{ flex: 1, background: 'rgba(0,0,0,0.05)', border: '2px solid rgba(0,0,0,0.12)', borderRadius: 8, padding: '0.65rem 1rem', fontSize: '0.9rem', color: '#040102' }} />
+          <button className="btn btn-orange" style={{ whiteSpace: 'nowrap' }} onClick={() => custom && giveAmount(custom, 'Custom')}>
             Give
           </button>
         </div>
@@ -497,11 +554,15 @@ export default function Home() {
   const [speakers, setSpeakers] = useState([])
   const [prayers, setPrayers] = useState([])
   const [media, setMedia] = useState([])
+  const [previousEvents, setPreviousEvents] = useState([])
+  const [pastMinisters, setPastMinisters] = useState([])
 
   useEffect(() => {
     fetch(API_BASE + '/api/speakers').then(r => r.json()).then(setSpeakers).catch(() => {})
     fetch(API_BASE + '/api/prayers').then(r => r.json()).then(setPrayers).catch(() => {})
     fetch(API_BASE + '/api/media').then(r => r.json()).then(setMedia).catch(() => {})
+    fetch(API_BASE + '/api/previous-events').then(r => r.json()).then(d => setPreviousEvents(Array.isArray(d) ? d : [])).catch(() => {})
+    fetch(API_BASE + '/api/past-ministers').then(r => r.json()).then(d => setPastMinisters(Array.isArray(d) ? d : [])).catch(() => {})
   }, [])
 
   return (
@@ -509,8 +570,9 @@ export default function Home() {
       <Navbar />
       <HeroSection config={config} />
       <AboutSection config={config} />
-      <FeaturesSection />
+      <PreviousEventsSection events={previousEvents} />
       <SpeakersSection speakers={speakers} />
+      <PastMinistersSection ministers={pastMinisters} />
       <ScheduleSection />
       <TestimonialsSection />
       <PrayerSection prayers={prayers} />

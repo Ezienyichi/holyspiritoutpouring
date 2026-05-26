@@ -20,6 +20,8 @@ import AdminGiving from './admin/AdminGiving'
 import AdminRegistrations from './admin/AdminRegistrations'
 import AdminLivestream from './admin/AdminLivestream'
 import AdminUsers from './admin/AdminUsers'
+import AdminPreviousEvents from './admin/AdminPreviousEvents'
+import AdminPastMinisters from './admin/AdminPastMinisters'
 
 export default function App() {
   return (
@@ -46,6 +48,8 @@ export default function App() {
           <Route path="registrations" element={<AdminRegistrations />} />
           <Route path="livestream" element={<AdminLivestream />} />
           <Route path="users" element={<AdminUsers />} />
+          <Route path="previous-events" element={<AdminPreviousEvents />} />
+          <Route path="past-ministers" element={<AdminPastMinisters />} />
         </Route>
       </Routes>
     </BrowserRouter>

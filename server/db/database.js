@@ -9,7 +9,7 @@ const DB_FILE = path.join(DATA_DIR, 'outpouring25.json');
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
-const TABLES = ['config', 'speakers', 'sessions', 'prayers', 'media', 'giving', 'registrations', 'chat', 'users'];
+const TABLES = ['config', 'speakers', 'sessions', 'prayers', 'media', 'giving', 'registrations', 'chat', 'users', 'previous_events', 'past_ministers'];
 
 let store = {};
 TABLES.forEach(t => { store[t] = []; });
@@ -461,6 +461,40 @@ function seed() {
       ['RevivalFire', "First time at Outpouring and I'm already transformed", '2025-08-15 18:02:00'],
     ].forEach(([username, message, createdAt]) => {
       store.chat.push({ id: nextId('chat'), username, message, createdAt });
+    });
+    save();
+  }
+
+  if (store.previous_events.length === 0) {
+    [
+      [2018, 'Outpouring 2018', 'The First Outpouring — Where It All Began', 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=640&h=853&fit=crop', '', 1],
+      [2019, 'Outpouring 2019', 'Deeper Waters — A Year of Miracles', 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=640&h=853&fit=crop', '', 2],
+      [2020, 'Outpouring 2020', 'Against All Odds — The Virtual Outpouring', 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=640&h=853&fit=crop', '', 3],
+      [2021, 'Outpouring 2021', 'Rising Again — Post Pandemic Revival', 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=640&h=853&fit=crop', '', 4],
+      [2022, 'Outpouring 2022', 'Fire Across the Nation', 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=640&h=853&fit=crop', '', 5],
+      [2023, 'Outpouring 2023', 'Generation of Power', 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=640&h=853&fit=crop', '', 6],
+      [2024, 'Outpouring 2024', 'Heaven Came Down', 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=640&h=853&fit=crop', 'https://www.youtube.com/@holyspiritoutpouring-o6s', 7],
+      [2025, 'Outpouring 2025', 'The Greatest Yet — Coming August 15', 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=640&h=853&fit=crop', '', 8],
+    ].forEach(([year, title, tagline, image_url, highlights_url, display_order]) => {
+      store.previous_events.push({ id: nextId('previous_events'), year, title, tagline, image_url, highlights_url, display_order, createdAt: now() });
+    });
+    save();
+  }
+
+  if (store.past_ministers.length === 0) {
+    [
+      ['Min Moses Bliss', 'Worship Leader', '2024', 'https://img.youtube.com/vi/MRZT865hYZc/maxresdefault.jpg', 1],
+      ['Min GUC', 'Gospel Artist', '2024', 'https://img.youtube.com/vi/-grmFq9vEL4/maxresdefault.jpg', 2],
+      ['Min Judikay', 'Gospel Artist', '2023', 'https://img.youtube.com/vi/mM-fmYIdhTU/maxresdefault.jpg', 3],
+      ['Min Empraiz', 'Worship Leader', '2023', 'https://img.youtube.com/vi/kqZ0nryrDjU/maxresdefault.jpg', 4],
+      ['Micah (Praise Prophet)', 'Minister', '2023', 'https://img.youtube.com/vi/SAdpDo04EFI/maxresdefault.jpg', 5],
+      ['Min GP Samz', 'Worship Leader', '2024', 'https://img.youtube.com/vi/IcqTnYpLArc/maxresdefault.jpg', 6],
+      ['Min Elekwu', 'Traditional Praise', '2024', 'https://img.youtube.com/vi/T2_rseKY9Tg/maxresdefault.jpg', 7],
+      ['Min Caleb', 'Gospel Artist', '2025', 'https://img.youtube.com/vi/IvKj7z8v6rk/maxresdefault.jpg', 8],
+      ['Min DFO', 'Deep Worship', '2024', 'https://img.youtube.com/vi/-lF45IFHtvA/maxresdefault.jpg', 9],
+      ['Min Wealth', 'Worship Leader', '2024', 'https://img.youtube.com/vi/BsV05k71cnM/maxresdefault.jpg', 10],
+    ].forEach(([name, ministry_role, year, photo_url, display_order]) => {
+      store.past_ministers.push({ id: nextId('past_ministers'), name, ministry_role, year, photo_url, display_order, createdAt: now() });
     });
     save();
   }
