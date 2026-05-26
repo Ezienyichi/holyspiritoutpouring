@@ -1,24 +1,34 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db/database');
+const { query } = require('../db/database');
 const requireAuth = require('../middleware/auth');
 
-router.get('/', (req, res) => {
-  const rows = db.prepare('SELECT key, value FROM config').all();
-  const config = {};
-  rows.forEach(r => { config[r.key] = r.value; });
-  res.json(config);
+router.get('/', async (req, res) => {
+  try {
+    const result = await query('SELECT key, value FROM config');
+    const config = {};
+    result.rows.forEach(r => { config[r.key] = r.value; });
+    res.json(config);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-router.put('/', requireAuth, (req, res) => {
-  const upsert = db.prepare('INSERT OR REPLACE INTO config (key, value) VALUES (?, ?)');
-  db.transaction(() => {
-    Object.entries(req.body).forEach(([k, v]) => upsert.run(k, String(v)));
-  })();
-  const rows = db.prepare('SELECT key, value FROM config').all();
-  const updated = {};
-  rows.forEach(r => { updated[r.key] = r.value; });
-  res.json(updated);
+router.put('/', requireAuth, async (req, res) => {
+  try {
+    for (const [k, v] of Object.entries(req.body)) {
+      await query(
+        'INSERT INTO config (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value',
+        [k, String(v)]
+      );
+    }
+    const result = await query('SELECT key, value FROM config');
+    const updated = {};
+    result.rows.forEach(r => { updated[r.key] = r.value; });
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

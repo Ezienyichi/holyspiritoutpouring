@@ -323,46 +323,47 @@ function ScheduleSection() {
   )
 }
 
-/* ── TESTIMONIALS — 3D CAROUSEL ──────────────── */
+/* ── TESTIMONIALS — infinite auto-scroll ─────── */
 const TESTIMONIALS = [
-  { quote: 'I came broken and empty, but the Holy Spirit filled me to overflowing. My life has never been the same since Outpouring 2024.', name: 'Sister Amara O.', loc: 'Port Harcourt, Nigeria', bg: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=640&h=853&fit=crop', year: '2024' },
-  { quote: "The worship at this conference is unlike anything I've experienced. Heaven literally comes down. I received healing during the evening service.", name: 'Brother James K.', loc: 'Nairobi, Kenya', bg: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=640&h=853&fit=crop', year: '2023' },
-  { quote: "As a pastor, I was running on empty. Outpouring reignited my fire and gave me a fresh vision for ministry. I bring my entire team every year.", name: 'Pastor Rebecca M.', loc: 'Accra, Ghana', bg: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=640&h=853&fit=crop', year: '2023' },
-  { quote: 'Three days of heaven on earth. I came for one session and stayed for all three days. The presence of God was tangible.', name: 'Deacon Samuel T.', loc: 'Abuja, Nigeria', bg: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=640&h=853&fit=crop', year: '2022' },
-  { quote: 'My teenage daughter gave her life to Christ at the youth session. This conference changed our family forever.', name: 'Mrs. Chioma E.', loc: 'Enugu, Nigeria', bg: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=640&h=853&fit=crop', year: '2022' },
+  { quote: 'I came broken and empty, but the Holy Spirit filled me to overflowing. My life has never been the same since Outpouring 2024.', name: 'Sister Amara O.', loc: 'Port Harcourt, Nigeria', initial: 'A', bg: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=640&h=853&fit=crop' },
+  { quote: "The worship at this conference is unlike anything I have experienced. Heaven literally comes down. I received healing during the evening service.", name: 'Brother James K.', loc: 'Nairobi, Kenya', initial: 'J', bg: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=640&h=853&fit=crop' },
+  { quote: "As a pastor, I was running on empty. Outpouring reignited my fire and gave me a fresh vision for ministry. I bring my entire team every year.", name: 'Pastor Rebecca M.', loc: 'Accra, Ghana', initial: 'R', bg: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=640&h=853&fit=crop' },
+  { quote: 'Three days of heaven on earth. I came for one session and stayed for all three days. The presence of God was tangible and real.', name: 'Deacon Samuel T.', loc: 'Abuja, Nigeria', initial: 'S', bg: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=640&h=853&fit=crop' },
+  { quote: 'My teenage daughter gave her life to Christ at the youth session. This conference changed our family forever. We are coming back.', name: 'Mrs. Chioma E.', loc: 'Enugu, Nigeria', initial: 'C', bg: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=640&h=853&fit=crop' },
 ]
 
 function TestimonialsSection() {
+  const doubled = [...TESTIMONIALS, ...TESTIMONIALS]
   return (
     <section className="testimonials-section">
       <div className="container">
         <div className="text-center" style={{ marginBottom: '3rem', position: 'relative', zIndex: 1 }}>
           <span className="section-label">Testimonies</span>
-          <h2 className="section-title">Lives Transformed</h2>
+          <h2 className="section-title" style={{ color: 'white' }}>What People Are Saying</h2>
           <div className="gold-line centered" />
+          <p className="section-subtitle centered" style={{ color: 'rgba(255,255,255,0.6)' }}>Lives transformed at every Outpouring since 2018.</p>
         </div>
-        <Carousel3D
-          items={TESTIMONIALS}
-          autoAdvanceMs={6000}
-          renderCard={(t, isActive) => (
-            <div className="testimonial-3d-card" style={{ boxShadow: isActive ? '0 24px 60px rgba(0,0,0,0.45)' : '0 8px 32px rgba(0,0,0,0.35)' }}>
-              <div className="testimonial-3d-bg" style={{ backgroundImage: `url(${t.bg})` }} />
-              <div className="testimonial-3d-overlay" />
-              <div className="testimonial-3d-year">{t.year}</div>
-              <div className="testimonial-3d-content">
-                <div className="testimonial-3d-quote">"</div>
-                <p className="testimonial-3d-text">{t.quote}</p>
-                <div className="testimonial-3d-author">
-                  <div className="testimonial-3d-avatar">{t.name.split(' ').map(w => w[0]).join('').slice(0, 2)}</div>
+      </div>
+      <div className="tscroll-outer">
+        <div className="tscroll-track">
+          {doubled.map((t, i) => (
+            <div key={i} className="tscroll-card">
+              <div className="tscroll-img" style={{ backgroundImage: `url(${t.bg})` }} />
+              <div className="tscroll-overlay" />
+              <div className="tscroll-quote">&ldquo;</div>
+              <div className="tscroll-body">
+                <p className="tscroll-text">{t.quote}</p>
+                <div className="tscroll-author">
+                  <div className="tscroll-avatar">{t.initial}</div>
                   <div>
-                    <div className="testimonial-3d-name">{t.name}</div>
-                    <div className="testimonial-3d-loc">{t.loc}</div>
+                    <div className="tscroll-name">{t.name}</div>
+                    <div className="tscroll-loc">{t.loc}</div>
                   </div>
                 </div>
               </div>
             </div>
-          )}
-        />
+          ))}
+        </div>
       </div>
     </section>
   )

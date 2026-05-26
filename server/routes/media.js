@@ -1,19 +1,29 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db/database');
+const { query } = require('../db/database');
 const requireAuth = require('../middleware/auth');
 
-router.get('/', (req, res) => {
-  res.json(db.prepare('SELECT * FROM media ORDER BY createdAt DESC').all());
+router.get('/', async (req, res) => {
+  try {
+    const result = await query('SELECT * FROM media ORDER BY "createdAt" DESC');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-router.post('/', requireAuth, (req, res) => {
-  const { title, url, type, caption, thumbnailUrl, youtubeUrl } = req.body;
-  if (!url) return res.status(400).json({ error: 'URL required' });
-  const r = db.prepare('INSERT INTO media (title,url,type,caption,thumbnailUrl,youtubeUrl) VALUES (?,?,?,?,?,?)').run(
-    title || '', url, type || 'photo', caption || '', thumbnailUrl || null, youtubeUrl || null
-  );
-  res.status(201).json(db.prepare('SELECT * FROM media WHERE id=?').get(r.lastInsertRowid));
+router.post('/', requireAuth, async (req, res) => {
+  try {
+    const { title, url, type, caption, thumbnailUrl, youtubeUrl } = req.body;
+    if (!url) return res.status(400).json({ error: 'URL required' });
+    const result = await query(
+      'INSERT INTO media (title, url, type, caption, "thumbnailUrl", "youtubeUrl") VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
+      [title || '', url, type || 'photo', caption || '', thumbnailUrl || null, youtubeUrl || null]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 router.post('/upload-image', requireAuth, (req, res) => {
@@ -86,10 +96,14 @@ router.post('/upload', requireAuth, (req, res) => {
   });
 });
 
-router.delete('/:id', requireAuth, (req, res) => {
-  const r = db.prepare('DELETE FROM media WHERE id=?').run(req.params.id);
-  if (!r.changes) return res.status(404).json({ error: 'Not found' });
-  res.json({ success: true });
+router.delete('/:id', requireAuth, async (req, res) => {
+  try {
+    const result = await query('DELETE FROM media WHERE id = $1', [req.params.id]);
+    if (result.rowCount === 0) return res.status(404).json({ error: 'Not found' });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

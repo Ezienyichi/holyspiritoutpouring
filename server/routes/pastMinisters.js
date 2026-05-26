@@ -1,32 +1,51 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db/database');
+const { query } = require('../db/database');
 const requireAuth = require('../middleware/auth');
 
-router.get('/', (req, res) => {
-  const rows = db.prepare('SELECT * FROM past_ministers ORDER BY display_order ASC, year DESC').all();
-  res.json(rows);
+router.get('/', async (req, res) => {
+  try {
+    const result = await query('SELECT * FROM past_ministers ORDER BY display_order ASC, year DESC');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-router.post('/', requireAuth, (req, res) => {
-  const { name, ministry_role, year, photo_url, display_order } = req.body;
-  const stmt = db.prepare('INSERT INTO past_ministers (name, ministry_role, year, photo_url, display_order) VALUES (?, ?, ?, ?, ?)');
-  const result = stmt.run(name || '', ministry_role || '', year || '', photo_url || '', Number(display_order) || 0);
-  const row = db.prepare('SELECT * FROM past_ministers WHERE id = ?').get(result.lastInsertRowid);
-  res.json(row);
+router.post('/', requireAuth, async (req, res) => {
+  try {
+    const { name, ministry_role, year, photo_url, display_order } = req.body;
+    const result = await query(
+      'INSERT INTO past_ministers (name, ministry_role, year, photo_url, display_order) VALUES ($1,$2,$3,$4,$5) RETURNING *',
+      [name || '', ministry_role || '', year || '', photo_url || '', Number(display_order) || 0]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-router.put('/:id', requireAuth, (req, res) => {
-  const { name, ministry_role, year, photo_url, display_order } = req.body;
-  db.prepare('UPDATE past_ministers SET name = ?, ministry_role = ?, year = ?, photo_url = ?, display_order = ? WHERE id = ?')
-    .run(name || '', ministry_role || '', year || '', photo_url || '', Number(display_order) || 0, Number(req.params.id));
-  const row = db.prepare('SELECT * FROM past_ministers WHERE id = ?').get(Number(req.params.id));
-  res.json(row);
+router.put('/:id', requireAuth, async (req, res) => {
+  try {
+    const { name, ministry_role, year, photo_url, display_order } = req.body;
+    const result = await query(
+      'UPDATE past_ministers SET name=$1, ministry_role=$2, year=$3, photo_url=$4, display_order=$5 WHERE id=$6 RETURNING *',
+      [name || '', ministry_role || '', year || '', photo_url || '', Number(display_order) || 0, Number(req.params.id)]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-router.delete('/:id', requireAuth, (req, res) => {
-  db.prepare('DELETE FROM past_ministers WHERE id = ?').run(Number(req.params.id));
-  res.json({ ok: true });
+router.delete('/:id', requireAuth, async (req, res) => {
+  try {
+    await query('DELETE FROM past_ministers WHERE id = $1', [Number(req.params.id)]);
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

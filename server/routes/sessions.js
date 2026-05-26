@@ -1,34 +1,56 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db/database');
+const { query } = require('../db/database');
 const requireAuth = require('../middleware/auth');
 
-router.get('/', (req, res) => {
-  const { day } = req.query;
-  const stmt = day
-    ? db.prepare('SELECT * FROM sessions WHERE day=? ORDER BY time')
-    : db.prepare('SELECT * FROM sessions ORDER BY day, time');
-  res.json(day ? stmt.all(Number(day)) : stmt.all());
+router.get('/', async (req, res) => {
+  try {
+    const { day } = req.query;
+    const result = day
+      ? await query('SELECT * FROM sessions WHERE day = $1 ORDER BY time', [Number(day)])
+      : await query('SELECT * FROM sessions ORDER BY day, time');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-router.post('/', requireAuth, (req, res) => {
-  const { day, time, title, speaker, type, description, isCurrentlyLive } = req.body;
-  if (!day || !time || !title) return res.status(400).json({ error: 'day, time, title required' });
-  const r = db.prepare('INSERT INTO sessions (day,time,title,speaker,type,description,isCurrentlyLive) VALUES (?,?,?,?,?,?,?)').run(day,time,title,speaker||'',type||'teaching',description||'',isCurrentlyLive?1:0);
-  res.status(201).json(db.prepare('SELECT * FROM sessions WHERE id=?').get(r.lastInsertRowid));
+router.post('/', requireAuth, async (req, res) => {
+  try {
+    const { day, time, title, speaker, type, description, isCurrentlyLive } = req.body;
+    if (!day || !time || !title) return res.status(400).json({ error: 'day, time, title required' });
+    const result = await query(
+      'INSERT INTO sessions (day, time, title, speaker, type, description, "isCurrentlyLive") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
+      [day, time, title, speaker || '', type || 'teaching', description || '', isCurrentlyLive ? 1 : 0]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-router.put('/:id', requireAuth, (req, res) => {
-  const { day, time, title, speaker, type, description, isCurrentlyLive } = req.body;
-  const r = db.prepare('UPDATE sessions SET day=?,time=?,title=?,speaker=?,type=?,description=?,isCurrentlyLive=? WHERE id=?').run(day,time,title,speaker||'',type||'teaching',description||'',isCurrentlyLive?1:0,req.params.id);
-  if (!r.changes) return res.status(404).json({ error: 'Not found' });
-  res.json(db.prepare('SELECT * FROM sessions WHERE id=?').get(req.params.id));
+router.put('/:id', requireAuth, async (req, res) => {
+  try {
+    const { day, time, title, speaker, type, description, isCurrentlyLive } = req.body;
+    const result = await query(
+      'UPDATE sessions SET day=$1, time=$2, title=$3, speaker=$4, type=$5, description=$6, "isCurrentlyLive"=$7 WHERE id=$8 RETURNING *',
+      [day, time, title, speaker || '', type || 'teaching', description || '', isCurrentlyLive ? 1 : 0, req.params.id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-router.delete('/:id', requireAuth, (req, res) => {
-  const r = db.prepare('DELETE FROM sessions WHERE id=?').run(req.params.id);
-  if (!r.changes) return res.status(404).json({ error: 'Not found' });
-  res.json({ success: true });
+router.delete('/:id', requireAuth, async (req, res) => {
+  try {
+    const result = await query('DELETE FROM sessions WHERE id = $1', [req.params.id]);
+    if (result.rowCount === 0) return res.status(404).json({ error: 'Not found' });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;
