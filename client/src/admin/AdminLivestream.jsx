@@ -58,7 +58,6 @@ export default function AdminLivestream() {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             boxShadow: isLive ? '0 0 40px rgba(244,68,68,0.4)' : 'none',
             transition: 'all 0.3s',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
             <div style={{ width: 40, height: 40, borderRadius: '50%', background: isLive ? '#f44444' : 'var(--navy-border)', transition: 'all 0.3s', boxShadow: isLive ? '0 0 16px rgba(244,68,68,0.7)' : 'none' }} />
           </div>
