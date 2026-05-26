@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useSiteConfig } from '../hooks/useSiteConfig'
 import Carousel3D from '../components/Carousel3D'
-
-const API_BASE = import.meta.env.VITE_API_URL || ''
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import CountdownTimer from '../components/CountdownTimer'
 import SpeakerCard from '../components/SpeakerCard'
 import SessionRow from '../components/SessionRow'
 import PrayerCard from '../components/PrayerCard'
+
+const API_BASE = import.meta.env.VITE_API_URL || ''
 
 /* ── HERO ─────────────────────────────────────── */
 function HeroSection({ config }) {
@@ -559,9 +559,9 @@ export default function Home() {
   const [pastMinisters, setPastMinisters] = useState([])
 
   useEffect(() => {
-    fetch(API_BASE + '/api/speakers').then(r => r.json()).then(setSpeakers).catch(() => {})
-    fetch(API_BASE + '/api/prayers').then(r => r.json()).then(setPrayers).catch(() => {})
-    fetch(API_BASE + '/api/media').then(r => r.json()).then(setMedia).catch(() => {})
+    fetch(API_BASE + '/api/speakers').then(r => r.json()).then(d => setSpeakers(Array.isArray(d) ? d : [])).catch(() => {})
+    fetch(API_BASE + '/api/prayers').then(r => r.json()).then(d => setPrayers(Array.isArray(d) ? d : [])).catch(() => {})
+    fetch(API_BASE + '/api/media').then(r => r.json()).then(d => setMedia(Array.isArray(d) ? d : [])).catch(() => {})
     fetch(API_BASE + '/api/previous-events').then(r => r.json()).then(d => setPreviousEvents(Array.isArray(d) ? d : [])).catch(() => {})
     fetch(API_BASE + '/api/past-ministers').then(r => r.json()).then(d => setPastMinisters(Array.isArray(d) ? d : [])).catch(() => {})
   }, [])
