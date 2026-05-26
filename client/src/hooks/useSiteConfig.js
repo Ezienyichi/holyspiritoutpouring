@@ -18,10 +18,11 @@ export function useSiteConfig() {
     fetch(BASE_URL + '/api/config')
       .then(r => r.json())
       .then(data => {
-        cachedConfig = data
-        setConfig(data)
+        const safe = (data && typeof data === 'object' && !Array.isArray(data)) ? data : {}
+        cachedConfig = safe
+        setConfig(safe)
         setLoading(false)
-        listeners.forEach(fn => fn(data))
+        listeners.forEach(fn => fn(safe))
       })
       .catch(() => setLoading(false))
   }, [])

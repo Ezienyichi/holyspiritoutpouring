@@ -17,7 +17,7 @@ export default function Live() {
     const day = dayMap[String(today)] || 1
     fetch(`${API_BASE}/api/sessions?day=${day}`)
       .then(r => r.json())
-      .then(d => { setSessions(d); setLoading(false) })
+      .then(d => { setSessions(Array.isArray(d) ? d : []); setLoading(false) })
       .catch(() => setLoading(false))
   }, [])
 

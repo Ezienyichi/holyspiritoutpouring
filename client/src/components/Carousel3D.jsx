@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 
 export default function Carousel3D({ items, renderCard, autoAdvanceMs = 5000, className = '' }) {
+  const safeItems = Array.isArray(items) ? items : []
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
   const [dragStart, setDragStart] = useState(null)
   const timerRef = useRef(null)
-  const n = items.length
+  const n = safeItems.length
 
-  const next = useCallback(() => setActive(i => (i + 1) % n), [n])
-  const prev = useCallback(() => setActive(i => (i - 1 + n) % n), [n])
+  const next = useCallback(() => setActive(i => (i + 1) % Math.max(n, 1)), [n])
+  const prev = useCallback(() => setActive(i => (i - 1 + Math.max(n, 1)) % Math.max(n, 1)), [n])
 
   useEffect(() => {
     if (paused || n <= 1) return
@@ -46,6 +47,8 @@ export default function Carousel3D({ items, renderCard, autoAdvanceMs = 5000, cl
     setDragStart(null)
   }
 
+  if (n === 0) return null
+
   return (
     <div
       className={`c3d-wrapper${className ? ' ' + className : ''}`}
@@ -55,7 +58,7 @@ export default function Carousel3D({ items, renderCard, autoAdvanceMs = 5000, cl
       onTouchEnd={handleTouchEnd}
     >
       <div className="c3d-stage">
-        {items.map((item, idx) => (
+        {safeItems.map((item, idx) => (
           <div
             key={idx}
             className="c3d-card"
@@ -79,7 +82,7 @@ export default function Carousel3D({ items, renderCard, autoAdvanceMs = 5000, cl
       </button>
 
       <div className="c3d-dots">
-        {items.map((_, idx) => (
+        {safeItems.map((_, idx) => (
           <button
             key={idx}
             className={`c3d-dot${idx === active ? ' active' : ''}`}

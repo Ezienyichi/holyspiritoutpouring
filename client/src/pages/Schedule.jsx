@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
-
-const API_BASE = import.meta.env.VITE_API_URL || ''
 import Footer from '../components/Footer'
 import SessionRow from '../components/SessionRow'
+
+const API_BASE = import.meta.env.VITE_API_URL || ''
 
 const DAYS = [
   { day: 1, label: 'Day 1 — Aug 15' },
@@ -19,7 +19,7 @@ export default function Schedule() {
 
   useEffect(() => {
     setLoading(true)
-    fetch(API_BASE + `/api/sessions?day=${activeDay}`).then(r => r.json()).then(d => { setSessions(d); setLoading(false); setExpanded(null) }).catch(() => setLoading(false))
+    fetch(API_BASE + `/api/sessions?day=${activeDay}`).then(r => r.json()).then(d => { setSessions(Array.isArray(d) ? d : []); setLoading(false); setExpanded(null) }).catch(() => setLoading(false))
   }, [activeDay])
 
   return (

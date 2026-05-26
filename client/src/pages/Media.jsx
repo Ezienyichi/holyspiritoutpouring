@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
-import Footer from '../components/Footer'
 
 function getYouTubeId(url) {
   if (!url) return null
@@ -79,7 +79,7 @@ export default function Media() {
   const [lightboxItem, setLightboxItem] = useState(null)
 
   useEffect(() => {
-    fetch(API_BASE + '/api/media').then(r => r.json()).then(d => { setItems(d); setLoading(false) }).catch(() => setLoading(false))
+    fetch(API_BASE + '/api/media').then(r => r.json()).then(d => { setItems(Array.isArray(d) ? d : []); setLoading(false) }).catch(() => setLoading(false))
   }, [])
 
   useEffect(() => {

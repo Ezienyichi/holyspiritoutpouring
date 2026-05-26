@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
-
-const API_BASE = import.meta.env.VITE_API_URL || ''
 import Footer from '../components/Footer'
 import PrayerCard from '../components/PrayerCard'
+
+const API_BASE = import.meta.env.VITE_API_URL || ''
 
 const CATS = ['Healing','Salvation','Finances','Family','Direction','Other']
 
@@ -17,7 +17,7 @@ export default function Prayer() {
   })
 
   useEffect(() => {
-    fetch(API_BASE + '/api/prayers').then(r => r.json()).then(d => { setPrayers(d); setLoading(false) }).catch(() => setLoading(false))
+    fetch(API_BASE + '/api/prayers').then(r => r.json()).then(d => { setPrayers(Array.isArray(d) ? d : []); setLoading(false) }).catch(() => setLoading(false))
   }, [])
 
   function onPray(id) {
