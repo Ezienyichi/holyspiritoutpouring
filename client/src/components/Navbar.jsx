@@ -27,7 +27,7 @@ export default function Navbar() {
 
   const links = [
     { to: '/', label: 'About' },
-    { to: '/speakers', label: 'Speakers' },
+    { to: '/team', label: 'Team' },
     { to: '/schedule', label: 'Schedule' },
     { to: '/media', label: 'Media' },
     { to: '/prayer', label: 'Prayer' },

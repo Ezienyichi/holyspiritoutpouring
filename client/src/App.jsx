@@ -22,6 +22,7 @@ import AdminLivestream from './admin/AdminLivestream'
 import AdminUsers from './admin/AdminUsers'
 import AdminPreviousEvents from './admin/AdminPreviousEvents'
 import AdminPastMinisters from './admin/AdminPastMinisters'
+import AdminSponsors from './admin/AdminSponsors'
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/speakers" element={<Speakers />} />
+        <Route path="/team" element={<Speakers />} />
         <Route path="/schedule" element={<Schedule />} />
         <Route path="/media" element={<Media />} />
         <Route path="/prayer" element={<Prayer />} />
@@ -50,6 +52,7 @@ export default function App() {
           <Route path="users" element={<AdminUsers />} />
           <Route path="previous-events" element={<AdminPreviousEvents />} />
           <Route path="past-ministers" element={<AdminPastMinisters />} />
+          <Route path="sponsors" element={<AdminSponsors />} />
         </Route>
       </Routes>
     </BrowserRouter>

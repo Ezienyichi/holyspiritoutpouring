@@ -15,7 +15,8 @@ function parseJwt(token) {
 const ALL_NAV = [
   { to: '/admin', label: 'Dashboard', end: true, roles: ['super_admin', 'content_manager', 'admin'] },
   { to: '/admin/config', label: 'Site Config', roles: ['super_admin', 'admin'] },
-  { to: '/admin/speakers', label: 'Speakers', roles: ['super_admin', 'content_manager', 'admin'] },
+  { to: '/admin/speakers', label: 'Team Members', roles: ['super_admin', 'content_manager', 'admin'] },
+  { to: '/admin/sponsors', label: 'Sponsors', roles: ['super_admin', 'content_manager', 'admin'] },
   { to: '/admin/previous-events', label: 'Previous Events', roles: ['super_admin', 'content_manager', 'admin'] },
   { to: '/admin/past-ministers', label: 'Past Ministers', roles: ['super_admin', 'content_manager', 'admin'] },
   { to: '/admin/schedule', label: 'Schedule', roles: ['super_admin', 'admin'] },

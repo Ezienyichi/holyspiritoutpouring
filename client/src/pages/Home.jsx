@@ -92,22 +92,72 @@ function HeroSection({ config }) {
   )
 }
 
+/* ── SPONSORS STRIP ──────────────────────────── */
+const FALLBACK_SPONSORS = [
+  'Sponsor One','Partner Two','Ministry Three','Church Four','Brand Five',
+  'Foundation Six','Network Seven','Media Eight','Church Nine','Ministry Ten',
+]
+
+function SponsorsStrip({ sponsors }) {
+  const items = sponsors.length > 0 ? sponsors : FALLBACK_SPONSORS.map((n, i) => ({ id: i, name: n, logo_url: '' }))
+  const doubled = [...items, ...items]
+  return (
+    <div style={{
+      height: 80, background: '#FFFFFF',
+      borderTop: '1px solid #EEEEEE', borderBottom: '1px solid #EEEEEE',
+      display: 'flex', alignItems: 'center', overflow: 'hidden',
+    }}>
+      <div style={{
+        flexShrink: 0, paddingLeft: 24, paddingRight: 24,
+        borderRight: '1px solid #EEEEEE', background: '#FFFFFF',
+        zIndex: 2, height: '100%', display: 'flex', alignItems: 'center',
+        fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 600,
+        letterSpacing: '0.1em', textTransform: 'uppercase', color: '#040102',
+        whiteSpace: 'nowrap',
+      }}>
+        Partners &amp; Sponsors
+      </div>
+      <div style={{ flex: 1, overflow: 'hidden', position: 'relative', height: '100%' }}>
+        <div className="sponsor-track" style={{ display: 'flex', gap: 16, alignItems: 'center', height: '100%' }}>
+          {doubled.map((s, i) => (
+            s.logo_url ? (
+              <a key={i} href={s.website_url || '#'} target={s.website_url ? '_blank' : undefined} rel="noopener noreferrer"
+                style={{ flexShrink: 0, height: 40, display: 'flex', alignItems: 'center' }}>
+                <img src={s.logo_url} alt={s.name} style={{ height: 40, maxWidth: 120, objectFit: 'contain', display: 'block' }} />
+              </a>
+            ) : (
+              <div key={i} style={{
+                flexShrink: 0, background: '#F8F8F8', border: '1px solid #EEEEEE', borderRadius: 6,
+                padding: '0 20px', height: 40, display: 'flex', alignItems: 'center',
+                fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600, color: '#040102',
+                whiteSpace: 'nowrap',
+              }}>
+                {s.name}
+              </div>
+            )
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 /* ── ABOUT (with embedded features) ──────────── */
 const FEATURES = [
   {
-    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>,
+    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>,
     title: 'Anointed Worship', body: 'Three nights of Spirit-led worship that will usher you into the very presence of God.'
   },
   {
-    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
+    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
     title: 'Power-Packed Teaching', body: 'World-class ministers delivering fresh revelation directly from the throne room of God.'
   },
   {
-    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>,
+    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>,
     title: 'Corporate Prayer', body: 'Join thousands in united intercession — heaven responds when believers pray together.'
   },
   {
-    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
+    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
     title: 'Global Livestream', body: 'Join from anywhere in the world — the fire of revival has no borders.'
   },
 ]
@@ -131,7 +181,7 @@ function AboutSection({ config }) {
             <p className="about-body">{config.aboutText1 || "The Holy Spirit Outpouring Conference is more than an event — it's a movement. For three transformative days, believers from every nation will gather to seek the face of God, receive fresh fire, and be equipped for end-time harvest."}</p>
             <p className="about-body">{config.aboutText2 || 'Whether you attend in person in Port Harcourt or join our global livestream, prepare for an encounter that will ignite your faith, restore your passion, and release the supernatural in your life.'}</p>
             <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-              <Link to="/speakers" className="btn btn-orange">
+              <Link to="/team" className="btn btn-orange">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 Meet the Speakers
               </Link>
@@ -157,13 +207,14 @@ function AboutSection({ config }) {
 
           <div className="about-img-wrap">
             <div className="about-img">
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-                <svg width="64" height="64" viewBox="0 0 22 28" fill="none">
-                  <path d="M11 0C11 0 4 7 4 14C4 17.31 5.45 20.28 7.73 22.36C7.27 21.34 7 20.2 7 19C7 15.69 9.24 12.94 11 11C12.76 12.94 15 15.69 15 19C15 20.2 14.73 21.34 14.27 22.36C16.55 20.28 18 17.31 18 14C18 7 11 0 11 0Z" fill="#c90505" opacity="0.3"/>
-                  <path d="M11 14C11 14 8 17 8 20C8 21.66 9.34 23 11 23C12.66 23 14 21.66 14 20C14 17 11 14 11 14Z" fill="#a00404" opacity="0.3"/>
-                </svg>
-                <span className="about-img-label">Conference photo coming soon</span>
-              </div>
+              {config.about_image_url ? (
+                <img src={config.about_image_url} alt="Conference Flyer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#CCCCCC" strokeWidth="1.5" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  <span style={{ color: '#BBBBBB', fontSize: '0.85rem' }}>Conference Flyer</span>
+                </div>
+              )}
             </div>
             <div className="about-stat-card">
               <span className="stat-num">{attendees}</span>
@@ -229,7 +280,7 @@ function SpeakersSection({ speakers }) {
           ))}
         </div>
         <div className="text-center" style={{ marginTop: '2.5rem' }}>
-          <Link to="/speakers" className="btn btn-navy">
+          <Link to="/team" className="btn btn-navy">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             View All Speakers
           </Link>
@@ -557,6 +608,7 @@ export default function Home() {
   const [media, setMedia] = useState([])
   const [previousEvents, setPreviousEvents] = useState([])
   const [pastMinisters, setPastMinisters] = useState([])
+  const [sponsors, setSponsors] = useState([])
 
   useEffect(() => {
     fetch(API_BASE + '/api/speakers').then(r => r.json()).then(d => setSpeakers(Array.isArray(d) ? d : [])).catch(() => {})
@@ -564,12 +616,14 @@ export default function Home() {
     fetch(API_BASE + '/api/media').then(r => r.json()).then(d => setMedia(Array.isArray(d) ? d : [])).catch(() => {})
     fetch(API_BASE + '/api/previous-events').then(r => r.json()).then(d => setPreviousEvents(Array.isArray(d) ? d : [])).catch(() => {})
     fetch(API_BASE + '/api/past-ministers').then(r => r.json()).then(d => setPastMinisters(Array.isArray(d) ? d : [])).catch(() => {})
+    fetch(API_BASE + '/api/sponsors').then(r => r.json()).then(d => setSponsors(Array.isArray(d) ? d : [])).catch(() => {})
   }, [])
 
   return (
     <>
       <Navbar />
       <HeroSection config={config} />
+      <SponsorsStrip sponsors={sponsors} />
       <AboutSection config={config} />
       <PreviousEventsSection events={previousEvents} />
       <SpeakersSection speakers={speakers} />

@@ -261,6 +261,12 @@ export default function SiteConfig() {
         <Section id="about" open={open} onToggle={setOpen} title="About Section Content"
           icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>}>
           <FG label="About Heading"><input {...inp('about_heading')} placeholder="A Divine Gathering for Such a Time" /></FG>
+          <FG label="About Section Flyer / Image" hint="Upload a landscape (16:9) conference flyer or event photo. Shows in the About section image box.">
+            <input type="url" {...inp('about_image_url')} placeholder="https://… or upload via Cloudinary" />
+            {config.about_image_url && (
+              <img src={config.about_image_url} alt="About flyer preview" style={{ marginTop: '0.5rem', width: '100%', maxWidth: 480, aspectRatio: '16/9', objectFit: 'cover', borderRadius: 8 }} onError={e => e.target.style.display = 'none'} />
+            )}
+          </FG>
           <FG label="About Paragraph 1"><textarea {...ta('aboutText1')} rows={4} /></FG>
           <FG label="About Paragraph 2"><textarea {...ta('aboutText2')} rows={4} /></FG>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0 1rem' }}>
@@ -269,7 +275,7 @@ export default function SiteConfig() {
             <FG label="Days"><input {...inp('about_stats_days')} placeholder="3" /></FG>
             <FG label="Sessions"><input {...inp('about_stats_sessions')} placeholder="40+" /></FG>
           </div>
-          <SaveBtn onClick={() => saveKeys(['about_heading','aboutText1','aboutText2','about_stats_attendees','about_stats_speakers','about_stats_days','about_stats_sessions'])} saving={saving} />
+          <SaveBtn onClick={() => saveKeys(['about_heading','about_image_url','aboutText1','aboutText2','about_stats_attendees','about_stats_speakers','about_stats_days','about_stats_sessions'])} saving={saving} />
         </Section>
 
         {/* ── 7. SEO ── */}

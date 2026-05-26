@@ -7,8 +7,9 @@ const API_BASE = import.meta.env.VITE_API_URL || ''
 const EMPTY = { name: '', title: '', church: '', topic: '', bio: '', photoUrl: '', instagram: '', twitter: '', displayOrder: 0, role: 'minister' }
 
 const ROLES = [
-  { value: 'minister', label: 'Featured Speaker / Minister' },
-  { value: 'convening_team', label: 'Convening Team' },
+  { value: 'minister', label: 'Minister / Featured Speaker' },
+  { value: 'convener', label: 'Host / Convener' },
+  { value: 'management', label: 'Management Team' },
   { value: 'sub_team_head', label: 'Sub Team Head' },
   { value: 'volunteer', label: 'Volunteer' },
 ]
@@ -165,8 +166,8 @@ export default function AdminSpeakers() {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h2 className="admin-page-title" style={{ margin: 0 }}>Speakers</h2>
-        <button className="btn btn-orange" onClick={openNew}>+ Add Speaker</button>
+        <h2 className="admin-page-title" style={{ margin: 0 }}>Team Members</h2>
+        <button className="btn btn-orange" onClick={openNew}>+ Add Member</button>
       </div>
 
       {loading ? <div className="loading-state">Loading…</div> : (

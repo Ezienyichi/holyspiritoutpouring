@@ -152,6 +152,26 @@ async function initializeDatabase() {
     )
   `);
 
+  await query(`
+    CREATE TABLE IF NOT EXISTS sponsors (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL DEFAULT '',
+      logo_url TEXT DEFAULT '',
+      website_url TEXT DEFAULT '',
+      display_order INTEGER DEFAULT 0,
+      active INTEGER DEFAULT 1,
+      deleted BOOLEAN DEFAULT FALSE,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
+
+  // Add columns to existing tables that may already exist (safe ALTER TABLE IF NOT EXISTS)
+  await query(`ALTER TABLE speakers ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'minister'`).catch(() => {});
+  await query(`ALTER TABLE speakers ADD COLUMN IF NOT EXISTS deleted BOOLEAN DEFAULT FALSE`).catch(() => {});
+  await query(`ALTER TABLE media ADD COLUMN IF NOT EXISTS deleted BOOLEAN DEFAULT FALSE`).catch(() => {});
+  await query(`ALTER TABLE sponsors ADD COLUMN IF NOT EXISTS deleted BOOLEAN DEFAULT FALSE`).catch(() => {});
+  await query(`INSERT INTO config (key, value) VALUES ('about_image_url', '') ON CONFLICT (key) DO NOTHING`).catch(() => {});
+
   await seed();
 }
 
@@ -233,6 +253,75 @@ async function seed() {
         'INSERT INTO speakers (name, title, church, topic, bio, "photoUrl", "socialYoutube", "socialInstagram", "socialFacebook", "displayOrder", role) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)',
         [name, title, church, topic, bio, photoUrl, socialYoutube, socialInstagram, socialFacebook, displayOrder, role]
       );
+    }
+  }
+
+  // Conveners — seed only if none exist yet
+  const convCount = parseInt((await query("SELECT COUNT(*) FROM speakers WHERE role = 'convener'")).rows[0].count, 10);
+  if (convCount === 0) {
+    const conveners = [
+      ['Convener Name 1', 'Lead Convener', '', '', '', '', '', '', '', 1, 'convener'],
+      ['Convener Name 2', 'Co-Convener', '', '', '', '', '', '', '', 2, 'convener'],
+      ['Host Name 1', 'Conference Host', '', '', '', '', '', '', '', 3, 'convener'],
+      ['Host Name 2', 'Conference Host', '', '', '', '', '', '', '', 4, 'convener'],
+      ['Host Name 3', 'Programme Host', '', '', '', '', '', '', '', 5, 'convener'],
+    ];
+    for (const [name, title, church, topic, bio, photoUrl, socialYoutube, socialInstagram, socialFacebook, displayOrder, role] of conveners) {
+      await query(
+        'INSERT INTO speakers (name, title, church, topic, bio, "photoUrl", "socialYoutube", "socialInstagram", "socialFacebook", "displayOrder", role) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)',
+        [name, title, church, topic, bio, photoUrl, socialYoutube, socialInstagram, socialFacebook, displayOrder, role]
+      );
+    }
+  }
+
+  // Management — seed only if none exist yet
+  const mgmtCount = parseInt((await query("SELECT COUNT(*) FROM speakers WHERE role = 'management'")).rows[0].count, 10);
+  if (mgmtCount === 0) {
+    const mgmt = [
+      ['Manager Name 1', 'Conference Director', '', '', '', '', '', '', '', 1, 'management'],
+      ['Manager Name 2', 'Operations Manager', '', '', '', '', '', '', '', 2, 'management'],
+      ['Manager Name 3', 'Creative Director', '', '', '', '', '', '', '', 3, 'management'],
+      ['Manager Name 4', 'Finance Manager', '', '', '', '', '', '', '', 4, 'management'],
+      ['Manager Name 5', 'Communications Manager', '', '', '', '', '', '', '', 5, 'management'],
+    ];
+    for (const [name, title, church, topic, bio, photoUrl, socialYoutube, socialInstagram, socialFacebook, displayOrder, role] of mgmt) {
+      await query(
+        'INSERT INTO speakers (name, title, church, topic, bio, "photoUrl", "socialYoutube", "socialInstagram", "socialFacebook", "displayOrder", role) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)',
+        [name, title, church, topic, bio, photoUrl, socialYoutube, socialInstagram, socialFacebook, displayOrder, role]
+      );
+    }
+  }
+
+  // Sub team heads — seed only if none exist yet
+  const subCount = parseInt((await query("SELECT COUNT(*) FROM speakers WHERE role = 'sub_team_head'")).rows[0].count, 10);
+  if (subCount === 0) {
+    const subRoles = ['Worship Lead','Prayer Lead','Media Lead','Hospitality Lead','Ushering Lead','Creative Arts Lead','Security Lead','Registration Lead','Children Ministry Lead','Welfare Lead','Transport Lead','Communications Lead'];
+    for (let i = 0; i < subRoles.length; i++) {
+      await query(
+        'INSERT INTO speakers (name, title, "displayOrder", role) VALUES ($1,$2,$3,$4)',
+        [`Sub Team Head ${i+1}`, subRoles[i], i+1, 'sub_team_head']
+      );
+    }
+  }
+
+  // Volunteers — seed only if none exist yet
+  const volCount = parseInt((await query("SELECT COUNT(*) FROM speakers WHERE role = 'volunteer'")).rows[0].count, 10);
+  if (volCount === 0) {
+    const volRoles = ['Worship Team','Prayer Team','Media Team','Hospitality Team','Ushering Team','Registration Team','Children Ministry','Welfare Team','Transport Team','Creative Team','Security Team','Communications Team'];
+    for (let i = 0; i < 30; i++) {
+      await query(
+        'INSERT INTO speakers (name, title, "displayOrder", role) VALUES ($1,$2,$3,$4)',
+        [`Volunteer ${i+1}`, volRoles[i % volRoles.length], i+1, 'volunteer']
+      );
+    }
+  }
+
+  // Sponsors — seed only if none exist yet
+  const spnCount = parseInt((await query('SELECT COUNT(*) FROM sponsors')).rows[0].count, 10);
+  if (spnCount === 0) {
+    const sps = ['Sponsor One','Partner Two','Ministry Three','Church Four','Brand Five','Foundation Six','Network Seven','Media Eight','Church Nine','Ministry Ten'];
+    for (let i = 0; i < sps.length; i++) {
+      await query('INSERT INTO sponsors (name, display_order, active) VALUES ($1,$2,$3)', [sps[i], i+1, 1]);
     }
   }
 

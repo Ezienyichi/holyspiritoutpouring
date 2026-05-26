@@ -5,7 +5,7 @@ const requireAuth = require('../middleware/auth');
 
 router.get('/', async (req, res) => {
   try {
-    const result = await query('SELECT * FROM speakers ORDER BY "displayOrder", id');
+    const result = await query('SELECT * FROM speakers WHERE deleted IS NOT TRUE ORDER BY "displayOrder", id');
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -30,7 +30,7 @@ router.put('/:id', requireAuth, async (req, res) => {
   try {
     const { name, title, church, topic, bio, photoUrl, socialYoutube, socialInstagram, socialFacebook, displayOrder, role } = req.body;
     const result = await query(
-      'UPDATE speakers SET name=$1, title=$2, church=$3, topic=$4, bio=$5, "photoUrl"=$6, "socialYoutube"=$7, "socialInstagram"=$8, "socialFacebook"=$9, "displayOrder"=$10, role=$11 WHERE id=$12 RETURNING *',
+      'UPDATE speakers SET name=$1, title=$2, church=$3, topic=$4, bio=$5, "photoUrl"=$6, "socialYoutube"=$7, "socialInstagram"=$8, "socialFacebook"=$9, "displayOrder"=$10, role=$11 WHERE id=$12 AND deleted IS NOT TRUE RETURNING *',
       [name, title || '', church || '', topic || '', bio || '', photoUrl || '', socialYoutube || '', socialInstagram || '', socialFacebook || '', displayOrder || 0, role || 'minister', req.params.id]
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });
@@ -42,9 +42,17 @@ router.put('/:id', requireAuth, async (req, res) => {
 
 router.delete('/:id', requireAuth, async (req, res) => {
   try {
-    const result = await query('DELETE FROM speakers WHERE id = $1', [req.params.id]);
-    if (result.rowCount === 0) return res.status(404).json({ error: 'Not found' });
+    await query('UPDATE speakers SET deleted = TRUE WHERE id = $1', [req.params.id]);
     res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put('/:id/restore', requireAuth, async (req, res) => {
+  try {
+    const result = await query('UPDATE speakers SET deleted = FALSE WHERE id = $1 RETURNING *', [req.params.id]);
+    res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

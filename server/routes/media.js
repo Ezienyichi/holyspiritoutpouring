@@ -5,7 +5,7 @@ const requireAuth = require('../middleware/auth');
 
 router.get('/', async (req, res) => {
   try {
-    const result = await query('SELECT * FROM media ORDER BY "createdAt" DESC');
+    const result = await query('SELECT * FROM media WHERE deleted IS NOT TRUE ORDER BY "createdAt" DESC');
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -98,9 +98,17 @@ router.post('/upload', requireAuth, (req, res) => {
 
 router.delete('/:id', requireAuth, async (req, res) => {
   try {
-    const result = await query('DELETE FROM media WHERE id = $1', [req.params.id]);
-    if (result.rowCount === 0) return res.status(404).json({ error: 'Not found' });
+    await query('UPDATE media SET deleted = TRUE WHERE id = $1', [req.params.id]);
     res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put('/:id/restore', requireAuth, async (req, res) => {
+  try {
+    const result = await query('UPDATE media SET deleted = FALSE WHERE id = $1 RETURNING *', [req.params.id]);
+    res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

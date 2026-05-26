@@ -36,7 +36,7 @@ export default function Footer() {
             <h4 className="footer-col-title">Quick Links</h4>
             <ul className="footer-links">
               <li><Link to="/">About</Link></li>
-              <li><Link to="/speakers">Speakers</Link></li>
+              <li><Link to="/team">Team</Link></li>
               <li><Link to="/schedule">Schedule</Link></li>
               <li><Link to="/give">Register / Give</Link></li>
               <li><Link to="/prayer">Prayer Wall</Link></li>
