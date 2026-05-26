@@ -92,43 +92,75 @@ function HeroSection({ config }) {
   )
 }
 
-/* ── SPONSORS STRIP ──────────────────────────── */
+/* ── FALLBACK DATA ───────────────────────────── */
 const FALLBACK_SPONSORS = [
-  'Sponsor One','Partner Two','Ministry Three','Church Four','Brand Five',
-  'Foundation Six','Network Seven','Media Eight','Church Nine','Ministry Ten',
+  { id:1, name:'Ministry Partner', logo_url:'' },
+  { id:2, name:'Church Network', logo_url:'' },
+  { id:3, name:'Media Partner', logo_url:'' },
+  { id:4, name:'Foundation', logo_url:'' },
+  { id:5, name:'Kingdom Network', logo_url:'' },
+  { id:6, name:'Gospel Media', logo_url:'' },
+  { id:7, name:'Faith Partner', logo_url:'' },
+  { id:8, name:'Revival Network', logo_url:'' },
 ]
 
+const FALLBACK_MINISTERS = [
+  { id:1, name:'Min Moses Bliss', ministry_role:'Worship Leader', year:'2024', photo_url:'' },
+  { id:2, name:'Min GUC', ministry_role:'Gospel Artist', year:'2024', photo_url:'' },
+  { id:3, name:'Min Judikay', ministry_role:'Gospel Artist', year:'2023', photo_url:'' },
+  { id:4, name:'Min Empraiz', ministry_role:'Worship Leader', year:'2023', photo_url:'' },
+  { id:5, name:'Micah Praise Prophet', ministry_role:'Praise Minister', year:'2023', photo_url:'' },
+  { id:6, name:'Min Carlos Rivera', ministry_role:'Worship Leader', year:'2022', photo_url:'' },
+  { id:7, name:'Min GP Samz', ministry_role:'Deep Worship', year:'2024', photo_url:'' },
+  { id:8, name:'Min Elekwu', ministry_role:'Traditional Praise', year:'2024', photo_url:'' },
+  { id:9, name:'Min Caleb', ministry_role:'Gospel Artist', year:'2025', photo_url:'' },
+  { id:10, name:'Min DFO', ministry_role:'Deep Worship', year:'2024', photo_url:'' },
+]
+
+const FALLBACK_EVENTS = [
+  { id:1, year:'2018', title:'Outpouring 2018', tagline:'The First Outpouring — Where It All Began', image_url:'', highlights_url:'' },
+  { id:2, year:'2019', title:'Outpouring 2019', tagline:'Deeper Waters — A Year of Miracles', image_url:'', highlights_url:'' },
+  { id:3, year:'2020', title:'Outpouring 2020', tagline:'Against All Odds — The Virtual Outpouring', image_url:'', highlights_url:'' },
+  { id:4, year:'2021', title:'Outpouring 2021', tagline:'Rising Again — Post Pandemic Revival', image_url:'', highlights_url:'' },
+  { id:5, year:'2022', title:'Outpouring 2022', tagline:'Fire Across the Nation', image_url:'', highlights_url:'' },
+  { id:6, year:'2023', title:'Outpouring 2023', tagline:'Generation of Power', image_url:'', highlights_url:'' },
+  { id:7, year:'2024', title:'Outpouring 2024', tagline:'Heaven Came Down', image_url:'', highlights_url:'' },
+  { id:8, year:'2025', title:'Outpouring 2025', tagline:'The Greatest Yet — August 15–17', image_url:'', highlights_url:'' },
+]
+
+/* ── SPONSORS STRIP ──────────────────────────── */
+
 function SponsorsStrip({ sponsors }) {
-  const items = sponsors.length > 0 ? sponsors : FALLBACK_SPONSORS.map((n, i) => ({ id: i, name: n, logo_url: '' }))
+  const items = sponsors.length > 0 ? sponsors : FALLBACK_SPONSORS
   const doubled = [...items, ...items]
   return (
     <div style={{
-      height: 80, background: '#FFFFFF',
+      height: 72, background: '#FFFFFF', position: 'relative',
       borderTop: '1px solid #EEEEEE', borderBottom: '1px solid #EEEEEE',
-      display: 'flex', alignItems: 'center', overflow: 'hidden',
+      display: 'flex', alignItems: 'center', overflow: 'hidden', width: '100%',
     }}>
       <div style={{
-        flexShrink: 0, paddingLeft: 24, paddingRight: 24,
-        borderRight: '1px solid #EEEEEE', background: '#FFFFFF',
-        zIndex: 2, height: '100%', display: 'flex', alignItems: 'center',
-        fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 600,
-        letterSpacing: '0.1em', textTransform: 'uppercase', color: '#040102',
+        position: 'absolute', left: 0, top: 0, bottom: 0, width: 155,
+        background: '#FFFFFF', borderRight: '1px solid #EEEEEE', zIndex: 2,
+        display: 'flex', alignItems: 'center', paddingLeft: 20, paddingRight: 20,
+        fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 700,
+        letterSpacing: '0.12em', textTransform: 'uppercase', color: '#040102',
         whiteSpace: 'nowrap',
       }}>
         Partners &amp; Sponsors
       </div>
-      <div style={{ flex: 1, overflow: 'hidden', position: 'relative', height: '100%' }}>
-        <div className="sponsor-track" style={{ display: 'flex', gap: 16, alignItems: 'center', height: '100%' }}>
+      <div style={{ flex: 1, overflow: 'hidden', marginLeft: 155, height: '100%' }}>
+        <div className="sponsor-track" style={{ display: 'flex', gap: 40, alignItems: 'center', height: '100%', width: 'max-content' }}>
           {doubled.map((s, i) => (
             s.logo_url ? (
               <a key={i} href={s.website_url || '#'} target={s.website_url ? '_blank' : undefined} rel="noopener noreferrer"
-                style={{ flexShrink: 0, height: 40, display: 'flex', alignItems: 'center' }}>
-                <img src={s.logo_url} alt={s.name} style={{ height: 40, maxWidth: 120, objectFit: 'contain', display: 'block' }} />
+                style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+                <img src={s.logo_url} alt={s.name} style={{ height: 36, objectFit: 'contain', filter: 'grayscale(20%)', opacity: 0.85, display: 'block' }} />
               </a>
             ) : (
               <div key={i} style={{
                 flexShrink: 0, background: '#F8F8F8', border: '1px solid #EEEEEE', borderRadius: 6,
-                padding: '0 20px', height: 40, display: 'flex', alignItems: 'center',
+                padding: '8px 20px', height: 40, display: 'flex', alignItems: 'center',
                 fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600, color: '#040102',
                 whiteSpace: 'nowrap',
               }}>
@@ -229,22 +261,28 @@ function AboutSection({ config }) {
 
 /* ── PREVIOUS EVENTS CAROUSEL ─────────────────── */
 function PreviousEventsSection({ events }) {
-  if (!events.length) return null
+  const display = events.length > 0 ? events : FALLBACK_EVENTS
   return (
     <section className="prev-events-section">
       <div className="container">
-        <div className="text-center" style={{ marginBottom: '3rem' }}>
+        <div className="text-center" style={{ marginBottom: '3.5rem' }}>
           <span className="section-label">Our Journey</span>
-          <h2 className="section-title" style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.8rem,3.5vw,2.8rem)', fontWeight: 700 }}>Outpouring Through the Years</h2>
+          <h2 className="section-title">Outpouring Through the Years</h2>
           <div className="gold-line centered" />
-          <p className="section-subtitle centered">A legacy of encounters, revivals, and transformed lives since 2018.</p>
+          <p className="section-subtitle centered">A legacy of encounters, revivals and transformed lives since 2018.</p>
         </div>
         <Carousel3D
-          items={events}
-          autoAdvanceMs={5000}
+          items={display}
+          autoAdvanceMs={6000}
+          cardWidth={340}
+          cardHeight={460}
           renderCard={(ev, isActive) => (
             <div className="prev-events-card" style={{ boxShadow: isActive ? '0 24px 60px rgba(0,0,0,0.3)' : '0 8px 32px rgba(0,0,0,0.2)' }}>
-              <img src={ev.image_url || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=640&h=853&fit=crop'} alt={ev.title} loading="lazy" />
+              {ev.image_url ? (
+                <img src={ev.image_url} alt={ev.title} loading="lazy" />
+              ) : (
+                <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #0D1B2A 0%, #1a0a2e 100%)' }} />
+              )}
               <div className="prev-events-overlay" />
               <div className={`prev-events-year${String(ev.year) === '2025' ? ' current' : ''}`}>{ev.year}</div>
               <div className="prev-events-content">
@@ -292,22 +330,28 @@ function SpeakersSection({ speakers }) {
 
 /* ── PAST MINISTERS CAROUSEL ─────────────────── */
 function PastMinistersSection({ ministers }) {
-  if (!ministers.length) return null
+  const display = ministers.length > 0 ? ministers : FALLBACK_MINISTERS
   return (
     <section className="ministers-section">
       <div className="container">
-        <div className="text-center" style={{ marginBottom: '3rem' }}>
-          <span className="section-label">Past Ministers</span>
-          <h2 className="section-title">Anointed Voices Across the Years</h2>
+        <div className="text-center" style={{ marginBottom: '3.5rem' }}>
+          <span className="section-label">Anointed Voices Through the Years</span>
+          <h2 className="section-title">Ministers Who Have Graced Our Stage</h2>
           <div className="gold-line centered" />
-          <p className="section-subtitle centered">Gospel ministers and worship leaders who have ministered at Outpouring.</p>
+          <p className="section-subtitle centered">Gospel ministers, worship leaders and choirs who have ministered at Outpouring.</p>
         </div>
         <Carousel3D
-          items={ministers}
-          autoAdvanceMs={4000}
+          items={display}
+          autoAdvanceMs={5000}
+          cardWidth={320}
+          cardHeight={420}
           renderCard={(m, isActive) => (
             <div className="ministers-card" style={{ boxShadow: isActive ? '0 24px 60px rgba(0,0,0,0.3)' : '0 8px 32px rgba(0,0,0,0.2)' }}>
-              <img src={m.photo_url || 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=640&h=853&fit=crop'} alt={m.name} loading="lazy" />
+              {m.photo_url ? (
+                <img src={m.photo_url} alt={m.name} loading="lazy" />
+              ) : (
+                <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #0D1B2A 0%, #1a0a2e 100%)' }} />
+              )}
               <div className="ministers-overlay" />
               <div className="ministers-year">{m.year}</div>
               <div className="ministers-content">
@@ -625,9 +669,9 @@ export default function Home() {
       <HeroSection config={config} />
       <SponsorsStrip sponsors={sponsors} />
       <AboutSection config={config} />
-      <PreviousEventsSection events={previousEvents} />
       <SpeakersSection speakers={speakers} />
       <PastMinistersSection ministers={pastMinisters} />
+      <PreviousEventsSection events={previousEvents} />
       <ScheduleSection />
       <TestimonialsSection />
       <PrayerSection prayers={prayers} />

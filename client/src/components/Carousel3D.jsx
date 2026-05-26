@@ -1,11 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
-export default function Carousel3D({ items, renderCard, autoAdvanceMs = 5000, className = '' }) {
+export default function Carousel3D({ items, renderCard, autoAdvanceMs = 5000, cardWidth = 320, cardHeight = 420, className = '' }) {
   const safeItems = Array.isArray(items) ? items : []
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
-  const [dragStart, setDragStart] = useState(null)
-  const timerRef = useRef(null)
+  const [touchStart, setTouchStart] = useState(null)
   const n = safeItems.length
 
   const next = useCallback(() => setActive(i => (i + 1) % Math.max(n, 1)), [n])
@@ -13,38 +12,22 @@ export default function Carousel3D({ items, renderCard, autoAdvanceMs = 5000, cl
 
   useEffect(() => {
     if (paused || n <= 1) return
-    timerRef.current = setInterval(next, autoAdvanceMs)
-    return () => clearInterval(timerRef.current)
+    const timer = setInterval(next, autoAdvanceMs)
+    return () => clearInterval(timer)
   }, [paused, next, autoAdvanceMs, n])
 
+  const sideOff = cardWidth + 20
+  const farOff = cardWidth + 260
+
   function getTransform(idx) {
-    const offset = ((idx - active + n) % n)
-    const rel = offset <= n / 2 ? offset : offset - n // -2,-1,0,1,2
-
-    if (rel === 0) return {
-      transform: 'translateX(-50%) scale(1.05)',
-      opacity: 1, zIndex: 10, filter: 'none', pointerEvents: 'auto',
-    }
-    if (rel === -1) return {
-      transform: 'translateX(calc(-50% - 300px)) scale(0.85) rotateY(8deg)',
-      opacity: 0.6, zIndex: 5, filter: 'blur(1px)', pointerEvents: 'auto',
-    }
-    if (rel === 1) return {
-      transform: 'translateX(calc(-50% + 300px)) scale(0.85) rotateY(-8deg)',
-      opacity: 0.6, zIndex: 5, filter: 'blur(1px)', pointerEvents: 'auto',
-    }
-    return {
-      transform: `translateX(calc(-50% + ${rel * 400}px)) scale(0.65)`,
-      opacity: 0, zIndex: 1, pointerEvents: 'none',
-    }
-  }
-
-  function handleTouchStart(e) { setDragStart(e.touches[0].clientX) }
-  function handleTouchEnd(e) {
-    if (dragStart === null) return
-    const diff = e.changedTouches[0].clientX - dragStart
-    if (Math.abs(diff) > 40) diff > 0 ? prev() : next()
-    setDragStart(null)
+    const raw = (idx - active + n) % n
+    const rel = raw <= n / 2 ? raw : raw - n
+    if (rel === 0) return { transform: 'translateX(-50%) scale(1)', opacity: 1, zIndex: 10, filter: 'none', pointerEvents: 'auto', boxShadow: '0 24px 60px rgba(0,0,0,0.25)' }
+    if (rel === -1) return { transform: `translateX(calc(-50% - ${sideOff}px)) scale(0.88)`, opacity: 0.65, zIndex: 5, filter: 'blur(1.5px) brightness(0.8)', pointerEvents: 'auto' }
+    if (rel === 1) return { transform: `translateX(calc(-50% + ${sideOff}px)) scale(0.88)`, opacity: 0.65, zIndex: 5, filter: 'blur(1.5px) brightness(0.8)', pointerEvents: 'auto' }
+    if (rel === -2) return { transform: `translateX(calc(-50% - ${farOff}px)) scale(0.72)`, opacity: 0.3, zIndex: 2, filter: 'blur(3px) brightness(0.6)', pointerEvents: 'none' }
+    if (rel === 2) return { transform: `translateX(calc(-50% + ${farOff}px)) scale(0.72)`, opacity: 0.3, zIndex: 2, filter: 'blur(3px) brightness(0.6)', pointerEvents: 'none' }
+    return { transform: 'translateX(-50%)', opacity: 0, zIndex: 1, pointerEvents: 'none' }
   }
 
   if (n === 0) return null
@@ -54,16 +37,31 @@ export default function Carousel3D({ items, renderCard, autoAdvanceMs = 5000, cl
       className={`c3d-wrapper${className ? ' ' + className : ''}`}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
+      onTouchStart={e => setTouchStart(e.touches[0].clientX)}
+      onTouchEnd={e => {
+        if (touchStart === null) return
+        const diff = e.changedTouches[0].clientX - touchStart
+        if (Math.abs(diff) > 50) diff > 0 ? prev() : next()
+        setTouchStart(null)
+      }}
     >
-      <div className="c3d-stage">
+      <div className="c3d-stage" style={{ height: cardHeight + 40 }}>
         {safeItems.map((item, idx) => (
           <div
             key={idx}
             className="c3d-card"
-            style={{ transition: 'all 0.5s cubic-bezier(0.25,0.46,0.45,0.94)', ...getTransform(idx) }}
-            onClick={() => idx !== active && (((idx - active + n) % n) <= n / 2 ? next() : prev())}
+            style={{
+              width: cardWidth,
+              height: cardHeight,
+              transition: 'all 0.55s cubic-bezier(0.25,0.46,0.45,0.94)',
+              ...getTransform(idx),
+            }}
+            onClick={() => {
+              if (idx === active) return
+              const raw = (idx - active + n) % n
+              const rel = raw <= n / 2 ? raw : raw - n
+              rel < 0 ? prev() : next()
+            }}
           >
             {renderCard(item, idx === active)}
           </div>

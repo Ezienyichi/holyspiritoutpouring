@@ -5,7 +5,7 @@ const requireAuth = require('../middleware/auth');
 
 router.get('/', async (req, res) => {
   try {
-    const result = await query('SELECT * FROM past_ministers ORDER BY display_order ASC, year DESC');
+    const result = await query('SELECT * FROM past_ministers WHERE deleted IS NOT TRUE ORDER BY display_order ASC, year DESC');
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -788,8 +788,8 @@ body { background: #FFFFFF; color: #040102; }
 
 /* --- 3D Carousel --- */
 .c3d-wrapper { position: relative; padding: 2rem 3.5rem 4.5rem; overflow-x: hidden; }
-.c3d-stage { position: relative; height: 480px; overflow: visible; perspective: 1200px; }
-.c3d-card { position: absolute; left: 50%; top: 0; width: 320px; height: 427px; cursor: pointer; }
+.c3d-stage { position: relative; overflow: visible; perspective: 1200px; }
+.c3d-card { position: absolute; left: 50%; top: 0; cursor: pointer; border-radius: 20px; overflow: hidden; }
 .c3d-arrow {
   position: absolute; top: calc(50% - 2rem); transform: translateY(-50%);
   z-index: 20; width: 56px; height: 56px; border-radius: 50%;
@@ -799,8 +799,8 @@ body { background: #FFFFFF; color: #040102; }
   transition: all 0.2s ease;
 }
 .c3d-arrow:hover { background: #c90505; color: white; box-shadow: 0 6px 24px rgba(201,5,5,0.35); }
-.c3d-arrow-left { left: 0; }
-.c3d-arrow-right { right: 0; }
+.c3d-arrow-left { left: calc(50% - 220px); }
+.c3d-arrow-right { right: calc(50% - 220px); }
 .c3d-dots { display: flex; gap: 8px; justify-content: center; margin-top: 1.5rem; align-items: center; }
 .c3d-dot { width: 8px; height: 8px; border-radius: 8px; background: #CCCCCC; border: none; cursor: pointer; transition: all 0.3s; padding: 0; }
 .c3d-dot.active { width: 28px; background: #c90505; }
@@ -812,8 +812,8 @@ body { background: #FFFFFF; color: #040102; }
 .testimonials-section .c3d-dot.active { background: #c90505; }
 
 /* --- Previous Events section --- */
-.prev-events-section { background: #F8F8F8; padding: 5rem 0; }
-.prev-events-card { width: 320px; height: 427px; border-radius: 16px; overflow: hidden; position: relative; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+.prev-events-section { background: #F8F8F8; padding: 80px 0; }
+.prev-events-card { width: 100%; height: 100%; border-radius: 20px; overflow: hidden; position: relative; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
 .prev-events-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .prev-events-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.88) 40%, rgba(0,0,0,0.1) 100%); }
 .prev-events-year { position: absolute; top: 16px; left: 16px; background: #c90505; color: white; font-weight: 700; font-size: 13px; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.02em; }
@@ -826,8 +826,8 @@ body { background: #FFFFFF; color: #040102; }
 .prev-events-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.7); }
 
 /* --- Past Ministers section --- */
-.ministers-section { background: #FFFFFF; padding: 5rem 0; }
-.ministers-card { width: 320px; height: 427px; border-radius: 16px; overflow: hidden; position: relative; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+.ministers-section { background: #FFFFFF; padding: 80px 0; }
+.ministers-card { width: 100%; height: 100%; border-radius: 20px; overflow: hidden; position: relative; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
 .ministers-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .ministers-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.88) 40%, rgba(0,0,0,0.1) 100%); }
 .ministers-year { position: absolute; top: 16px; left: 16px; background: #c90505; color: white; font-weight: 700; font-size: 13px; padding: 4px 12px; border-radius: 20px; }
@@ -879,14 +879,12 @@ body { background: #FFFFFF; color: #040102; }
 
 /* --- Responsive carousel --- */
 @media (max-width: 768px) {
-  .c3d-wrapper { padding: 1.5rem 2.5rem 4rem; }
-  .c3d-stage { height: 400px; }
+  .c3d-wrapper { padding: 1.5rem 1rem 4rem; }
   .c3d-arrow { width: 44px; height: 44px; }
+  .c3d-arrow-left { left: 12px; }
+  .c3d-arrow-right { right: 12px; }
   .about-features-grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 480px) {
-  .c3d-card { width: 280px; height: 373px; }
-  .c3d-stage { height: 370px; }
+  .ministers-section, .prev-events-section { padding: 48px 0; }
 }
 
 /* --- Session expand on light bg --- */
@@ -957,9 +955,9 @@ body { background: #FFFFFF; color: #040102; }
 .upload-zone-text strong { color: var(--orange); }
 
 /* ===== SPONSORS STRIP ===== */
-.sponsor-track { animation: scrollLogos 20s linear infinite; width: max-content; }
+.sponsor-track { animation: scrollSponsors 25s linear infinite; width: max-content; }
 .sponsor-track:hover { animation-play-state: paused; }
-@keyframes scrollLogos { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+@keyframes scrollSponsors { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ===== TESTIMONIALS AUTO-SCROLL CAROUSEL ===== */
