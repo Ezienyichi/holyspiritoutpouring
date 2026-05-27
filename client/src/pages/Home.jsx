@@ -10,6 +10,8 @@ import SpeakerCard from '../components/SpeakerCard'
 import SessionRow from '../components/SessionRow'
 import PrayerCard from '../components/PrayerCard'
 
+const API_BASE = import.meta.env.VITE_API_URL || ''
+
 /* ── HERO ─────────────────────────────────────── */
 function HeroSection({ config }) {
   const [isMuted, setIsMuted] = useState(true)
