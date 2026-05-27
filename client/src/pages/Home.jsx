@@ -261,40 +261,93 @@ function AboutSection({ config }) {
 }
 
 /* ── PREVIOUS EVENTS CAROUSEL ─────────────────── */
+function EventCard({ ev }) {
+  const [hlHover, setHlHover] = useState(false)
+  return (
+    <div style={{ width: '100%', height: '100%', position: 'relative', background: '#0D1B2A' }}>
+      {ev.image_url ? (
+        <img src={ev.image_url} alt={ev.title} loading="lazy"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+      ) : (
+        <div style={{
+          width: '100%', height: '100%',
+          background: 'linear-gradient(135deg, #1a0030 0%, #0D1B2A 100%)',
+        }} />
+      )}
+      {/* Overlay */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.92) 100%)',
+      }} />
+      {/* Year badge */}
+      {ev.year && (
+        <div style={{
+          position: 'absolute', top: 18, left: 18,
+          background: '#c90505', color: 'white', fontWeight: 700, fontSize: 15,
+          padding: '6px 16px', borderRadius: 6,
+          fontFamily: 'var(--font-body)',
+        }}>{ev.year}</div>
+      )}
+      {/* Bottom content */}
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '24px 20px' }}>
+        <div style={{
+          fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 700,
+          color: 'white', marginBottom: 6, lineHeight: 1.3,
+        }}>{ev.title}</div>
+        <div style={{
+          fontFamily: 'var(--font-body)', fontSize: 14,
+          color: 'rgba(255,255,255,0.7)', lineHeight: 1.5, marginBottom: 16,
+        }}>{ev.tagline}</div>
+        {ev.highlights_url && (
+          <button
+            onMouseEnter={() => setHlHover(true)}
+            onMouseLeave={() => setHlHover(false)}
+            onClick={() => window.open(ev.highlights_url, '_blank')}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              background: hlHover ? 'rgba(201,5,5,0.7)' : 'rgba(255,255,255,0.12)',
+              border: `1px solid ${hlHover ? '#c90505' : 'rgba(255,255,255,0.3)'}`,
+              borderRadius: 100, padding: '9px 20px',
+              color: 'white', fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600,
+              cursor: 'pointer', transition: 'all 0.2s',
+            }}
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            View Highlights
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
 function PreviousEventsSection({ events }) {
   const display = events.length > 0 ? events : FALLBACK_EVENTS
   return (
-    <section className="prev-events-section">
+    <section style={{ background: '#F8F8F8', padding: '80px 0' }}>
       <div className="container">
-        <div className="text-center" style={{ marginBottom: '3.5rem' }}>
-          <span className="section-label">Our Journey</span>
-          <h2 className="section-title">Outpouring Through the Years</h2>
+        <div className="text-center" style={{ marginBottom: 56 }}>
+          <span style={{
+            fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 700,
+            color: '#040102', letterSpacing: '0.15em', textTransform: 'uppercase',
+            display: 'block', marginBottom: 12,
+          }}>Our Journey</span>
+          <h2 style={{
+            fontFamily: 'var(--font-display)', fontSize: 'clamp(26px, 4vw, 38px)',
+            fontWeight: 700, color: '#040102', margin: '0 0 12px',
+          }}>Outpouring Through the Years</h2>
           <div className="gold-line centered" />
-          <p className="section-subtitle centered">A legacy of encounters, revivals and transformed lives since 2018.</p>
+          <p style={{
+            fontFamily: 'var(--font-body)', fontSize: 16, color: '#666666',
+            marginTop: 16, maxWidth: 560, marginInline: 'auto',
+          }}>A legacy of encounters, revivals and transformed lives since 2018.</p>
         </div>
         <Carousel3D
           items={display}
           autoAdvanceMs={6000}
           cardWidth={340}
           cardHeight={460}
-          renderCard={(ev, isActive) => (
-            <div className="prev-events-card" style={{ boxShadow: isActive ? '0 24px 60px rgba(0,0,0,0.3)' : '0 8px 32px rgba(0,0,0,0.2)' }}>
-              {ev.image_url ? (
-                <img src={ev.image_url} alt={ev.title} loading="lazy" />
-              ) : (
-                <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #0D1B2A 0%, #1a0a2e 100%)' }} />
-              )}
-              <div className="prev-events-overlay" />
-              <div className={`prev-events-year${String(ev.year) === '2025' ? ' current' : ''}`}>{ev.year}</div>
-              <div className="prev-events-content">
-                <div className="prev-events-title">{ev.title}</div>
-                <div className="prev-events-tagline">{ev.tagline}</div>
-                {ev.highlights_url && (
-                  <a href={ev.highlights_url} target="_blank" rel="noopener noreferrer" className="prev-events-btn">View Highlights</a>
-                )}
-              </div>
-            </div>
-          )}
+          renderCard={(ev) => <EventCard ev={ev} />}
         />
       </div>
     </section>
@@ -330,37 +383,83 @@ function SpeakersSection({ speakers }) {
 }
 
 /* ── PAST MINISTERS CAROUSEL ─────────────────── */
+function MinisterCard({ m }) {
+  const initials = (m.name || '').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?'
+  return (
+    <div style={{ width: '100%', height: '100%', position: 'relative', background: '#0D1B2A' }}>
+      {m.photo_url ? (
+        <img src={m.photo_url} alt={m.name} loading="lazy"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+      ) : (
+        <div style={{
+          width: '100%', height: '100%',
+          background: 'linear-gradient(135deg, #0D1B2A 0%, #1E2D45 100%)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <div style={{
+            width: 80, height: 80, borderRadius: '50%',
+            background: 'rgba(201,5,5,0.8)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, color: 'white',
+          }}>{initials}</div>
+        </div>
+      )}
+      {/* Overlay */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.88) 100%)',
+      }} />
+      {/* Year badge */}
+      {m.year && (
+        <div style={{
+          position: 'absolute', top: 18, left: 18,
+          background: '#c90505', color: 'white', fontWeight: 700, fontSize: 12,
+          padding: '5px 12px', borderRadius: 6, letterSpacing: '0.05em',
+          fontFamily: 'var(--font-body)',
+        }}>{m.year}</div>
+      )}
+      {/* Bottom content */}
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 20 }}>
+        <div style={{
+          fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700,
+          color: 'white', marginBottom: 4, lineHeight: 1.3,
+        }}>{m.name}</div>
+        <div style={{
+          fontFamily: 'var(--font-body)', fontSize: 13,
+          color: 'rgba(255,255,255,0.72)',
+        }}>{m.ministry_role}</div>
+      </div>
+    </div>
+  )
+}
+
 function PastMinistersSection({ ministers }) {
   const display = ministers.length > 0 ? ministers : FALLBACK_MINISTERS
   return (
-    <section className="ministers-section">
+    <section style={{ background: '#FFFFFF', padding: '80px 0' }}>
       <div className="container">
-        <div className="text-center" style={{ marginBottom: '3.5rem' }}>
-          <span className="section-label">Anointed Voices Through the Years</span>
-          <h2 className="section-title">Ministers Who Have Graced Our Stage</h2>
+        <div className="text-center" style={{ marginBottom: 56 }}>
+          <span style={{
+            fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 700,
+            color: '#040102', letterSpacing: '0.15em', textTransform: 'uppercase',
+            display: 'block', marginBottom: 12,
+          }}>Anointed Voices Through the Years</span>
+          <h2 style={{
+            fontFamily: 'var(--font-display)', fontSize: 'clamp(26px, 4vw, 38px)',
+            fontWeight: 700, color: '#040102', margin: '0 0 12px',
+          }}>Ministers Who Have Graced Our Stage</h2>
           <div className="gold-line centered" />
-          <p className="section-subtitle centered">Gospel ministers, worship leaders and choirs who have ministered at Outpouring.</p>
+          <p style={{
+            fontFamily: 'var(--font-body)', fontSize: 16, color: '#666666',
+            marginTop: 16, maxWidth: 560, marginInline: 'auto',
+          }}>Gospel ministers, worship leaders and choirs who have ministered at Outpouring.</p>
         </div>
         <Carousel3D
           items={display}
           autoAdvanceMs={5000}
           cardWidth={320}
           cardHeight={420}
-          renderCard={(m, isActive) => (
-            <div className="ministers-card" style={{ boxShadow: isActive ? '0 24px 60px rgba(0,0,0,0.3)' : '0 8px 32px rgba(0,0,0,0.2)' }}>
-              {m.photo_url ? (
-                <img src={m.photo_url} alt={m.name} loading="lazy" />
-              ) : (
-                <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #0D1B2A 0%, #1a0a2e 100%)' }} />
-              )}
-              <div className="ministers-overlay" />
-              <div className="ministers-year">{m.year}</div>
-              <div className="ministers-content">
-                <div className="ministers-name">{m.name}</div>
-                <div className="ministers-role">{m.ministry_role}</div>
-              </div>
-            </div>
-          )}
+          renderCard={(m) => <MinisterCard m={m} />}
         />
       </div>
     </section>
