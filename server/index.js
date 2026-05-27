@@ -1,9 +1,8 @@
-require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
 const allowedOrigins = [
   'http://localhost:5173',
@@ -26,6 +25,22 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Health routes first — no database needed, always respond
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', service: 'Outpouring API' });
+});
+
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'Backend is running',
+    timestamp: new Date().toISOString(),
+    database_url_set: !!process.env.DATABASE_URL,
+    node_env: process.env.NODE_ENV || 'development',
+  });
+});
+
+// API routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/config', require('./routes/config'));
 app.use('/api/speakers', require('./routes/speakers'));
@@ -42,11 +57,9 @@ app.use('/api/sponsors', require('./routes/sponsors'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/testimonials', require('./routes/testimonials'));
 
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Backend is running', timestamp: new Date().toISOString() });
-});
-
-if (require.main === module) {
+// Local development only
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3001;
   app.listen(PORT, () => console.log(`Outpouring '25 server → http://localhost:${PORT}`));
 }
 
