@@ -9,9 +9,10 @@ router.get('/', async (req, res) => {
     const result = day
       ? await query('SELECT * FROM sessions WHERE day = $1 ORDER BY time', [Number(day)])
       : await query('SELECT * FROM sessions ORDER BY day, time');
-    res.json(result.rows);
+    res.json(result.rows || []);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('sessions GET:', err.message);
+    res.json([]);
   }
 });
 

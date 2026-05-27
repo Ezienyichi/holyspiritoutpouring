@@ -9,9 +9,10 @@ router.get('/', async (req, res) => {
     const result = all
       ? await query('SELECT * FROM prayers ORDER BY "createdAt" DESC')
       : await query('SELECT * FROM prayers WHERE approved = 1 ORDER BY "createdAt" DESC');
-    res.json(result.rows);
+    res.json(result.rows || []);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('prayers GET:', err.message);
+    res.json([]);
   }
 });
 

@@ -8,9 +8,10 @@ router.get('/', async (req, res) => {
     const result = await query(
       "SELECT * FROM sponsors WHERE active = 1 AND (deleted IS NOT TRUE) ORDER BY display_order ASC, id ASC"
     );
-    res.json(result.rows);
+    res.json(result.rows || []);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('sponsors GET:', err.message);
+    res.json([]);
   }
 });
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useSiteConfig } from '../hooks/useSiteConfig'
+import { apiFetch } from '../utils/api'
 import Carousel3D from '../components/Carousel3D'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -8,8 +9,6 @@ import CountdownTimer from '../components/CountdownTimer'
 import SpeakerCard from '../components/SpeakerCard'
 import SessionRow from '../components/SessionRow'
 import PrayerCard from '../components/PrayerCard'
-
-const API_BASE = import.meta.env.VITE_API_URL || ''
 
 /* ── HERO ─────────────────────────────────────── */
 function HeroSection({ config }) {
@@ -419,16 +418,17 @@ function ScheduleSection() {
 }
 
 /* ── TESTIMONIALS — infinite auto-scroll ─────── */
-const TESTIMONIALS = [
-  { quote: 'I came broken and empty, but the Holy Spirit filled me to overflowing. My life has never been the same since Outpouring 2024.', name: 'Sister Amara O.', loc: 'Port Harcourt, Nigeria', initial: 'A', bg: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=640&h=853&fit=crop' },
-  { quote: "The worship at this conference is unlike anything I have experienced. Heaven literally comes down. I received healing during the evening service.", name: 'Brother James K.', loc: 'Nairobi, Kenya', initial: 'J', bg: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=640&h=853&fit=crop' },
-  { quote: "As a pastor, I was running on empty. Outpouring reignited my fire and gave me a fresh vision for ministry. I bring my entire team every year.", name: 'Pastor Rebecca M.', loc: 'Accra, Ghana', initial: 'R', bg: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=640&h=853&fit=crop' },
-  { quote: 'Three days of heaven on earth. I came for one session and stayed for all three days. The presence of God was tangible and real.', name: 'Deacon Samuel T.', loc: 'Abuja, Nigeria', initial: 'S', bg: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=640&h=853&fit=crop' },
-  { quote: 'My teenage daughter gave her life to Christ at the youth session. This conference changed our family forever. We are coming back.', name: 'Mrs. Chioma E.', loc: 'Enugu, Nigeria', initial: 'C', bg: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=640&h=853&fit=crop' },
+const FALLBACK_TESTIMONIALS = [
+  { id: 't1', quote: 'I came broken and empty, but the Holy Spirit filled me to overflowing. My life has never been the same since Outpouring 2024.', name: 'Sister Amara O.', location: 'Port Harcourt, Nigeria', bg_url: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=640&h=853&fit=crop' },
+  { id: 't2', quote: 'The worship at this conference is unlike anything I have experienced. Heaven literally comes down. I received healing during the evening service.', name: 'Brother James K.', location: 'Nairobi, Kenya', bg_url: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=640&h=853&fit=crop' },
+  { id: 't3', quote: 'As a pastor, I was running on empty. Outpouring reignited my fire and gave me a fresh vision for ministry. I bring my entire team every year.', name: 'Pastor Rebecca M.', location: 'Accra, Ghana', bg_url: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=640&h=853&fit=crop' },
+  { id: 't4', quote: 'Three days of heaven on earth. I came for one session and stayed for all three days. The presence of God was tangible and real.', name: 'Deacon Samuel T.', location: 'Abuja, Nigeria', bg_url: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=640&h=853&fit=crop' },
+  { id: 't5', quote: 'My teenage daughter gave her life to Christ at the youth session. This conference changed our family forever. We are coming back.', name: 'Mrs. Chioma E.', location: 'Enugu, Nigeria', bg_url: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=640&h=853&fit=crop' },
 ]
 
-function TestimonialsSection() {
-  const doubled = [...TESTIMONIALS, ...TESTIMONIALS]
+function TestimonialsSection({ testimonials = [] }) {
+  const items = testimonials.length > 0 ? testimonials : FALLBACK_TESTIMONIALS
+  const doubled = [...items, ...items]
   return (
     <section className="testimonials-section">
       <div className="container">
@@ -441,23 +441,28 @@ function TestimonialsSection() {
       </div>
       <div className="tscroll-outer">
         <div className="tscroll-track">
-          {doubled.map((t, i) => (
-            <div key={i} className="tscroll-card">
-              <div className="tscroll-img" style={{ backgroundImage: `url(${t.bg})` }} />
-              <div className="tscroll-overlay" />
-              <div className="tscroll-quote">&ldquo;</div>
-              <div className="tscroll-body">
-                <p className="tscroll-text">{t.quote}</p>
-                <div className="tscroll-author">
-                  <div className="tscroll-avatar">{t.initial}</div>
-                  <div>
-                    <div className="tscroll-name">{t.name}</div>
-                    <div className="tscroll-loc">{t.loc}</div>
+          {doubled.map((t, i) => {
+            const bgUrl = t.bg_url || t.bg || ''
+            const initial = (t.name || '?').charAt(0).toUpperCase()
+            const loc = t.location || t.loc || ''
+            return (
+              <div key={i} className="tscroll-card">
+                <div className="tscroll-img" style={{ backgroundImage: bgUrl ? `url(${bgUrl})` : undefined }} />
+                <div className="tscroll-overlay" />
+                <div className="tscroll-quote">&ldquo;</div>
+                <div className="tscroll-body">
+                  <p className="tscroll-text">{t.quote || t.text}</p>
+                  <div className="tscroll-author">
+                    <div className="tscroll-avatar">{initial}</div>
+                    <div>
+                      <div className="tscroll-name">{t.name}</div>
+                      <div className="tscroll-loc">{loc}</div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>
@@ -653,14 +658,29 @@ export default function Home() {
   const [previousEvents, setPreviousEvents] = useState([])
   const [pastMinisters, setPastMinisters] = useState([])
   const [sponsors, setSponsors] = useState([])
+  const [testimonials, setTestimonials] = useState([])
 
   useEffect(() => {
-    fetch(API_BASE + '/api/speakers').then(r => r.json()).then(d => setSpeakers(Array.isArray(d) ? d : [])).catch(() => {})
-    fetch(API_BASE + '/api/prayers').then(r => r.json()).then(d => setPrayers(Array.isArray(d) ? d : [])).catch(() => {})
-    fetch(API_BASE + '/api/media').then(r => r.json()).then(d => setMedia(Array.isArray(d) ? d : [])).catch(() => {})
-    fetch(API_BASE + '/api/previous-events').then(r => r.json()).then(d => setPreviousEvents(Array.isArray(d) ? d : [])).catch(() => {})
-    fetch(API_BASE + '/api/past-ministers').then(r => r.json()).then(d => setPastMinisters(Array.isArray(d) ? d : [])).catch(() => {})
-    fetch(API_BASE + '/api/sponsors').then(r => r.json()).then(d => setSponsors(Array.isArray(d) ? d : [])).catch(() => {})
+    const loadAll = async () => {
+      const [speakersRes, prayersRes, mediaRes, eventsRes, ministersRes, sponsorsRes, testimonialsRes] =
+        await Promise.allSettled([
+          apiFetch('/api/speakers'),
+          apiFetch('/api/prayers'),
+          apiFetch('/api/media'),
+          apiFetch('/api/previous-events'),
+          apiFetch('/api/past-ministers'),
+          apiFetch('/api/sponsors'),
+          apiFetch('/api/testimonials'),
+        ])
+      if (speakersRes.status === 'fulfilled') setSpeakers(Array.isArray(speakersRes.value) ? speakersRes.value : [])
+      if (prayersRes.status === 'fulfilled') setPrayers(Array.isArray(prayersRes.value) ? prayersRes.value : [])
+      if (mediaRes.status === 'fulfilled') setMedia(Array.isArray(mediaRes.value) ? mediaRes.value : [])
+      if (eventsRes.status === 'fulfilled') setPreviousEvents(Array.isArray(eventsRes.value) ? eventsRes.value : [])
+      if (ministersRes.status === 'fulfilled') setPastMinisters(Array.isArray(ministersRes.value) ? ministersRes.value : [])
+      if (sponsorsRes.status === 'fulfilled') setSponsors(Array.isArray(sponsorsRes.value) ? sponsorsRes.value : [])
+      if (testimonialsRes.status === 'fulfilled') setTestimonials(Array.isArray(testimonialsRes.value) ? testimonialsRes.value : [])
+    }
+    loadAll()
   }, [])
 
   return (
@@ -673,7 +693,7 @@ export default function Home() {
       <PastMinistersSection ministers={pastMinisters} />
       <PreviousEventsSection events={previousEvents} />
       <ScheduleSection />
-      <TestimonialsSection />
+      <TestimonialsSection testimonials={testimonials} />
       <PrayerSection prayers={prayers} />
       <MediaSection media={media} />
       <GiveSection />

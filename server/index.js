@@ -9,6 +9,7 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
   'https://holyspiritoutpouring-ha9z.vercel.app',
+  'https://holyspiritoutpouring.vercel.app',
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
@@ -17,6 +18,8 @@ app.use(cors({
     if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
     callback(null, false);
   },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
 
@@ -37,6 +40,7 @@ app.use('/api/previous-events', require('./routes/previousEvents'));
 app.use('/api/past-ministers', require('./routes/pastMinisters'));
 app.use('/api/sponsors', require('./routes/sponsors'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/testimonials', require('./routes/testimonials'));
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Backend is running', timestamp: new Date().toISOString() });

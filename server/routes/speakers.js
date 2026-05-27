@@ -6,9 +6,10 @@ const requireAuth = require('../middleware/auth');
 router.get('/', async (req, res) => {
   try {
     const result = await query('SELECT * FROM speakers WHERE deleted IS NOT TRUE ORDER BY "displayOrder", id');
-    res.json(result.rows);
+    res.json(result.rows || []);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('speakers GET:', err.message);
+    res.json([]);
   }
 });
 

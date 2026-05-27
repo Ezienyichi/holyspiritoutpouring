@@ -10,7 +10,8 @@ router.get('/', async (req, res) => {
     result.rows.forEach(r => { config[r.key] = r.value; });
     res.json(config);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('config GET:', err.message);
+    res.json({});
   }
 });
 
