@@ -38,9 +38,10 @@ export default function App() {
         <Route path="/give" element={<Give />} />
         <Route path="/register" element={<Register />} />
         <Route path="/live" element={<Live />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/admin" element={<AdminLogin />} />
+        <Route path="/admin/*" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
           <Route path="config" element={<SiteConfig />} />
           <Route path="speakers" element={<AdminSpeakers />} />
           <Route path="schedule" element={<AdminSchedule />} />

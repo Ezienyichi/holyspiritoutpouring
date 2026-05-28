@@ -39,15 +39,15 @@ export default function AdminLayout() {
 
   useEffect(() => {
     const token = getToken()
-    if (!token) { navigate('/admin/login', { replace: true }); return }
+    if (!token) { navigate('/admin', { replace: true }); return }
     const decoded = parseJwt(token)
-    if (!decoded) { navigate('/admin/login', { replace: true }); return }
+    if (!decoded) { navigate('/admin', { replace: true }); return }
     setUser(decoded)
     if (decoded.exp) {
       const msLeft = decoded.exp * 1000 - Date.now()
       if (msLeft <= 0) {
         clearToken()
-        navigate('/admin/login', { replace: true })
+        navigate('/admin', { replace: true })
         return
       }
       const warnAt = msLeft - 5 * 60 * 1000
@@ -63,7 +63,7 @@ export default function AdminLayout() {
 
   function logout() {
     clearToken()
-    navigate('/admin/login', { replace: true })
+    navigate('/admin', { replace: true })
   }
 
   const role = user?.role || 'admin'
