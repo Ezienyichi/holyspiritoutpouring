@@ -7,15 +7,15 @@ const { query } = require('../db/database');
 const JWT_SECRET = process.env.JWT_SECRET || 'outpouring_secret_key_2025';
 
 router.post('/login', async (req, res) => {
-  try {
-    const { username, password, rememberMe } = req.body;
+  const { username, password, rememberMe } = req.body;
+  console.log('[auth] Login attempt:', username);
 
+  try {
     const result = await query('SELECT * FROM users WHERE username = $1', [username]);
     const user = result.rows[0];
     if (user) {
-      if (!bcrypt.compareSync(password, user.password)) {
-        return res.status(401).json({ error: 'Invalid credentials' });
-      }
+      const match = await bcrypt.compare(password, user.password);
+      if (!match) return res.status(401).json({ error: 'Invalid credentials' });
       const expiresIn = rememberMe ? '7d' : '24h';
       const token = jwt.sign(
         { id: user.id, username: user.username, role: user.role, name: user.name },
@@ -25,20 +25,32 @@ router.post('/login', async (req, res) => {
       return res.json({ token, username: user.username, role: user.role, name: user.name });
     }
 
-    // Fallback: env var plain text check
+    // No DB user found — try env var credentials
     const adminUser = process.env.ADMIN_USER || 'admin';
     const adminPass = process.env.ADMIN_PASS || 'outpouring2025';
     if (username !== adminUser || password !== adminPass) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
     const token = jwt.sign(
-      { username, role: 'super_admin', name: 'Administrator' },
+      { id: 1, username, role: 'super_admin', name: 'Administrator' },
       JWT_SECRET,
-      { expiresIn: '24h' }
+      { expiresIn: rememberMe ? '7d' : '24h' }
     );
-    res.json({ token, username, role: 'super_admin', name: 'Administrator' });
+    return res.json({ token, username, role: 'super_admin', name: 'Administrator' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[auth] Login DB error:', err.message, 'code:', err.code);
+    // DB unreachable — fall through to env var credentials
+    const adminUser = process.env.ADMIN_USER || 'admin';
+    const adminPass = process.env.ADMIN_PASS || 'outpouring2025';
+    if (username === adminUser && password === adminPass) {
+      const token = jwt.sign(
+        { id: 1, username, role: 'super_admin', name: 'Administrator' },
+        JWT_SECRET,
+        { expiresIn: rememberMe ? '7d' : '24h' }
+      );
+      return res.json({ token, username, role: 'super_admin', name: 'Administrator' });
+    }
+    return res.status(401).json({ error: 'Invalid credentials' });
   }
 });
 
