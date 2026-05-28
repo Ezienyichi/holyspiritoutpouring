@@ -37,13 +37,29 @@ app.get('/', (req, res) => {
   res.json({ status: 'ok', service: 'Outpouring API' });
 });
 
-app.get('/api/health', (req, res) => {
+app.get('/api/health', async (req, res) => {
+  const hasDbUrl = !!process.env.DATABASE_URL;
+  let dbConnected = false;
+  let dbError = null;
+
+  if (hasDbUrl) {
+    try {
+      const { query } = require('./db/database');
+      await query('SELECT 1');
+      dbConnected = true;
+    } catch (err) {
+      dbError = err.message;
+    }
+  }
+
   res.json({
     status: 'ok',
     message: 'Backend is running',
     timestamp: new Date().toISOString(),
-    database_url_set: !!process.env.DATABASE_URL,
-    node_env: process.env.NODE_ENV || 'development',
+    database_url_set: hasDbUrl,
+    database_connected: dbConnected,
+    database_error: dbError,
+    node_env: process.env.NODE_ENV,
   });
 });
 
