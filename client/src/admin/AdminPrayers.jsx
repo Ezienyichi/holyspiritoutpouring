@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
-import { api } from '../api'
+import { getToken } from '../api'
 import { useToast } from '../context/ToastContext'
+
+const API_BASE = import.meta.env.VITE_API_URL || ''
 
 export default function AdminPrayers() {
   const toast = useToast()
@@ -10,24 +12,35 @@ export default function AdminPrayers() {
 
   async function load() {
     setLoading(true)
-    const d = await api.get('/prayers?all=true')
-    setPrayers(Array.isArray(d) ? d : [])
+    try {
+      const res = await fetch(API_BASE + '/api/prayers?all=true', { headers: { Authorization: `Bearer ${getToken()}` } })
+      const d = await res.json()
+      setPrayers(Array.isArray(d) ? d : [])
+    } catch {}
     setLoading(false)
   }
 
   useEffect(() => { load() }, [])
 
   async function approve(id) {
-    await api.patch(`/prayers/${id}/approve`, { approved: true })
-    toast.success('Prayer Approved', 'The prayer request is now visible on the public prayer wall.')
-    load()
+    try {
+      await fetch(API_BASE + `/api/prayers/${id}/approve`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+        body: JSON.stringify({ approved: true }),
+      })
+      toast.success('Prayer Approved', 'The prayer request is now visible on the public prayer wall.')
+      load()
+    } catch { toast.error('Error', 'Could not approve prayer.') }
   }
 
   async function del(id) {
     if (!confirm('Delete this prayer request?')) return
-    await api.del(`/prayers/${id}`)
-    toast.info('Prayer Removed', 'The prayer request has been removed from the prayer wall.')
-    load()
+    try {
+      await fetch(API_BASE + `/api/prayers/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${getToken()}` } })
+      setPrayers(prev => prev.filter(p => p.id !== id))
+      toast.info('Prayer Removed', 'The prayer request has been removed from the prayer wall.')
+    } catch { toast.error('Error', 'Could not delete prayer.') }
   }
 
   const filtered = filter === 'all' ? prayers

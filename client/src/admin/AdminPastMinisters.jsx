@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
-import { api, getToken } from '../api'
+import { getToken } from '../api'
 import { useToast } from '../context/ToastContext'
+import SaveButton from '../components/SaveButton'
+import { saveRecord } from '../utils/adminSave'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
@@ -115,11 +117,12 @@ export default function AdminPastMinisters() {
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState(null)
   const [form, setForm] = useState(EMPTY)
-  const [saving, setSaving] = useState(false)
-
   async function load() {
-    const d = await api.get('/past-ministers')
-    setMinisters(Array.isArray(d) ? d : [])
+    try {
+      const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/past-ministers', { headers: { Authorization: `Bearer ${getToken()}` } })
+      const d = await res.json()
+      setMinisters(Array.isArray(d) ? d : [])
+    } catch {}
     setLoading(false)
   }
 
@@ -129,26 +132,24 @@ export default function AdminPastMinisters() {
   function openEdit(m) { setForm({ ...m }); setModal(m.id) }
   function closeModal() { setModal(null) }
 
-  async function save(e) {
-    e.preventDefault()
-    setSaving(true)
-    if (modal === 'new') {
-      await api.post('/past-ministers', form)
-      toast.success('Minister Added', `${form.name} has been added.`)
-    } else {
-      await api.put(`/past-ministers/${modal}`, form)
-      toast.success('Minister Updated', 'Minister details have been saved.')
-    }
-    setSaving(false)
+  const handleSave = async () => {
+    if (!form.name?.trim()) throw new Error('Name is required')
+    if (!form.year?.trim()) throw new Error('Year is required')
+    const id = modal !== 'new' ? modal : null
+    const saved = await saveRecord('/api/past-ministers', form, id)
+    setMinisters(prev => id ? prev.map(m => m.id === id ? saved : m) : [saved, ...prev])
     setModal(null)
-    load()
+    setForm(EMPTY)
+    toast.success(id ? 'Minister Updated' : 'Minister Added', `${saved.name} has been saved.`)
   }
 
   async function del(id) {
     if (!confirm('Delete this minister?')) return
-    await api.del(`/past-ministers/${id}`)
-    toast.warning('Minister Removed', 'The minister has been removed.')
-    load()
+    try {
+      await fetch((import.meta.env.VITE_API_URL || '') + `/api/past-ministers/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${getToken()}` } })
+      setMinisters(prev => prev.filter(m => m.id !== id))
+      toast.warning('Minister Removed', 'The minister has been removed.')
+    } catch { toast.error('Error', 'Could not delete minister.') }
   }
 
   const f = (k, v) => setForm(p => ({ ...p, [k]: v }))
@@ -197,11 +198,11 @@ export default function AdminPastMinisters() {
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && closeModal()}>
           <div className="modal-box" style={{ maxWidth: 560, maxHeight: '90vh', overflowY: 'auto' }}>
             <h3 className="modal-title">{modal === 'new' ? 'Add Past Minister' : 'Edit Minister'}</h3>
-            <form onSubmit={save}>
+            <form onSubmit={e => e.preventDefault()}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 <div className="form-group" style={{ margin: 0, gridColumn: '1/-1' }}>
                   <label className="form-label">Name *</label>
-                  <input className="form-input" value={form.name || ''} onChange={e => f('name', e.target.value)} required placeholder="Moses Bliss" />
+                  <input className="form-input" value={form.name || ''} onChange={e => f('name', e.target.value)} placeholder="Moses Bliss" />
                 </div>
                 <div className="form-group" style={{ margin: 0, gridColumn: '1/-1' }}>
                   <label className="form-label">Ministry Role</label>
@@ -209,7 +210,7 @@ export default function AdminPastMinisters() {
                 </div>
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label">Year *</label>
-                  <input className="form-input" value={form.year || ''} onChange={e => f('year', e.target.value)} required placeholder="2024" />
+                  <input className="form-input" value={form.year || ''} onChange={e => f('year', e.target.value)} placeholder="2024" />
                 </div>
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label">Display Order</label>
@@ -219,7 +220,7 @@ export default function AdminPastMinisters() {
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-navy" onClick={closeModal}>Cancel</button>
-                <button type="submit" className="btn btn-orange" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
+                <SaveButton onClick={handleSave} label="Save Minister" />
               </div>
             </form>
           </div>

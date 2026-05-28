@@ -1,15 +1,25 @@
 import { useState, useEffect } from 'react'
-import { api } from '../api'
+import { getToken } from '../api'
 import { useToast } from '../context/ToastContext'
+import SaveButton from '../components/SaveButton'
+
+const API_BASE = import.meta.env.VITE_API_URL || ''
+
+async function putConfig(data) {
+  const res = await fetch(API_BASE + '/api/config', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.error || 'Save failed') }
+  return res.json()
+}
 
 export default function AdminLivestream() {
   const toast = useToast()
   const [config, setConfig] = useState({})
   const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
-
-  const API_BASE = import.meta.env.VITE_API_URL || ''
+  const [toggling, setToggling] = useState(false)
 
   useEffect(() => {
     fetch(API_BASE + '/api/config')
@@ -18,31 +28,24 @@ export default function AdminLivestream() {
       .catch(() => setLoading(false))
   }, [])
 
-  async function save(e) {
-    e.preventDefault()
-    setSaving(true)
-    await api.put('/config', {
-      isLive: config.isLive,
-      streamUrl: config.streamUrl,
-      streamTitle: config.streamTitle,
-    })
-    setSaving(false)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 3000)
+  const handleSave = async () => {
+    await putConfig({ isLive: config.isLive, streamUrl: config.streamUrl, streamTitle: config.streamTitle })
     toast.success('Stream Updated', 'Livestream settings have been saved. Changes are now live.')
   }
 
   async function toggleLive() {
     const next = config.isLive === 'true' || config.isLive === true ? 'false' : 'true'
-    setSaving(true)
-    await api.put('/config', { isLive: next })
-    setConfig(c => ({ ...c, isLive: next }))
-    setSaving(false)
-    if (next === 'true') {
-      toast.info('Stream is Live', 'The livestream is now active and visible to all visitors.')
-    } else {
-      toast.info('Stream Offline', 'The livestream has been set to offline.')
-    }
+    setToggling(true)
+    try {
+      await putConfig({ isLive: next })
+      setConfig(c => ({ ...c, isLive: next }))
+      if (next === 'true') {
+        toast.info('Stream is Live', 'The livestream is now active and visible to all visitors.')
+      } else {
+        toast.info('Stream Offline', 'The livestream has been set to offline.')
+      }
+    } catch { toast.error('Error', 'Could not update stream status.') }
+    finally { setToggling(false) }
   }
 
   if (loading) return <div className="loading-state">Loading…</div>
@@ -52,7 +55,6 @@ export default function AdminLivestream() {
   return (
     <div>
       <h2 className="admin-page-title">Livestream Control</h2>
-      {saved && <div className="alert alert-ok" style={{ marginBottom: '1.5rem' }}>Settings saved!</div>}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
         <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2.5rem 2rem', gap: '1.5rem' }}>
@@ -82,15 +84,15 @@ export default function AdminLivestream() {
               minWidth: 200, justifyContent: 'center',
             }}
             onClick={toggleLive}
-            disabled={saving}
+            disabled={toggling}
           >
-            {saving ? 'Updating…' : isLive ? '■ End Stream' : '● Go Live'}
+            {toggling ? 'Updating…' : isLive ? '■ End Stream' : '● Go Live'}
           </button>
         </div>
 
         <div className="admin-card">
           <h3 style={{ color: 'var(--white)', fontFamily: 'var(--font-display)', marginBottom: '1.5rem', fontSize: '1rem' }}>Stream Settings</h3>
-          <form onSubmit={save}>
+          <form onSubmit={e => e.preventDefault()}>
             <div className="form-group">
               <label className="form-label">Stream URL (YouTube/Vimeo embed)</label>
               <input
@@ -112,9 +114,7 @@ export default function AdminLivestream() {
                 onChange={e => setConfig(c => ({ ...c, streamTitle: e.target.value }))}
               />
             </div>
-            <button type="submit" className="btn btn-orange" disabled={saving}>
-              {saving ? 'Saving…' : 'Save Settings'}
-            </button>
+            <SaveButton onClick={handleSave} label="Save Settings" />
           </form>
         </div>
       </div>

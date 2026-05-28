@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
-import { api, getToken } from '../api'
+import { getToken } from '../api'
 import { useToast } from '../context/ToastContext'
+import SaveButton from '../components/SaveButton'
+import { saveRecord } from '../utils/adminSave'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
@@ -125,11 +127,12 @@ export default function AdminSpeakers() {
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState(null)
   const [form, setForm] = useState(EMPTY)
-  const [saving, setSaving] = useState(false)
-
   async function load() {
-    const d = await api.get('/speakers')
-    setSpeakers(Array.isArray(d) ? d : [])
+    try {
+      const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/speakers', { headers: { Authorization: `Bearer ${getToken()}` } })
+      const d = await res.json()
+      setSpeakers(Array.isArray(d) ? d : [])
+    } catch {}
     setLoading(false)
   }
 
@@ -139,26 +142,23 @@ export default function AdminSpeakers() {
   function openEdit(s) { setForm({ ...s }); setModal(s.id) }
   function closeModal() { setModal(null) }
 
-  async function save(e) {
-    e.preventDefault()
-    setSaving(true)
-    if (modal === 'new') {
-      await api.post('/speakers', form)
-      toast.success('Speaker Added', `${form.name} has been added to the speakers list.`)
-    } else {
-      await api.put(`/speakers/${modal}`, form)
-      toast.success('Speaker Updated', 'Speaker details have been saved successfully.')
-    }
-    setSaving(false)
+  const handleSave = async () => {
+    if (!form.name?.trim()) throw new Error('Name is required')
+    const id = modal !== 'new' ? modal : null
+    const saved = await saveRecord('/api/speakers', form, id)
+    setSpeakers(prev => id ? prev.map(s => s.id === id ? saved : s) : [saved, ...prev])
     setModal(null)
-    load()
+    setForm(EMPTY)
+    toast.success(id ? 'Speaker Updated' : 'Speaker Added', `${saved.name} has been saved.`)
   }
 
   async function del(id) {
     if (!confirm('Delete this speaker?')) return
-    await api.del(`/speakers/${id}`)
-    toast.warning('Speaker Removed', 'The speaker has been removed from the website.')
-    load()
+    try {
+      await fetch((import.meta.env.VITE_API_URL || '') + `/api/speakers/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${getToken()}` } })
+      setSpeakers(prev => prev.filter(s => s.id !== id))
+      toast.warning('Speaker Removed', 'The speaker has been removed from the website.')
+    } catch { toast.error('Error', 'Could not delete speaker.') }
   }
 
   const f = (k, v) => setForm(p => ({ ...p, [k]: v }))
@@ -205,12 +205,12 @@ export default function AdminSpeakers() {
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && closeModal()}>
           <div className="modal-box" style={{ maxWidth: 620, maxHeight: '90vh', overflowY: 'auto' }}>
             <h3 className="modal-title">{modal === 'new' ? 'Add Speaker' : 'Edit Speaker'}</h3>
-            <form onSubmit={save}>
+            <form onSubmit={e => e.preventDefault()}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 {[['name','Name *'],['title','Title'],['church','Church/Ministry'],['topic','Session Topic']].map(([k,lbl]) => (
                   <div className="form-group" key={k} style={{ margin: 0 }}>
                     <label className="form-label">{lbl}</label>
-                    <input className="form-input" value={form[k]||''} onChange={e=>f(k,e.target.value)} required={k==='name'} />
+                    <input className="form-input" value={form[k]||''} onChange={e=>f(k,e.target.value)} />
                   </div>
                 ))}
                 <PhotoUploader value={form.photoUrl} onChange={url => f('photoUrl', url)} />
@@ -239,7 +239,7 @@ export default function AdminSpeakers() {
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-navy" onClick={closeModal}>Cancel</button>
-                <button type="submit" className="btn btn-orange" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
+                <SaveButton onClick={handleSave} label="Save Speaker" />
               </div>
             </form>
           </div>

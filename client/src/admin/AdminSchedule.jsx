@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
-import { api } from '../api'
+import { getToken } from '../api'
 import { useToast } from '../context/ToastContext'
+import SaveButton from '../components/SaveButton'
+import { saveRecord } from '../utils/adminSave'
 
+const API_BASE = import.meta.env.VITE_API_URL || ''
 const EMPTY = { day: 1, time: '', title: '', speaker: '', type: 'session', description: '', isCurrentlyLive: false }
-const TYPES = ['worship','session','prayer','break','special']
+const TYPES = ['worship', 'session', 'prayer', 'break', 'special']
 const DAYS = [1, 2, 3]
 
 export default function AdminSchedule() {
@@ -13,12 +16,14 @@ export default function AdminSchedule() {
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState(null)
   const [form, setForm] = useState(EMPTY)
-  const [saving, setSaving] = useState(false)
 
   async function load(day) {
     setLoading(true)
-    const d = await api.get(`/sessions?day=${day}`)
-    setSessions(Array.isArray(d) ? d : [])
+    try {
+      const res = await fetch(API_BASE + `/api/sessions?day=${day}`, { headers: { Authorization: `Bearer ${getToken()}` } })
+      const d = await res.json()
+      setSessions(Array.isArray(d) ? d : [])
+    } catch {}
     setLoading(false)
   }
 
@@ -28,27 +33,30 @@ export default function AdminSchedule() {
   function openEdit(s) { setForm({ ...s, isCurrentlyLive: !!s.isCurrentlyLive }); setModal(s.id) }
   function closeModal() { setModal(null) }
 
-  async function save(e) {
-    e.preventDefault()
-    setSaving(true)
+  const handleSave = async () => {
+    if (!form.time?.trim()) throw new Error('Time is required')
+    if (!form.title?.trim()) throw new Error('Title is required')
+    const id = modal !== 'new' ? modal : null
     const body = { ...form, isCurrentlyLive: form.isCurrentlyLive ? 1 : 0 }
-    if (modal === 'new') {
-      await api.post('/sessions', body)
-      toast.success('Session Added', 'The new session has been added to the conference schedule.')
-    } else {
-      await api.put(`/sessions/${modal}`, body)
+    const saved = await saveRecord('/api/sessions', body, id)
+    if (id) {
+      setSessions(prev => prev.map(s => s.id === id ? saved : s))
       toast.success('Session Updated', 'Schedule changes have been saved successfully.')
+    } else {
+      await load(activeDay)
+      toast.success('Session Added', 'The new session has been added to the conference schedule.')
     }
-    setSaving(false)
     setModal(null)
-    load(activeDay)
+    setForm(EMPTY)
   }
 
   async function del(id) {
     if (!confirm('Delete this session?')) return
-    await api.del(`/sessions/${id}`)
-    toast.warning('Session Removed', 'The session has been removed from the schedule.')
-    load(activeDay)
+    try {
+      await fetch(API_BASE + `/api/sessions/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${getToken()}` } })
+      setSessions(prev => prev.filter(s => s.id !== id))
+      toast.warning('Session Removed', 'The session has been removed from the schedule.')
+    } catch { toast.error('Error', 'Could not delete session.') }
   }
 
   const f = (k, v) => setForm(p => ({ ...p, [k]: v }))
@@ -86,53 +94,56 @@ export default function AdminSchedule() {
                   </td>
                 </tr>
               ))}
+              {sessions.length === 0 && (
+                <tr><td colSpan={6} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>No sessions for this day yet.</td></tr>
+              )}
             </tbody>
           </table>
         </div>
       )}
 
       {modal !== null && (
-        <div className="admin-modal-overlay" onClick={closeModal}>
-          <div className="admin-modal" onClick={e => e.stopPropagation()}>
-            <h3 className="admin-modal-title">{modal === 'new' ? 'Add Session' : 'Edit Session'}</h3>
-            <form onSubmit={save}>
+        <div className="modal-overlay" onClick={e => e.target === e.currentTarget && closeModal()}>
+          <div className="modal-box" style={{ maxWidth: 560, maxHeight: '90vh', overflowY: 'auto' }}>
+            <h3 className="modal-title">{modal === 'new' ? 'Add Session' : 'Edit Session'}</h3>
+            <form onSubmit={e => e.preventDefault()}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label">Day</label>
                   <select className="form-select" value={form.day} onChange={e => f('day', Number(e.target.value))}>
-                    {DAYS.map(d => <option key={d} value={d}>Day {d} — Aug {14+d}</option>)}
+                    {DAYS.map(d => <option key={d} value={d}>Day {d} — Aug {14 + d}</option>)}
                   </select>
                 </div>
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label">Time *</label>
-                  <input className="form-input" value={form.time||''} onChange={e=>f('time',e.target.value)} placeholder="9:00 AM" required />
+                  <input className="form-input" value={form.time || ''} onChange={e => f('time', e.target.value)} placeholder="9:00 AM" />
                 </div>
                 <div className="form-group" style={{ margin: 0, gridColumn: '1/-1' }}>
                   <label className="form-label">Title *</label>
-                  <input className="form-input" value={form.title||''} onChange={e=>f('title',e.target.value)} required />
+                  <input className="form-input" value={form.title || ''} onChange={e => f('title', e.target.value)} />
                 </div>
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label">Speaker</label>
-                  <input className="form-input" value={form.speaker||''} onChange={e=>f('speaker',e.target.value)} />
+                  <input className="form-input" value={form.speaker || ''} onChange={e => f('speaker', e.target.value)} />
                 </div>
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label">Type</label>
-                  <select className="form-select" value={form.type} onChange={e=>f('type',e.target.value)}>
+                  <select className="form-select" value={form.type} onChange={e => f('type', e.target.value)}>
                     {TYPES.map(t => <option key={t}>{t}</option>)}
                   </select>
                 </div>
               </div>
-              <div className="form-group">
+              <div className="form-group" style={{ marginTop: '0.75rem' }}>
                 <label className="form-label">Description</label>
-                <textarea className="form-textarea" value={form.description||''} onChange={e=>f('description',e.target.value)} rows={3} />
+                <textarea className="form-textarea" value={form.description || ''} onChange={e => f('description', e.target.value)} rows={3} />
               </div>
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginBottom: '1rem' }}>
-                <input type="checkbox" checked={!!form.isCurrentlyLive} onChange={e=>f('isCurrentlyLive',e.target.checked)} />
+                <input type="checkbox" checked={!!form.isCurrentlyLive} onChange={e => f('isCurrentlyLive', e.target.checked)} />
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Mark as currently live</span>
               </label>
-              <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
-                <button type="button" className="btn btn-outline" onClick={closeModal}>Cancel</button>
-                <button type="submit" className="btn btn-orange" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-navy" onClick={closeModal}>Cancel</button>
+                <SaveButton onClick={handleSave} label="Save Session" />
               </div>
             </form>
           </div>

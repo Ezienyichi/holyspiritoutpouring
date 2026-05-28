@@ -21,6 +21,7 @@ const ALL_NAV = [
   { to: '/admin/past-ministers', label: 'Past Ministers', roles: ['super_admin', 'content_manager', 'admin'] },
   { to: '/admin/schedule', label: 'Schedule', roles: ['super_admin', 'admin'] },
   { to: '/admin/prayers', label: 'Prayers', roles: ['super_admin', 'content_manager', 'admin'] },
+  { to: '/admin/testimonials', label: 'Testimonials', roles: ['super_admin', 'content_manager', 'admin'] },
   { to: '/admin/media', label: 'Media', roles: ['super_admin', 'content_manager', 'admin'] },
   { to: '/admin/giving', label: 'Giving', roles: ['super_admin', 'admin'] },
   { to: '/admin/registrations', label: 'Registrations', roles: ['super_admin', 'admin'] },

@@ -23,6 +23,7 @@ import AdminUsers from './admin/AdminUsers'
 import AdminPreviousEvents from './admin/AdminPreviousEvents'
 import AdminPastMinisters from './admin/AdminPastMinisters'
 import AdminSponsors from './admin/AdminSponsors'
+import AdminTestimonials from './admin/AdminTestimonials'
 
 export default function App() {
   return (
@@ -54,6 +55,7 @@ export default function App() {
           <Route path="previous-events" element={<AdminPreviousEvents />} />
           <Route path="past-ministers" element={<AdminPastMinisters />} />
           <Route path="sponsors" element={<AdminSponsors />} />
+          <Route path="testimonials" element={<AdminTestimonials />} />
         </Route>
       </Routes>
     </BrowserRouter>

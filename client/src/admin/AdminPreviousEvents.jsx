@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
-import { api, getToken } from '../api'
+import { getToken } from '../api'
 import { useToast } from '../context/ToastContext'
+import SaveButton from '../components/SaveButton'
+import { saveRecord } from '../utils/adminSave'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
@@ -115,11 +117,12 @@ export default function AdminPreviousEvents() {
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState(null)
   const [form, setForm] = useState(EMPTY)
-  const [saving, setSaving] = useState(false)
-
   async function load() {
-    const d = await api.get('/previous-events')
-    setEvents(Array.isArray(d) ? d : [])
+    try {
+      const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/previous-events', { headers: { Authorization: `Bearer ${getToken()}` } })
+      const d = await res.json()
+      setEvents(Array.isArray(d) ? d : [])
+    } catch {}
     setLoading(false)
   }
 
@@ -129,26 +132,24 @@ export default function AdminPreviousEvents() {
   function openEdit(ev) { setForm({ ...ev }); setModal(ev.id) }
   function closeModal() { setModal(null) }
 
-  async function save(e) {
-    e.preventDefault()
-    setSaving(true)
-    if (modal === 'new') {
-      await api.post('/previous-events', form)
-      toast.success('Event Added', `${form.year} — ${form.title} has been added.`)
-    } else {
-      await api.put(`/previous-events/${modal}`, form)
-      toast.success('Event Updated', 'Event details have been saved.')
-    }
-    setSaving(false)
+  const handleSave = async () => {
+    if (!form.year?.trim()) throw new Error('Year is required')
+    if (!form.title?.trim()) throw new Error('Title is required')
+    const id = modal !== 'new' ? modal : null
+    const saved = await saveRecord('/api/previous-events', form, id)
+    setEvents(prev => id ? prev.map(e => e.id === id ? saved : e) : [saved, ...prev])
     setModal(null)
-    load()
+    setForm(EMPTY)
+    toast.success(id ? 'Event Updated' : 'Event Added', `${saved.year} — ${saved.title} has been saved.`)
   }
 
   async function del(id) {
     if (!confirm('Delete this event?')) return
-    await api.del(`/previous-events/${id}`)
-    toast.warning('Event Removed', 'The event has been removed.')
-    load()
+    try {
+      await fetch((import.meta.env.VITE_API_URL || '') + `/api/previous-events/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${getToken()}` } })
+      setEvents(prev => prev.filter(e => e.id !== id))
+      toast.warning('Event Removed', 'The event has been removed.')
+    } catch { toast.error('Error', 'Could not delete event.') }
   }
 
   const f = (k, v) => setForm(p => ({ ...p, [k]: v }))
@@ -200,11 +201,11 @@ export default function AdminPreviousEvents() {
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && closeModal()}>
           <div className="modal-box" style={{ maxWidth: 620, maxHeight: '90vh', overflowY: 'auto' }}>
             <h3 className="modal-title">{modal === 'new' ? 'Add Previous Event' : 'Edit Event'}</h3>
-            <form onSubmit={save}>
+            <form onSubmit={e => e.preventDefault()}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label">Year *</label>
-                  <input className="form-input" value={form.year || ''} onChange={e => f('year', e.target.value)} required placeholder="2025" />
+                  <input className="form-input" value={form.year || ''} onChange={e => f('year', e.target.value)} placeholder="2025" />
                 </div>
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label">Display Order</label>
@@ -212,7 +213,7 @@ export default function AdminPreviousEvents() {
                 </div>
                 <div className="form-group" style={{ margin: 0, gridColumn: '1/-1' }}>
                   <label className="form-label">Title *</label>
-                  <input className="form-input" value={form.title || ''} onChange={e => f('title', e.target.value)} required placeholder="Outpouring '25" />
+                  <input className="form-input" value={form.title || ''} onChange={e => f('title', e.target.value)} placeholder="Outpouring '25" />
                 </div>
                 <div className="form-group" style={{ margin: 0, gridColumn: '1/-1' }}>
                   <label className="form-label">Tagline</label>
@@ -226,7 +227,7 @@ export default function AdminPreviousEvents() {
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-navy" onClick={closeModal}>Cancel</button>
-                <button type="submit" className="btn btn-orange" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
+                <SaveButton onClick={handleSave} label="Save Event" />
               </div>
             </form>
           </div>

@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
-import { api, getToken } from '../api'
+import { getToken } from '../api'
 import { useToast } from '../context/ToastContext'
+import SaveButton from '../components/SaveButton'
+import { saveRecord } from '../utils/adminSave'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
@@ -94,19 +96,21 @@ export default function AdminSponsors() {
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState(null)
   const [form, setForm] = useState(EMPTY)
-  const [saving, setSaving] = useState(false)
   const [showDeleted, setShowDeleted] = useState(false)
   const [deleted, setDeleted] = useState([])
 
   async function load() {
-    const d = await api.get('/sponsors/all')
-    setSponsors(Array.isArray(d) ? d : [])
+    try {
+      const res = await fetch(API_BASE + '/api/sponsors/all', { headers: { Authorization: `Bearer ${getToken()}` } })
+      const d = await res.json()
+      setSponsors(Array.isArray(d) ? d : [])
+    } catch {}
     setLoading(false)
   }
 
   async function loadDeleted() {
     try {
-      const res = await fetch(API_BASE + '/api/sponsors/all', { headers: { Authorization: `Bearer ${localStorage.getItem('op25_token')}` } })
+      const res = await fetch(API_BASE + '/api/sponsors/all', { headers: { Authorization: `Bearer ${getToken()}` } })
       const d = await res.json()
       setDeleted(Array.isArray(d) ? d.filter(s => s.deleted) : [])
     } catch {}
@@ -119,36 +123,32 @@ export default function AdminSponsors() {
   function openEdit(s) { setForm({ ...s, active: s.active === 1 || s.active === true ? 1 : 0 }); setModal(s.id) }
   function closeModal() { setModal(null) }
 
-  async function save(e) {
-    e.preventDefault()
-    setSaving(true)
-    if (modal === 'new') {
-      await api.post('/sponsors', form)
-      toast.success('Sponsor Added', `${form.name} has been added.`)
-    } else {
-      await api.put(`/sponsors/${modal}`, form)
-      toast.success('Sponsor Updated', 'Sponsor details saved.')
-    }
-    setSaving(false)
+  const handleSave = async () => {
+    if (!form.name?.trim()) throw new Error('Name is required')
+    const id = modal !== 'new' ? modal : null
+    const saved = await saveRecord('/api/sponsors', form, id)
+    setSponsors(prev => id ? prev.map(s => s.id === id ? saved : s) : [saved, ...prev])
     setModal(null)
-    load()
+    setForm(EMPTY)
+    toast.success(id ? 'Sponsor Updated' : 'Sponsor Added', `${saved.name} has been saved.`)
   }
 
   async function del(id, name) {
     if (!confirm(`Remove ${name}?`)) return
-    await api.del(`/sponsors/${id}`)
-    toast.warning('Sponsor Removed', `${name} has been removed.`)
-    load()
+    try {
+      await fetch(API_BASE + `/api/sponsors/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${getToken()}` } })
+      setSponsors(prev => prev.filter(s => s.id !== id))
+      toast.warning('Sponsor Removed', `${name} has been removed.`)
+    } catch { toast.error('Error', 'Could not remove sponsor.') }
   }
 
   async function restore(id) {
-    await fetch(API_BASE + `/api/sponsors/${id}/restore`, {
-      method: 'PUT',
-      headers: { Authorization: `Bearer ${localStorage.getItem('op25_token')}` }
-    })
-    toast.success('Restored', 'Sponsor restored.')
-    load()
-    loadDeleted()
+    try {
+      await fetch(API_BASE + `/api/sponsors/${id}/restore`, { method: 'PUT', headers: { Authorization: `Bearer ${getToken()}` } })
+      toast.success('Restored', 'Sponsor restored.')
+      load()
+      loadDeleted()
+    } catch { toast.error('Error', 'Could not restore sponsor.') }
   }
 
   const f = (k, v) => setForm(p => ({ ...p, [k]: v }))
@@ -227,7 +227,7 @@ export default function AdminSponsors() {
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && closeModal()}>
           <div className="modal-box" style={{ maxWidth: 520, maxHeight: '90vh', overflowY: 'auto' }}>
             <h3 className="modal-title">{modal === 'new' ? 'Add Sponsor / Partner' : 'Edit Sponsor'}</h3>
-            <form onSubmit={save}>
+            <form onSubmit={e => e.preventDefault()}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 <div className="form-group" style={{ margin: 0, gridColumn: '1/-1' }}>
                   <label className="form-label">Name *</label>
@@ -252,7 +252,7 @@ export default function AdminSponsors() {
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-navy" onClick={closeModal}>Cancel</button>
-                <button type="submit" className="btn btn-orange" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
+                <SaveButton onClick={handleSave} label="Save Sponsor" />
               </div>
             </form>
           </div>
