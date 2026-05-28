@@ -677,28 +677,62 @@ function HomeVideoCard({ item }) {
   )
 }
 
+function getVideoThumbnail(item) {
+  if (item.thumbnailUrl) return item.thumbnailUrl
+  if (item.youtubeUrl || item.url) {
+    const url = item.youtubeUrl || item.url
+    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/)
+    if (match) return `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg`
+  }
+  return item.url || ''
+}
+
 function MediaSection({ media }) {
-  const videos = media.filter(m => m.type === 'video').slice(0, 6)
+  const displayMedia = media.slice(0, 6)
   return (
     <section className="media-section">
       <div className="container">
         <div className="text-center" style={{ marginBottom: '3rem' }}>
           <span className="section-label">Gallery</span>
-          <h2 className="section-title">Watch Our Videos</h2>
+          <h2 className="section-title">Photos &amp; Videos</h2>
           <div className="gold-line centered" />
-          <p className="section-subtitle centered">Relive the moments from previous outpourings. Click any video to watch on YouTube.</p>
+          <p className="section-subtitle centered">Relive the moments from previous outpourings.</p>
         </div>
-        {videos.length === 0 ? (
+        {displayMedia.length === 0 ? (
           <div style={{ textAlign: 'center', color: '#666', padding: '3rem 0' }}>Gallery content coming soon.</div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
-            {videos.map(v => <HomeVideoCard key={v.id} item={v} />)}
+            {displayMedia.map(item => (
+              item.type === 'video'
+                ? <HomeVideoCard key={item.id} item={item} />
+                : (
+                  <div key={item.id} style={{ borderRadius: 12, overflow: 'hidden', aspectRatio: '16/9', position: 'relative', background: '#162032' }}>
+                    <img
+                      src={item.url}
+                      alt={item.title || item.caption}
+                      loading="lazy"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      onError={e => { e.target.style.display = 'none' }}
+                    />
+                    {(item.title || item.caption) && (
+                      <div style={{
+                        position: 'absolute', bottom: 0, left: 0, right: 0,
+                        padding: '8px 12px',
+                        background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
+                        color: 'white', fontSize: 12, fontWeight: 600,
+                      }}>
+                        {item.title || item.caption}
+                      </div>
+                    )}
+                  </div>
+                )
+            ))}
           </div>
         )}
         <div className="text-center" style={{ marginTop: '2.5rem' }}>
           <Link to="/media" className="btn btn-navy">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-            View All Videos
+            View Full Gallery
           </Link>
         </div>
       </div>

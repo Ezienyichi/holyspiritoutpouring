@@ -12,6 +12,9 @@ export default function AdminMedia() {
   const [urlForm, setUrlForm] = useState({ url: '', type: 'photo', caption: '', title: '' })
   const [ytForm, setYtForm] = useState({ youtubeUrl: '', title: '', caption: '' })
   const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [uploadError, setUploadError] = useState('')
+  const [uploadSuccess, setUploadSuccess] = useState('')
   const [dragOver, setDragOver] = useState(false)
   const [adding, setAdding] = useState(false)
   const fileRef = useRef()
@@ -28,11 +31,17 @@ export default function AdminMedia() {
     e.preventDefault()
     if (!urlForm.url.trim()) return
     setAdding(true)
-    await api.post('/media', urlForm)
-    toast.success('Photo Added', 'Your image has been added to the gallery successfully.')
-    setUrlForm({ url: '', type: 'photo', caption: '', title: '' })
-    setAdding(false)
-    loadItems()
+    setUploadError('')
+    try {
+      await api.post('/media', urlForm)
+      toast.success('Photo Added', 'Your image has been added to the gallery successfully.')
+      setUrlForm({ url: '', type: 'photo', caption: '', title: '' })
+      loadItems()
+    } catch (err) {
+      setUploadError(err.message || 'Failed to add media')
+    } finally {
+      setAdding(false)
+    }
   }
 
   function extractYouTubeId(url) {
@@ -43,51 +52,73 @@ export default function AdminMedia() {
   async function addYouTube(e) {
     e.preventDefault()
     const id = extractYouTubeId(ytForm.youtubeUrl)
-    if (!id) { alert('Invalid YouTube URL'); return }
+    if (!id) { setUploadError('Invalid YouTube URL'); return }
     setAdding(true)
-    const thumbnailUrl = `https://img.youtube.com/vi/${id}/maxresdefault.jpg`
-    await api.post('/media', {
-      title: ytForm.title,
-      url: thumbnailUrl,
-      thumbnailUrl,
-      youtubeUrl: ytForm.youtubeUrl,
-      type: 'video',
-      caption: ytForm.caption || ytForm.title,
-    })
-    toast.success('Video Added', 'The YouTube video has been added to the gallery.')
-    setYtForm({ youtubeUrl: '', title: '', caption: '' })
-    setAdding(false)
-    loadItems()
+    setUploadError('')
+    try {
+      const thumbnailUrl = `https://img.youtube.com/vi/${id}/maxresdefault.jpg`
+      await api.post('/media', {
+        title: ytForm.title,
+        url: thumbnailUrl,
+        thumbnailUrl,
+        youtubeUrl: ytForm.youtubeUrl,
+        type: 'video',
+        caption: ytForm.caption || ytForm.title,
+      })
+      toast.success('Video Added', 'The YouTube video has been added to the gallery.')
+      setYtForm({ youtubeUrl: '', title: '', caption: '' })
+      loadItems()
+    } catch (err) {
+      setUploadError(err.message || 'Failed to add video')
+    } finally {
+      setAdding(false)
+    }
   }
 
   async function uploadFile(file) {
     if (!file) return
     setUploading(true)
+    setUploadProgress(10)
+    setUploadError('')
+    setUploadSuccess('')
     try {
       const formData = new FormData()
-      formData.append('file', file)
+      formData.append('image', file)
+
       const res = await fetch(API_BASE + '/api/media/upload', {
         method: 'POST',
         headers: { Authorization: `Bearer ${getToken()}` },
         body: formData,
       })
+
+      setUploadProgress(70)
       const data = await res.json()
+
       if (!res.ok) {
-        if (data.error && data.error.includes('not configured')) {
-          toast.error('Upload Failed', 'Media storage is not configured. Contact the administrator.')
-        } else {
-          toast.error('Upload Failed', 'Could not upload the image. Please check your connection and try again.')
-        }
-        return
+        throw new Error(data.error || 'Upload failed')
       }
+
+      setUploadProgress(85)
+
       await api.post('/media', {
         title: file.name.replace(/\.[^/.]+$/, ''),
         url: data.url,
         type: file.type.startsWith('video') ? 'video' : 'photo',
         caption: '',
       })
+
+      setUploadProgress(100)
+      setUploadSuccess('Upload successful! Image added to gallery.')
       toast.success('Photo Uploaded', 'Your image has been added to the gallery successfully.')
       loadItems()
+
+      setTimeout(() => {
+        setUploadProgress(0)
+        setUploadSuccess('')
+      }, 3000)
+    } catch (err) {
+      setUploadError(err.message || 'Upload failed. Please try again.')
+      setUploadProgress(0)
     } finally {
       setUploading(false)
     }
@@ -121,6 +152,11 @@ export default function AdminMedia() {
 
         {tab === 'url' && (
           <form onSubmit={addByUrl}>
+            {uploadError && (
+              <div style={{ background: 'rgba(201,5,5,0.15)', border: '1px solid rgba(201,5,5,0.3)', borderRadius: 8, padding: '0.6rem 0.9rem', color: '#ff6b6b', fontSize: 13, marginBottom: '0.75rem' }}>
+                {uploadError}
+              </div>
+            )}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
               <div className="form-group" style={{ margin: 0 }}>
                 <label className="form-label">Title</label>
@@ -148,6 +184,11 @@ export default function AdminMedia() {
 
         {tab === 'youtube' && (
           <form onSubmit={addYouTube}>
+            {uploadError && (
+              <div style={{ background: 'rgba(201,5,5,0.15)', border: '1px solid rgba(201,5,5,0.3)', borderRadius: 8, padding: '0.6rem 0.9rem', color: '#ff6b6b', fontSize: 13, marginBottom: '0.75rem' }}>
+                {uploadError}
+              </div>
+            )}
             <div className="form-group" style={{ marginBottom: '0.75rem' }}>
               <label className="form-label">YouTube URL *</label>
               <input className="form-input" placeholder="https://www.youtube.com/watch?v=…" value={ytForm.youtubeUrl} onChange={e => setYtForm(f => ({ ...f, youtubeUrl: e.target.value }))} required />
@@ -180,24 +221,56 @@ export default function AdminMedia() {
             <input
               ref={fileRef}
               type="file"
-              accept="image/*,video/*"
+              accept="image/*"
               style={{ display: 'none' }}
-              onChange={e => uploadFile(e.target.files[0])}
+              onChange={e => { if (e.target.files[0]) uploadFile(e.target.files[0]) }}
             />
             <div
               className={`upload-zone${dragOver ? ' drag-over' : ''}`}
-              onClick={() => fileRef.current?.click()}
+              onClick={() => !uploading && fileRef.current?.click()}
               onDragOver={e => { e.preventDefault(); setDragOver(true) }}
               onDragLeave={() => setDragOver(false)}
-              onDrop={e => { e.preventDefault(); setDragOver(false); uploadFile(e.dataTransfer.files[0]) }}
+              onDrop={e => {
+                e.preventDefault()
+                setDragOver(false)
+                if (!uploading && e.dataTransfer.files[0]) uploadFile(e.dataTransfer.files[0])
+              }}
+              style={{ cursor: uploading ? 'not-allowed' : 'pointer' }}
             >
               <div className="upload-zone-icon">☁️</div>
               {uploading
-                ? <div className="upload-zone-text">Uploading…</div>
-                : <div className="upload-zone-text"><strong>Click to choose</strong> or drag and drop a file here</div>
+                ? <div className="upload-zone-text">Uploading to Cloudinary…</div>
+                : <div className="upload-zone-text"><strong>Click to choose</strong> or drag and drop an image here</div>
               }
-              <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.5rem' }}>Images and videos supported</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.5rem' }}>
+                Images up to 10MB supported
+              </div>
             </div>
+
+            {uploading && (
+              <div style={{ marginTop: '0.75rem' }}>
+                <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 8, overflow: 'hidden', height: 6 }}>
+                  <div style={{
+                    height: '100%',
+                    background: '#c90505',
+                    width: uploadProgress + '%',
+                    transition: 'width 0.4s ease',
+                  }} />
+                </div>
+                <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: '0.4rem' }}>
+                  Uploading to Cloudinary… please wait
+                </p>
+              </div>
+            )}
+
+            {uploadError && (
+              <p style={{ fontSize: 12, color: '#ff6b6b', marginTop: '0.5rem' }}>{uploadError}</p>
+            )}
+
+            {uploadSuccess && (
+              <p style={{ fontSize: 12, color: '#5DCAA5', marginTop: '0.5rem' }}>{uploadSuccess}</p>
+            )}
+
             <p style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginTop: '0.75rem' }}>
               Requires Cloudinary env vars: CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
             </p>
