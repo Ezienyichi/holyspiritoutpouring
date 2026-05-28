@@ -1,9 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { setToken } from '../api'
+import { setToken, getToken } from '../api'
 import { useToast } from '../context/ToastContext'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
+
+function parseJwt(token) {
+  try { return JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))) } catch { return null }
+}
 
 export default function AdminLogin() {
   const toast = useToast()
@@ -11,6 +15,15 @@ export default function AdminLogin() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const token = getToken()
+    if (!token) return
+    const decoded = parseJwt(token)
+    if (decoded && decoded.exp && decoded.exp * 1000 > Date.now()) {
+      navigate('/admin', { replace: true })
+    }
+  }, [navigate])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -30,7 +43,7 @@ export default function AdminLogin() {
       }
       setToken(data.token)
       toast.success('Welcome Back', 'You are now logged in to the admin panel.')
-      navigate('/admin')
+      navigate('/admin', { replace: true })
     } catch {
       toast.error('Login Failed', 'Network error. Please check your connection.')
       setError('Network error. Please try again.')
