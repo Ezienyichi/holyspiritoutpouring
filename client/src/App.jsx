@@ -10,20 +10,6 @@ import Register from './pages/Register'
 import Live from './pages/Live'
 import AdminLogin from './admin/AdminLogin'
 import AdminLayout from './admin/AdminLayout'
-import Dashboard from './admin/Dashboard'
-import SiteConfig from './admin/SiteConfig'
-import AdminSpeakers from './admin/AdminSpeakers'
-import AdminSchedule from './admin/AdminSchedule'
-import AdminPrayers from './admin/AdminPrayers'
-import AdminMedia from './admin/AdminMedia'
-import AdminGiving from './admin/AdminGiving'
-import AdminRegistrations from './admin/AdminRegistrations'
-import AdminLivestream from './admin/AdminLivestream'
-import AdminUsers from './admin/AdminUsers'
-import AdminPreviousEvents from './admin/AdminPreviousEvents'
-import AdminPastMinisters from './admin/AdminPastMinisters'
-import AdminSponsors from './admin/AdminSponsors'
-import AdminTestimonials from './admin/AdminTestimonials'
 
 export default function App() {
   return (
@@ -40,23 +26,7 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/live" element={<Live />} />
         <Route path="/admin" element={<AdminLogin />} />
-        <Route path="/admin/*" element={<AdminLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="config" element={<SiteConfig />} />
-          <Route path="speakers" element={<AdminSpeakers />} />
-          <Route path="schedule" element={<AdminSchedule />} />
-          <Route path="prayers" element={<AdminPrayers />} />
-          <Route path="media" element={<AdminMedia />} />
-          <Route path="giving" element={<AdminGiving />} />
-          <Route path="registrations" element={<AdminRegistrations />} />
-          <Route path="livestream" element={<AdminLivestream />} />
-          <Route path="users" element={<AdminUsers />} />
-          <Route path="previous-events" element={<AdminPreviousEvents />} />
-          <Route path="past-ministers" element={<AdminPastMinisters />} />
-          <Route path="sponsors" element={<AdminSponsors />} />
-          <Route path="testimonials" element={<AdminTestimonials />} />
-        </Route>
+        <Route path="/admin/*" element={<AdminLayout />} />
       </Routes>
     </BrowserRouter>
     </ToastProvider>
