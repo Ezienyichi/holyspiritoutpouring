@@ -1,49 +1,95 @@
 import { useState, useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
-import { api } from '../api'
+import { getToken } from '../api'
+
+const BASE_URL = import.meta.env.VITE_API_URL || ''
+
+function authHeaders() {
+  return { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'application/json' }
+}
+
+async function safeFetch(url, fallback) {
+  try {
+    const res = await Promise.race([
+      fetch(url, { headers: authHeaders() }),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 7000)),
+    ])
+    if (!res.ok) return fallback
+    return res.json()
+  } catch {
+    return fallback
+  }
+}
 
 export default function Dashboard() {
   const { user } = useOutletContext() || {}
   const role = user?.role || 'admin'
   const isSuperAdmin = role === 'super_admin' || role === 'admin'
 
-  const [stats, setStats] = useState({ registrations: 0, prayers: 0, pendingPrayers: 0, media: 0, totalGifts: 0 })
+  const [stats, setStats] = useState({ speakers: 0, sessions: 0, prayers: 0, registrations: 0, media: 0, giving: 0, totalGiving: 0, pendingPrayers: 0 })
   const [recentReg, setRecentReg] = useState([])
   const [recentGiving, setRecentGiving] = useState([])
   const [recentPrayers, setRecentPrayers] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!user) return
-    const base = [api.get('/prayers?all=true'), api.get('/media')]
-    const extra = isSuperAdmin ? [api.get('/registrations'), api.get('/giving')] : []
-    Promise.all([...base, ...extra]).then(results => {
-      const [prayers, media, reg, giving] = isSuperAdmin
-        ? results
-        : [...results, [], []]
-      const totalGifts = (giving || []).reduce((s, g) => s + (g.amount || 0), 0)
-      setStats({
-        registrations: (reg || []).length,
-        prayers: prayers.length,
-        pendingPrayers: prayers.filter(p => !p.approved).length,
-        media: media.length,
-        totalGifts,
-      })
-      setRecentReg((reg || []).slice(-5).reverse())
-      setRecentGiving((giving || []).slice(-5).reverse())
-      setRecentPrayers(prayers.filter(p => !p.approved).slice(0, 5))
-      setLoading(false)
-    }).catch(() => setLoading(false))
-  }, [user, isSuperAdmin])
+    const safetyTimer = setTimeout(() => setLoading(false), 8000)
 
-  if (!user || loading) return <div className="loading-state">Loading dashboard…</div>
+    async function fetchAll() {
+      const statsData = await safeFetch(`${BASE_URL}/api/dashboard/stats`, {})
+      setStats(prev => ({
+        ...prev,
+        speakers: statsData.speakers || 0,
+        sessions: statsData.sessions || 0,
+        prayers: statsData.prayers || 0,
+        registrations: statsData.registrations || 0,
+        media: statsData.media || 0,
+        giving: statsData.giving || 0,
+        totalGiving: statsData.totalGiving || 0,
+      }))
+
+      const prayersData = await safeFetch(`${BASE_URL}/api/prayers?all=true`, [])
+      const prayers = Array.isArray(prayersData) ? prayersData : []
+      setStats(prev => ({ ...prev, pendingPrayers: prayers.filter(p => !p.approved).length }))
+      setRecentPrayers(prayers.filter(p => !p.approved).slice(0, 5))
+
+      if (isSuperAdmin) {
+        const regData = await safeFetch(`${BASE_URL}/api/registrations`, [])
+        setRecentReg(Array.isArray(regData) ? regData.slice(-5).reverse() : [])
+
+        const givingData = await safeFetch(`${BASE_URL}/api/giving`, [])
+        setRecentGiving(Array.isArray(givingData) ? givingData.slice(-5).reverse() : [])
+      }
+
+      clearTimeout(safetyTimer)
+      setLoading(false)
+    }
+
+    fetchAll()
+    return () => clearTimeout(safetyTimer)
+  }, [isSuperAdmin])
+
+  if (loading) return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60vh', gap: '1rem' }}>
+      <div style={{
+        width: 40, height: 40,
+        border: '3px solid rgba(232,98,42,0.2)',
+        borderTop: '3px solid var(--orange)',
+        borderRadius: '50%',
+        animation: 'spin 0.8s linear infinite',
+      }} />
+      <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Loading dashboard...</p>
+      <p style={{ color: 'var(--text-dim)', fontSize: '12px', textAlign: 'center' }}>If this takes too long the database may be connecting. Please wait.</p>
+    </div>
+  )
 
   const statCards = [
-    ...(isSuperAdmin ? [{ label: 'Registrations', value: stats?.registrations || 0, color: 'var(--orange)' }] : []),
-    { label: 'Prayer Requests', value: stats?.prayers || 0, color: '#7c6af7' },
-    { label: 'Pending Prayers', value: stats?.pendingPrayers || 0, color: '#f7c26a' },
-    { label: 'Media Items', value: stats?.media || 0, color: '#4af78a' },
-    ...(isSuperAdmin ? [{ label: 'Total Giving', value: `₦${(stats?.totalGifts || 0).toLocaleString()}`, color: '#f7a24a' }] : []),
+    ...(isSuperAdmin ? [{ label: 'Registrations', value: stats.registrations, color: 'var(--orange)' }] : []),
+    { label: 'Prayer Requests', value: stats.prayers, color: '#7c6af7' },
+    { label: 'Pending Prayers', value: stats.pendingPrayers, color: '#f7c26a' },
+    { label: 'Media Items', value: stats.media, color: '#4af78a' },
+    { label: 'Speakers', value: stats.speakers, color: '#60a5fa' },
+    ...(isSuperAdmin ? [{ label: 'Total Giving', value: `₦${(stats.totalGiving || 0).toLocaleString()}`, color: '#f7a24a' }] : []),
   ]
 
   return (
@@ -123,7 +169,7 @@ export default function Dashboard() {
                   </tbody>
                 </table>
               )}
-          </div>
+        </div>
         )}
       </div>
     </div>

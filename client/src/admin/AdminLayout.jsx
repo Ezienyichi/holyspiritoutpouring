@@ -13,7 +13,7 @@ function parseJwt(token) {
 }
 
 const ALL_NAV = [
-  { to: '/admin', label: 'Dashboard', end: true, roles: ['super_admin', 'content_manager', 'admin'] },
+  { to: '/admin/dashboard', label: 'Dashboard', roles: ['super_admin', 'content_manager', 'admin'] },
   { to: '/admin/config', label: 'Site Config', roles: ['super_admin', 'admin'] },
   { to: '/admin/speakers', label: 'Team Members', roles: ['super_admin', 'content_manager', 'admin'] },
   { to: '/admin/sponsors', label: 'Sponsors', roles: ['super_admin', 'content_manager', 'admin'] },
@@ -64,7 +64,7 @@ export default function AdminLayout() {
 
   function logout() {
     clearToken()
-    navigate('/admin', { replace: true })
+    window.location.href = '/admin'
   }
 
   const role = user?.role || 'admin'
@@ -82,7 +82,7 @@ export default function AdminLayout() {
             <h3 style={{ color: 'var(--white)', fontFamily: 'var(--font-display)', marginBottom: '0.5rem' }}>Session Expiring Soon</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '1.5rem' }}>Your session will expire in 5 minutes. Please save your work.</p>
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
-              <button className="btn btn-orange" onClick={() => { setShowExpiry(false); navigate('/admin/login') }}>Sign In Again</button>
+              <button className="btn btn-orange" onClick={() => { clearToken(); window.location.href = '/admin' }}>Sign In Again</button>
               <button className="btn btn-navy" onClick={() => setShowExpiry(false)}>Dismiss</button>
             </div>
           </div>
