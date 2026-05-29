@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Routes, Route, NavLink, Navigate, useNavigate } from 'react-router-dom'
+import { Routes, Route, NavLink, useNavigate } from 'react-router-dom'
 import { getToken, clearToken } from '../api'
 import { useToast } from '../context/ToastContext'
 import Dashboard from './Dashboard'
@@ -26,20 +26,21 @@ function parseJwt(token) {
 }
 
 const NAV_ITEMS = [
-  { path: 'dashboard',       label: 'Dashboard',        roles: ['super_admin', 'content_manager', 'admin'] },
-  { path: 'config',          label: 'Site Config',       roles: ['super_admin', 'admin'] },
-  { path: 'speakers',        label: 'Team Members',      roles: ['super_admin', 'content_manager', 'admin'] },
-  { path: 'sponsors',        label: 'Sponsors',          roles: ['super_admin', 'content_manager', 'admin'] },
-  { path: 'previous-events', label: 'Previous Events',   roles: ['super_admin', 'content_manager', 'admin'] },
-  { path: 'past-ministers',  label: 'Past Ministers',    roles: ['super_admin', 'content_manager', 'admin'] },
-  { path: 'schedule',        label: 'Schedule',          roles: ['super_admin', 'admin'] },
-  { path: 'prayers',         label: 'Prayers',           roles: ['super_admin', 'content_manager', 'admin'] },
-  { path: 'testimonials',    label: 'Testimonials',      roles: ['super_admin', 'content_manager', 'admin'] },
-  { path: 'media',           label: 'Media',             roles: ['super_admin', 'content_manager', 'admin'] },
-  { path: 'giving',          label: 'Giving',            roles: ['super_admin', 'admin'] },
-  { path: 'registrations',   label: 'Registrations',     roles: ['super_admin', 'admin'] },
-  { path: 'livestream',      label: 'Livestream',        roles: ['super_admin', 'admin'] },
-  { path: 'users',           label: 'Users',             roles: ['super_admin', 'admin'] },
+  { path: 'dashboard',       label: 'Dashboard',          roles: ['super_admin', 'content_manager', 'admin'] },
+  { path: 'site-config',     label: 'Site Config',        roles: ['super_admin', 'admin'] },
+  { path: 'speakers',        label: 'Featured Speakers',  roles: ['super_admin', 'content_manager', 'admin'] },
+  { path: 'team-members',    label: 'Team Members',       roles: ['super_admin', 'content_manager', 'admin'] },
+  { path: 'sponsors',        label: 'Sponsors',           roles: ['super_admin', 'content_manager', 'admin'] },
+  { path: 'previous-events', label: 'Previous Events',    roles: ['super_admin', 'content_manager', 'admin'] },
+  { path: 'past-ministers',  label: 'Past Ministers',     roles: ['super_admin', 'content_manager', 'admin'] },
+  { path: 'schedule',        label: 'Schedule',           roles: ['super_admin', 'admin'] },
+  { path: 'prayers',         label: 'Prayers',            roles: ['super_admin', 'content_manager', 'admin'] },
+  { path: 'testimonials',    label: 'Testimonials',       roles: ['super_admin', 'content_manager', 'admin'] },
+  { path: 'media',           label: 'Media',              roles: ['super_admin', 'content_manager', 'admin'] },
+  { path: 'giving',          label: 'Giving',             roles: ['super_admin', 'admin'] },
+  { path: 'registrations',   label: 'Registrations',      roles: ['super_admin', 'admin'] },
+  { path: 'livestream',      label: 'Livestream',         roles: ['super_admin', 'admin'] },
+  { path: 'users',           label: 'Users',              roles: ['super_admin', 'admin'] },
 ]
 
 export default function AdminLayout() {
@@ -184,22 +185,22 @@ export default function AdminLayout() {
         {/* Page content */}
         <div style={{ flex: 1, padding: '2rem', overflowY: 'auto' }}>
           <Routes>
-            <Route index element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="dashboard"       element={<Dashboard />} />
-            <Route path="config"          element={<SiteConfig />} />
+            <Route path="site-config"     element={<SiteConfig />} />
             <Route path="speakers"        element={<AdminSpeakers />} />
+            <Route path="team-members"    element={<AdminSpeakers />} />
+            <Route path="sponsors"        element={<AdminSponsors />} />
+            <Route path="previous-events" element={<AdminPreviousEvents />} />
+            <Route path="past-ministers"  element={<AdminPastMinisters />} />
             <Route path="schedule"        element={<AdminSchedule />} />
             <Route path="prayers"         element={<AdminPrayers />} />
+            <Route path="testimonials"    element={<AdminTestimonials />} />
             <Route path="media"           element={<AdminMedia />} />
             <Route path="giving"          element={<AdminGiving />} />
             <Route path="registrations"   element={<AdminRegistrations />} />
             <Route path="livestream"      element={<AdminLivestream />} />
-            <Route path="sponsors"        element={<AdminSponsors />} />
-            <Route path="past-ministers"  element={<AdminPastMinisters />} />
-            <Route path="previous-events" element={<AdminPreviousEvents />} />
-            <Route path="testimonials"    element={<AdminTestimonials />} />
             <Route path="users"           element={<AdminUsers />} />
-            <Route path="*"               element={<Navigate to="/admin/dashboard" replace />} />
+            <Route index                  element={<Dashboard />} />
           </Routes>
         </div>
       </div>
