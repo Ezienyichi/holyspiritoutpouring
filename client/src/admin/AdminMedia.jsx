@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { api, getToken } from '../api'
 import { useToast } from '../context/ToastContext'
+import VisibilityToggle from '../components/VisibilityToggle'
+import { toggleVisibility } from '../utils/visibility'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
@@ -129,6 +131,13 @@ export default function AdminMedia() {
     await api.del(`/media/${id}`)
     toast.success('Media Removed', 'The item has been deleted from the gallery.')
     loadItems()
+  }
+
+  async function handleToggleVisibility(item) {
+    try {
+      const updated = await toggleVisibility('media', item.id, item.visible == 1)
+      setItems(prev => prev.map(m => m.id === item.id ? { ...m, visible: updated.visible } : m))
+    } catch { toast.error('Error', 'Could not update visibility.') }
   }
 
   const ytPreviewId = ytForm.youtubeUrl ? extractYouTubeId(ytForm.youtubeUrl) : null
@@ -300,6 +309,9 @@ export default function AdminMedia() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.4rem' }}>
                   <span style={{ background: 'var(--navy)', borderRadius: 6, padding: '0.1rem 0.4rem', fontSize: '0.7rem', color: 'var(--orange)' }}>{item.type}</span>
                   <button className="admin-btn-del" style={{ padding: '0.2rem 0.5rem', fontSize: '0.75rem' }} onClick={() => del(item.id)}>Delete</button>
+                </div>
+                <div style={{ marginTop: '0.5rem' }}>
+                  <VisibilityToggle isVisible={item.visible == 1 || item.visible === null} onToggle={() => handleToggleVisibility(item)} />
                 </div>
               </div>
             </div>

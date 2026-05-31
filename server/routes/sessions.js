@@ -6,9 +6,11 @@ const requireAuth = require('../middleware/auth');
 router.get('/', async (req, res) => {
   try {
     const { day } = req.query;
+    const isAdmin = !!req.headers.authorization;
+    const visClause = isAdmin ? '' : 'AND (visible = 1 OR visible IS NULL)';
     const result = day
-      ? await query('SELECT * FROM sessions WHERE day = $1 ORDER BY time', [Number(day)])
-      : await query('SELECT * FROM sessions ORDER BY day, time');
+      ? await query(`SELECT * FROM sessions WHERE day = $1 ${visClause} ORDER BY time`, [Number(day)])
+      : await query(`SELECT * FROM sessions WHERE 1=1 ${visClause} ORDER BY day, time`);
     res.json(result.rows || []);
   } catch (err) {
     console.error('sessions GET:', err.message);
@@ -18,11 +20,11 @@ router.get('/', async (req, res) => {
 
 router.post('/', requireAuth, async (req, res) => {
   try {
-    const { day, time, title, speaker, type, description, isCurrentlyLive } = req.body;
+    const { day, time, title, speaker, type, description, isCurrentlyLive, visible } = req.body;
     if (!day || !time || !title) return res.status(400).json({ error: 'day, time, title required' });
     const result = await query(
-      'INSERT INTO sessions (day, time, title, speaker, type, description, "isCurrentlyLive") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
-      [day, time, title, speaker || '', type || 'teaching', description || '', isCurrentlyLive ? 1 : 0]
+      'INSERT INTO sessions (day, time, title, speaker, type, description, "isCurrentlyLive", visible) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',
+      [day, time, title, speaker || '', type || 'teaching', description || '', isCurrentlyLive ? 1 : 0, visible !== undefined ? visible : 1]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {

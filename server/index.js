@@ -79,6 +79,7 @@ app.use('/api/past-ministers', require('./routes/pastMinisters'));
 app.use('/api/sponsors', require('./routes/sponsors'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/testimonials', require('./routes/testimonials'));
+app.use('/api/visibility', require('./routes/visibility'));
 
 // Local development only
 if (process.env.NODE_ENV !== 'production') {

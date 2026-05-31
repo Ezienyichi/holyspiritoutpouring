@@ -165,12 +165,33 @@ async function initializeDatabase() {
     )
   `);
 
+  await query(`
+    CREATE TABLE IF NOT EXISTS testimonials (
+      id SERIAL PRIMARY KEY,
+      name TEXT DEFAULT 'Anonymous',
+      location TEXT DEFAULT '',
+      year TEXT DEFAULT '',
+      text TEXT NOT NULL DEFAULT '',
+      approved INTEGER DEFAULT 0,
+      visible INTEGER DEFAULT 1,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
+
   // Add columns to existing tables that may already exist (safe ALTER TABLE IF NOT EXISTS)
   await query(`ALTER TABLE speakers ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'minister'`).catch(() => {});
   await query(`ALTER TABLE speakers ADD COLUMN IF NOT EXISTS deleted BOOLEAN DEFAULT FALSE`).catch(() => {});
   await query(`ALTER TABLE media ADD COLUMN IF NOT EXISTS deleted BOOLEAN DEFAULT FALSE`).catch(() => {});
   await query(`ALTER TABLE sponsors ADD COLUMN IF NOT EXISTS deleted BOOLEAN DEFAULT FALSE`).catch(() => {});
   await query(`INSERT INTO config (key, value) VALUES ('about_image_url', '') ON CONFLICT (key) DO NOTHING`).catch(() => {});
+
+  // Visible column for content visibility control
+  await query(`ALTER TABLE speakers ADD COLUMN IF NOT EXISTS visible INTEGER DEFAULT 1`).catch(() => {});
+  await query(`ALTER TABLE sessions ADD COLUMN IF NOT EXISTS visible INTEGER DEFAULT 1`).catch(() => {});
+  await query(`ALTER TABLE media ADD COLUMN IF NOT EXISTS visible INTEGER DEFAULT 1`).catch(() => {});
+  await query(`ALTER TABLE past_ministers ADD COLUMN IF NOT EXISTS visible INTEGER DEFAULT 1`).catch(() => {});
+  await query(`ALTER TABLE previous_events ADD COLUMN IF NOT EXISTS visible INTEGER DEFAULT 1`).catch(() => {});
+  await query(`ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS visible INTEGER DEFAULT 1`).catch(() => {});
 
   await seed();
 }

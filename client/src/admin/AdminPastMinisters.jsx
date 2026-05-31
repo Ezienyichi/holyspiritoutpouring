@@ -3,10 +3,12 @@ import { getToken } from '../api'
 import { useToast } from '../context/ToastContext'
 import SaveButton from '../components/SaveButton'
 import { saveRecord } from '../utils/adminSave'
+import VisibilityToggle from '../components/VisibilityToggle'
+import { toggleVisibility } from '../utils/visibility'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
-const EMPTY = { name: '', ministry_role: '', year: '', photo_url: '', display_order: 0 }
+const EMPTY = { name: '', ministry_role: '', year: '', photo_url: '', display_order: 0, visible: 1 }
 
 function PhotoUploader({ value, onChange }) {
   const [tab, setTab] = useState('upload')
@@ -152,6 +154,13 @@ export default function AdminPastMinisters() {
     } catch { toast.error('Error', 'Could not delete minister.') }
   }
 
+  async function handleToggleVisibility(minister) {
+    try {
+      const updated = await toggleVisibility('past_ministers', minister.id, minister.visible == 1)
+      setMinisters(prev => prev.map(m => m.id === minister.id ? { ...m, visible: updated.visible } : m))
+    } catch { toast.error('Error', 'Could not update visibility.') }
+  }
+
   const f = (k, v) => setForm(p => ({ ...p, [k]: v }))
 
   return (
@@ -165,7 +174,7 @@ export default function AdminPastMinisters() {
         <div className="admin-card" style={{ overflowX: 'auto' }}>
           <table className="admin-table">
             <thead>
-              <tr><th>Order</th><th>Photo</th><th>Year</th><th>Name</th><th>Ministry Role</th><th>Actions</th></tr>
+              <tr><th>Order</th><th>Photo</th><th>Year</th><th>Name</th><th>Ministry Role</th><th>Visibility</th><th>Actions</th></tr>
             </thead>
             <tbody>
               {ministers.map(m => (
@@ -180,6 +189,7 @@ export default function AdminPastMinisters() {
                   <td style={{ fontWeight: 700, color: 'var(--orange)' }}>{m.year}</td>
                   <td style={{ fontWeight: 600 }}>{m.name}</td>
                   <td style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{m.ministry_role}</td>
+                  <td><VisibilityToggle isVisible={m.visible == 1 || m.visible === null} onToggle={() => handleToggleVisibility(m)} /></td>
                   <td>
                     <button className="admin-btn-edit" onClick={() => openEdit(m)}>Edit</button>
                     <button className="admin-btn-del" onClick={() => del(m.id)}>Delete</button>
@@ -187,7 +197,7 @@ export default function AdminPastMinisters() {
                 </tr>
               ))}
               {ministers.length === 0 && (
-                <tr><td colSpan={6} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>No ministers yet. Click "+ Add Minister" to get started.</td></tr>
+                <tr><td colSpan={7} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>No ministers yet. Click "+ Add Minister" to get started.</td></tr>
               )}
             </tbody>
           </table>
@@ -217,6 +227,10 @@ export default function AdminPastMinisters() {
                   <input className="form-input" type="number" value={form.display_order || 0} onChange={e => f('display_order', Number(e.target.value))} />
                 </div>
                 <PhotoUploader value={form.photo_url} onChange={url => f('photo_url', url)} />
+                <div className="form-group" style={{ margin: 0, gridColumn: '1/-1' }}>
+                  <label className="form-label">Visibility</label>
+                  <VisibilityToggle isVisible={form.visible == 1 || form.visible === undefined} onToggle={() => f('visible', form.visible == 1 ? 0 : 1)} />
+                </div>
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-navy" onClick={closeModal}>Cancel</button>

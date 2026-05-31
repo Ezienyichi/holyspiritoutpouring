@@ -3,9 +3,11 @@ import { getToken } from '../api'
 import { useToast } from '../context/ToastContext'
 import SaveButton from '../components/SaveButton'
 import { saveRecord } from '../utils/adminSave'
+import VisibilityToggle from '../components/VisibilityToggle'
+import { toggleVisibility } from '../utils/visibility'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
-const EMPTY = { day: 1, time: '', title: '', speaker: '', type: 'session', description: '', isCurrentlyLive: false }
+const EMPTY = { day: 1, time: '', title: '', speaker: '', type: 'session', description: '', isCurrentlyLive: false, visible: 1 }
 const TYPES = ['worship', 'session', 'prayer', 'break', 'special']
 const DAYS = [1, 2, 3]
 
@@ -59,6 +61,13 @@ export default function AdminSchedule() {
     } catch { toast.error('Error', 'Could not delete session.') }
   }
 
+  async function handleToggleVisibility(session) {
+    try {
+      const updated = await toggleVisibility('sessions', session.id, session.visible == 1)
+      setSessions(prev => prev.map(s => s.id === session.id ? { ...s, visible: updated.visible } : s))
+    } catch { toast.error('Error', 'Could not update visibility.') }
+  }
+
   const f = (k, v) => setForm(p => ({ ...p, [k]: v }))
 
   return (
@@ -78,7 +87,7 @@ export default function AdminSchedule() {
         <div className="admin-card" style={{ overflowX: 'auto' }}>
           <table className="admin-table">
             <thead>
-              <tr><th>Time</th><th>Title</th><th>Speaker</th><th>Type</th><th>Live</th><th>Actions</th></tr>
+              <tr><th>Time</th><th>Title</th><th>Speaker</th><th>Type</th><th>Live</th><th>Visibility</th><th>Actions</th></tr>
             </thead>
             <tbody>
               {sessions.map(s => (
@@ -88,6 +97,7 @@ export default function AdminSchedule() {
                   <td style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{s.speaker || '—'}</td>
                   <td><span style={{ background: 'var(--navy)', borderRadius: 6, padding: '0.2rem 0.5rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>{s.type}</span></td>
                   <td>{s.isCurrentlyLive ? <span style={{ color: '#f44', fontWeight: 700 }}>● LIVE</span> : <span style={{ color: 'var(--text-muted)' }}>—</span>}</td>
+                  <td><VisibilityToggle isVisible={s.visible == 1 || s.visible === null} onToggle={() => handleToggleVisibility(s)} /></td>
                   <td>
                     <button className="admin-btn-edit" onClick={() => openEdit(s)}>Edit</button>
                     <button className="admin-btn-del" onClick={() => del(s.id)}>Delete</button>
@@ -95,7 +105,7 @@ export default function AdminSchedule() {
                 </tr>
               ))}
               {sessions.length === 0 && (
-                <tr><td colSpan={6} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>No sessions for this day yet.</td></tr>
+                <tr><td colSpan={7} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>No sessions for this day yet.</td></tr>
               )}
             </tbody>
           </table>
@@ -137,10 +147,16 @@ export default function AdminSchedule() {
                 <label className="form-label">Description</label>
                 <textarea className="form-textarea" value={form.description || ''} onChange={e => f('description', e.target.value)} rows={3} />
               </div>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginBottom: '1rem' }}>
-                <input type="checkbox" checked={!!form.isCurrentlyLive} onChange={e => f('isCurrentlyLive', e.target.checked)} />
-                <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Mark as currently live</span>
-              </label>
+              <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', marginBottom: '1rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                  <input type="checkbox" checked={!!form.isCurrentlyLive} onChange={e => f('isCurrentlyLive', e.target.checked)} />
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Mark as currently live</span>
+                </label>
+              </div>
+              <div className="form-group" style={{ marginBottom: '1rem' }}>
+                <label className="form-label">Visibility</label>
+                <VisibilityToggle isVisible={form.visible == 1 || form.visible === undefined} onToggle={() => f('visible', form.visible == 1 ? 0 : 1)} />
+              </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-navy" onClick={closeModal}>Cancel</button>
                 <SaveButton onClick={handleSave} label="Save Session" />

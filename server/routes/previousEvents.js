@@ -5,7 +5,9 @@ const requireAuth = require('../middleware/auth');
 
 router.get('/', async (req, res) => {
   try {
-    const result = await query('SELECT * FROM previous_events WHERE deleted IS NOT TRUE ORDER BY display_order ASC, year ASC');
+    const isAdmin = !!req.headers.authorization;
+    const visClause = isAdmin ? '' : 'AND (visible = 1 OR visible IS NULL)';
+    const result = await query(`SELECT * FROM previous_events WHERE deleted IS NOT TRUE ${visClause} ORDER BY display_order ASC, year ASC`);
     res.json(result.rows || []);
   } catch (err) {
     console.error('previous_events GET:', err.message);
@@ -15,10 +17,10 @@ router.get('/', async (req, res) => {
 
 router.post('/', requireAuth, async (req, res) => {
   try {
-    const { year, title, tagline, image_url, highlights_url, display_order } = req.body;
+    const { year, title, tagline, image_url, highlights_url, display_order, visible } = req.body;
     const result = await query(
-      'INSERT INTO previous_events (year, title, tagline, image_url, highlights_url, display_order) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
-      [year || '', title || '', tagline || '', image_url || '', highlights_url || '', Number(display_order) || 0]
+      'INSERT INTO previous_events (year, title, tagline, image_url, highlights_url, display_order, visible) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
+      [year || '', title || '', tagline || '', image_url || '', highlights_url || '', Number(display_order) || 0, visible !== undefined ? visible : 1]
     );
     res.json(result.rows[0]);
   } catch (err) {
@@ -28,10 +30,10 @@ router.post('/', requireAuth, async (req, res) => {
 
 router.put('/:id', requireAuth, async (req, res) => {
   try {
-    const { year, title, tagline, image_url, highlights_url, display_order } = req.body;
+    const { year, title, tagline, image_url, highlights_url, display_order, visible } = req.body;
     const result = await query(
-      'UPDATE previous_events SET year=$1, title=$2, tagline=$3, image_url=$4, highlights_url=$5, display_order=$6 WHERE id=$7 RETURNING *',
-      [year || '', title || '', tagline || '', image_url || '', highlights_url || '', Number(display_order) || 0, Number(req.params.id)]
+      'UPDATE previous_events SET year=$1, title=$2, tagline=$3, image_url=$4, highlights_url=$5, display_order=$6, visible=COALESCE($7, visible) WHERE id=$8 RETURNING *',
+      [year || '', title || '', tagline || '', image_url || '', highlights_url || '', Number(display_order) || 0, visible !== undefined ? visible : null, Number(req.params.id)]
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });
     res.json(result.rows[0]);

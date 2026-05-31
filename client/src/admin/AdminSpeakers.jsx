@@ -3,10 +3,12 @@ import { getToken } from '../api'
 import { useToast } from '../context/ToastContext'
 import SaveButton from '../components/SaveButton'
 import { saveRecord } from '../utils/adminSave'
+import VisibilityToggle from '../components/VisibilityToggle'
+import { toggleVisibility } from '../utils/visibility'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
-const EMPTY = { name: '', title: '', church: '', topic: '', bio: '', photoUrl: '', instagram: '', twitter: '', displayOrder: 0, role: 'minister' }
+const EMPTY = { name: '', title: '', church: '', topic: '', bio: '', photoUrl: '', instagram: '', twitter: '', displayOrder: 0, role: 'minister', visible: 1 }
 
 const ROLES = [
   { value: 'minister', label: 'Minister / Featured Speaker' },
@@ -161,6 +163,13 @@ export default function AdminSpeakers() {
     } catch { toast.error('Error', 'Could not delete speaker.') }
   }
 
+  async function handleToggleVisibility(speaker) {
+    try {
+      const updated = await toggleVisibility('speakers', speaker.id, speaker.visible == 1)
+      setSpeakers(prev => prev.map(s => s.id === speaker.id ? { ...s, visible: updated.visible } : s))
+    } catch { toast.error('Error', 'Could not update visibility.') }
+  }
+
   const f = (k, v) => setForm(p => ({ ...p, [k]: v }))
 
   return (
@@ -174,7 +183,7 @@ export default function AdminSpeakers() {
         <div className="admin-card" style={{ overflowX: 'auto' }}>
           <table className="admin-table">
             <thead>
-              <tr><th>#</th><th>Photo</th><th>Name</th><th>Title / Church</th><th>Role</th><th>Topic</th><th>Actions</th></tr>
+              <tr><th>#</th><th>Photo</th><th>Name</th><th>Title / Church</th><th>Role</th><th>Topic</th><th>Visibility</th><th>Actions</th></tr>
             </thead>
             <tbody>
               {speakers.map(s => (
@@ -190,6 +199,7 @@ export default function AdminSpeakers() {
                   <td style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{s.title}<br />{s.church}</td>
                   <td style={{ fontSize: '0.8rem', color: 'var(--orange)' }}>{ROLES.find(r => r.value === (s.role || 'minister'))?.label || s.role}</td>
                   <td style={{ fontSize: '0.85rem' }}>{s.topic}</td>
+                  <td><VisibilityToggle isVisible={s.visible == 1 || s.visible === null} onToggle={() => handleToggleVisibility(s)} /></td>
                   <td>
                     <button className="admin-btn-edit" onClick={() => openEdit(s)}>Edit</button>
                     <button className="admin-btn-del" onClick={() => del(s.id)}>Delete</button>
@@ -236,6 +246,13 @@ export default function AdminSpeakers() {
               <div className="form-group" style={{ marginTop: '0.75rem' }}>
                 <label className="form-label">Bio</label>
                 <textarea className="form-textarea" value={form.bio||''} onChange={e=>f('bio',e.target.value)} rows={3} />
+              </div>
+              <div className="form-group" style={{ marginTop: '0.75rem' }}>
+                <label className="form-label">Visibility</label>
+                <VisibilityToggle
+                  isVisible={form.visible == 1 || form.visible === undefined}
+                  onToggle={() => f('visible', form.visible == 1 ? 0 : 1)}
+                />
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-navy" onClick={closeModal}>Cancel</button>

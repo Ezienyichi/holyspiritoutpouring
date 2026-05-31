@@ -3,10 +3,12 @@ import { getToken } from '../api'
 import { useToast } from '../context/ToastContext'
 import SaveButton from '../components/SaveButton'
 import { saveRecord } from '../utils/adminSave'
+import VisibilityToggle from '../components/VisibilityToggle'
+import { toggleVisibility } from '../utils/visibility'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
-const EMPTY = { year: '', title: '', tagline: '', image_url: '', highlights_url: '', display_order: 0 }
+const EMPTY = { year: '', title: '', tagline: '', image_url: '', highlights_url: '', display_order: 0, visible: 1 }
 
 function ImageUploader({ value, onChange, label = 'Event Image' }) {
   const [tab, setTab] = useState('upload')
@@ -152,6 +154,13 @@ export default function AdminPreviousEvents() {
     } catch { toast.error('Error', 'Could not delete event.') }
   }
 
+  async function handleToggleVisibility(event) {
+    try {
+      const updated = await toggleVisibility('previous_events', event.id, event.visible == 1)
+      setEvents(prev => prev.map(e => e.id === event.id ? { ...e, visible: updated.visible } : e))
+    } catch { toast.error('Error', 'Could not update visibility.') }
+  }
+
   const f = (k, v) => setForm(p => ({ ...p, [k]: v }))
 
   return (
@@ -165,7 +174,7 @@ export default function AdminPreviousEvents() {
         <div className="admin-card" style={{ overflowX: 'auto' }}>
           <table className="admin-table">
             <thead>
-              <tr><th>Order</th><th>Image</th><th>Year</th><th>Title</th><th>Tagline</th><th>Highlights URL</th><th>Actions</th></tr>
+              <tr><th>Order</th><th>Image</th><th>Year</th><th>Title</th><th>Tagline</th><th>Visibility</th><th>Actions</th></tr>
             </thead>
             <tbody>
               {events.map(ev => (
@@ -179,10 +188,8 @@ export default function AdminPreviousEvents() {
                   </td>
                   <td style={{ fontWeight: 700, color: 'var(--orange)' }}>{ev.year}</td>
                   <td style={{ fontWeight: 600 }}>{ev.title}</td>
-                  <td style={{ color: 'var(--text-muted)', fontSize: '0.85rem', maxWidth: 200 }}>{ev.tagline}</td>
-                  <td style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    {ev.highlights_url ? <a href={ev.highlights_url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange)' }}>Link</a> : '—'}
-                  </td>
+                  <td style={{ color: 'var(--text-muted)', fontSize: '0.85rem', maxWidth: 160 }}>{ev.tagline}</td>
+                  <td><VisibilityToggle isVisible={ev.visible == 1 || ev.visible === null} onToggle={() => handleToggleVisibility(ev)} /></td>
                   <td>
                     <button className="admin-btn-edit" onClick={() => openEdit(ev)}>Edit</button>
                     <button className="admin-btn-del" onClick={() => del(ev.id)}>Delete</button>
@@ -224,6 +231,10 @@ export default function AdminPreviousEvents() {
                   <input className="form-input" value={form.highlights_url || ''} onChange={e => f('highlights_url', e.target.value)} placeholder="https://youtube.com/..." />
                 </div>
                 <ImageUploader value={form.image_url} onChange={url => f('image_url', url)} label="Event Cover Image (Portrait 3:4)" />
+                <div className="form-group" style={{ margin: 0, gridColumn: '1/-1' }}>
+                  <label className="form-label">Visibility</label>
+                  <VisibilityToggle isVisible={form.visible == 1 || form.visible === undefined} onToggle={() => f('visible', form.visible == 1 ? 0 : 1)} />
+                </div>
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-navy" onClick={closeModal}>Cancel</button>

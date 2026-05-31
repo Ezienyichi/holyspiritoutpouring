@@ -78,7 +78,9 @@ router.post('/upload-image', auth, upload.single('image'), async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    const result = await query('SELECT * FROM media WHERE deleted IS NOT TRUE ORDER BY id DESC');
+    const isAdmin = !!req.headers.authorization;
+    const visClause = isAdmin ? '' : 'AND (visible = 1 OR visible IS NULL)';
+    const result = await query(`SELECT * FROM media WHERE deleted IS NOT TRUE ${visClause} ORDER BY id DESC`);
     res.json(result.rows || []);
   } catch (err) {
     console.error('Media GET error:', err.message);
