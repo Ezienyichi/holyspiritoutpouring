@@ -63,6 +63,27 @@ app.get('/api/health', async (req, res) => {
   });
 });
 
+// Debug endpoint — table row counts
+app.get('/api/debug/counts', async (req, res) => {
+  try {
+    const { query } = require('./db/database');
+    const [ministers, events, speakers, media] = await Promise.all([
+      query('SELECT COUNT(*) FROM past_ministers WHERE deleted IS NOT TRUE'),
+      query('SELECT COUNT(*) FROM previous_events WHERE deleted IS NOT TRUE'),
+      query('SELECT COUNT(*) FROM speakers WHERE deleted IS NOT TRUE'),
+      query('SELECT COUNT(*) FROM media WHERE deleted IS NOT TRUE'),
+    ]);
+    res.json({
+      past_ministers: parseInt(ministers.rows[0].count),
+      previous_events: parseInt(events.rows[0].count),
+      speakers: parseInt(speakers.rows[0].count),
+      media: parseInt(media.rows[0].count),
+    });
+  } catch (err) {
+    res.json({ error: err.message });
+  }
+});
+
 // API routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/config', require('./routes/config'));
