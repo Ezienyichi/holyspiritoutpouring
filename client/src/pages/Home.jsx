@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useSiteConfig } from '../hooks/useSiteConfig'
 import { apiFetch } from '../utils/api'
 import Carousel3D from '../components/Carousel3D'
@@ -95,10 +95,10 @@ function HeroSection({ config }) {
         </p>
         {showCountdown && <CountdownTimer targetDate={config.countdownDate || '2026-08-15T18:00:00'} />}
         <div className="hero-cta">
-          <a href="#register-section" className="btn btn-orange btn-lg" onClick={e => { e.preventDefault(); document.getElementById('register-section')?.scrollIntoView({ behavior: 'smooth' }) }}>
+          <Link to="/register" className="btn btn-orange btn-lg">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             Register Free
-          </a>
+          </Link>
           <a href="#about-section" className="btn btn-outline btn-lg" onClick={e => { e.preventDefault(); document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' }) }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg>
             Learn More
@@ -152,15 +152,15 @@ function SponsorsStrip({ sponsors }) {
   const doubled = [...items, ...items]
   return (
     <div style={{
-      height: 72, background: '#FFFFFF', position: 'relative',
-      borderTop: '1px solid #EEEEEE', borderBottom: '1px solid #EEEEEE',
+      height: 80, background: '#FFFFFF', position: 'relative',
+      borderTop: '2px solid #EEEEEE', borderBottom: '2px solid #EEEEEE',
       display: 'flex', alignItems: 'center', overflow: 'hidden', width: '100%',
     }}>
       <div style={{
         position: 'absolute', left: 0, top: 0, bottom: 0, width: 155,
         background: '#FFFFFF', borderRight: '1px solid #EEEEEE', zIndex: 2,
         display: 'flex', alignItems: 'center', paddingLeft: 20, paddingRight: 20,
-        fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 700,
+        fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 800,
         letterSpacing: '0.12em', textTransform: 'uppercase', color: '#040102',
         whiteSpace: 'nowrap',
       }}>
@@ -172,14 +172,14 @@ function SponsorsStrip({ sponsors }) {
             s.logo_url ? (
               <a key={i} href={s.website_url || '#'} target={s.website_url ? '_blank' : undefined} rel="noopener noreferrer"
                 style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-                <img src={s.logo_url} alt={s.name} style={{ height: 36, objectFit: 'contain', filter: 'grayscale(20%)', opacity: 0.85, display: 'block' }} />
+                <img src={s.logo_url} alt={s.name} style={{ height: 44, width: 'auto', objectFit: 'contain', filter: 'none', opacity: 1, display: 'block' }} />
               </a>
             ) : (
               <div key={i} style={{
-                flexShrink: 0, background: '#F8F8F8', border: '1px solid #EEEEEE', borderRadius: 6,
-                padding: '8px 20px', height: 40, display: 'flex', alignItems: 'center',
-                fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600, color: '#040102',
-                whiteSpace: 'nowrap',
+                flexShrink: 0, background: '#FFFFFF', border: '2px solid #EEEEEE', borderRadius: 8,
+                padding: '10px 24px', height: 48, display: 'flex', alignItems: 'center',
+                fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 800, color: '#040102',
+                whiteSpace: 'nowrap', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', letterSpacing: '0.02em',
               }}>
                 {s.name}
               </div>
@@ -676,21 +676,23 @@ function HomeVideoCard({ item }) {
   const thumb = item.thumbnailUrl || (ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : item.url)
   const watchUrl = item.youtubeUrl || (ytId ? `https://www.youtube.com/watch?v=${ytId}` : '#')
   return (
-    <a
-      href={watchUrl} target="_blank" rel="noopener noreferrer"
-      style={{ display: 'block', position: 'relative', borderRadius: 12, overflow: 'hidden', aspectRatio: '16/9', cursor: 'pointer', transition: 'all 0.25s ease', textDecoration: 'none' }}
-      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.25)' }}
-      onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '' }}
-    >
-      <img src={thumb} alt={item.title || item.caption} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.55) 100%)' }} />
-      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-60%)', width: 56, height: 56, borderRadius: '50%', background: '#FF0000', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 12px rgba(0,0,0,0.4)' }} className="yt-play-btn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-      </div>
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 12px 12px', color: 'white', fontSize: 13, fontWeight: 700, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-        {item.title || item.caption}
-      </div>
-    </a>
+    <div>
+      <a
+        href={watchUrl} target="_blank" rel="noopener noreferrer"
+        className="home-gallery-card"
+        style={{ cursor: 'pointer', transition: 'all 0.25s ease', textDecoration: 'none' }}
+        onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.25)' }}
+        onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '' }}
+      >
+        <img src={thumb} alt={item.title || item.caption} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} onError={e => { e.target.style.display = 'none' }} />
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.15)' }}>
+          <div className="yt-play-btn" style={{ width: 44, height: 44, borderRadius: '50%', background: '#FF0000', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(0,0,0,0.4)' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg>
+          </div>
+        </div>
+      </a>
+      {(item.title || item.caption) && <p className="home-gallery-title">{item.title || item.caption}</p>}
+    </div>
   )
 }
 
@@ -718,29 +720,22 @@ function MediaSection({ media }) {
         {displayMedia.length === 0 ? (
           <div style={{ textAlign: 'center', color: '#666', padding: '3rem 0' }}>Gallery content coming soon.</div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+          <div className="home-gallery-grid">
             {displayMedia.map(item => (
               item.type === 'video'
                 ? <HomeVideoCard key={item.id} item={item} />
                 : (
-                  <div key={item.id} style={{ borderRadius: 12, overflow: 'hidden', aspectRatio: '16/9', position: 'relative', background: '#162032' }}>
-                    <img
-                      src={item.url}
-                      alt={item.title || item.caption}
-                      loading="lazy"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                      onError={e => { e.target.style.display = 'none' }}
-                    />
-                    {(item.title || item.caption) && (
-                      <div style={{
-                        position: 'absolute', bottom: 0, left: 0, right: 0,
-                        padding: '8px 12px',
-                        background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
-                        color: 'white', fontSize: 12, fontWeight: 600,
-                      }}>
-                        {item.title || item.caption}
-                      </div>
-                    )}
+                  <div key={item.id}>
+                    <div className="home-gallery-card">
+                      <img
+                        src={item.url}
+                        alt={item.title || item.caption}
+                        loading="lazy"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                        onError={e => { e.target.style.display = 'none' }}
+                      />
+                    </div>
+                    {(item.title || item.caption) && <p className="home-gallery-title">{item.title || item.caption}</p>}
                   </div>
                 )
             ))}
@@ -760,16 +755,22 @@ function MediaSection({ media }) {
 
 /* ── GIVE ────────────────────────────────────── */
 function GiveSection() {
-  const [custom, setCustom] = useState('')
+  const navigate = useNavigate()
+  const [giveForm, setGiveForm] = useState({ name: '', location: '', amount: '', reason: '' })
   const tiers = [
-    { name: 'Seed Partner', amount: '₦5,000', desc: "Support one attendee's registration and help make this gathering possible." },
-    { name: 'Conference Partner', amount: '₦25,000', desc: 'Fund a full session production — sound, lighting, and streaming.' },
-    { name: 'Vision Partner', amount: '₦100,000', desc: 'Sponsor the global broadcast reaching thousands online.' },
+    { name: 'Seed Partner', amount: 5000, display: '₦5,000', desc: "Support one attendee's registration and help make this gathering possible." },
+    { name: 'Conference Partner', amount: 25000, display: '₦25,000', desc: 'Fund a full session production — sound, lighting, and streaming.' },
+    { name: 'Vision Partner', amount: 100000, display: '₦100,000', desc: 'Sponsor the global broadcast reaching thousands online.' },
   ]
-  async function giveAmount(amount, tier) {
-    await fetch(API_BASE + '/api/giving', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount, tier }) }).catch(() => {})
-    alert(`Thank you! Your gift of ${amount} has been received. God bless you!`)
+  function goToGive(data) {
+    sessionStorage.setItem('giveFormData', JSON.stringify(data))
+    navigate('/give')
   }
+  const fields = [
+    { label: 'Full Name', placeholder: 'Your full name', type: 'text', field: 'name' },
+    { label: 'Location', placeholder: 'City, State, Country', type: 'text', field: 'location' },
+    { label: 'Amount (₦)', placeholder: 'Enter amount', type: 'number', field: 'amount' },
+  ]
   return (
     <section className="give-section" id="register-section">
       <div className="container">
@@ -781,19 +782,62 @@ function GiveSection() {
           {tiers.map(t => (
             <div key={t.name} className="give-card">
               <div className="give-tier">{t.name}</div>
-              <div className="give-amount">{t.amount}</div>
+              <div className="give-amount">{t.display}</div>
               <p className="give-desc">{t.desc}</p>
-              <button className="btn btn-orange" style={{ width: '100%', justifyContent: 'center' }} onClick={() => giveAmount(t.amount, t.name)}>
+              <button className="btn btn-orange" style={{ width: '100%', justifyContent: 'center' }} onClick={() => goToGive({ name: '', location: '', amount: String(t.amount), reason: t.name })}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                 Give Now
               </button>
             </div>
           ))}
         </div>
-        <div className="give-custom">
-          <input placeholder="Custom amount (₦)" value={custom} onChange={e => setCustom(e.target.value)} style={{ flex: 1, background: 'rgba(0,0,0,0.05)', border: '2px solid rgba(0,0,0,0.12)', borderRadius: 8, padding: '0.65rem 1rem', fontSize: '0.9rem', color: '#040102' }} />
-          <button className="btn btn-orange" style={{ whiteSpace: 'nowrap' }} onClick={() => custom && giveAmount(custom, 'Custom')}>
-            Give
+
+        <div style={{
+          background: 'rgba(255,255,255,0.05)',
+          border: '2px solid rgba(255,255,255,0.25)',
+          borderRadius: '16px',
+          padding: '2rem',
+          maxWidth: '480px',
+          margin: '2.5rem auto 0',
+        }}>
+          <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', color: 'white', marginBottom: '1.5rem', textAlign: 'center' }}>
+            Give Towards the Vision
+          </h3>
+
+          {fields.map(f => (
+            <div key={f.field} style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: 'rgba(255,255,255,0.7)', marginBottom: '6px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{f.label}</label>
+              <input
+                type={f.type}
+                placeholder={f.placeholder}
+                value={giveForm[f.field]}
+                onChange={e => setGiveForm(g => ({ ...g, [f.field]: e.target.value }))}
+                style={{ width: '100%', background: 'rgba(255,255,255,0.08)', border: '2px solid rgba(255,255,255,0.3)', borderRadius: '8px', padding: '12px 16px', color: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.2s' }}
+                onFocus={e => e.target.style.borderColor = '#c90505'}
+                onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.3)'}
+              />
+            </div>
+          ))}
+
+          <div style={{ marginBottom: '1.5rem' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: 'rgba(255,255,255,0.7)', marginBottom: '6px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Reason for Giving</label>
+            <input
+              type="text"
+              placeholder="Connect your giving to an expectation from God"
+              value={giveForm.reason}
+              onChange={e => setGiveForm(g => ({ ...g, reason: e.target.value }))}
+              style={{ width: '100%', background: 'rgba(255,255,255,0.08)', border: '2px solid rgba(255,255,255,0.3)', borderRadius: '8px', padding: '12px 16px', color: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.2s' }}
+              onFocus={e => e.target.style.borderColor = '#c90505'}
+              onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.3)'}
+            />
+          </div>
+
+          <button
+            onClick={() => goToGive(giveForm)}
+            style={{ width: '100%', background: '#c90505', color: 'white', border: 'none', borderRadius: '8px', padding: '14px', fontSize: '15px', fontWeight: '700', cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+          >
+            Give Now
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </button>
         </div>
       </div>

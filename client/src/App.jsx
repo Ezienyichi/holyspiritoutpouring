@@ -10,11 +10,13 @@ import Register from './pages/Register'
 import Live from './pages/Live'
 import AdminLogin from './admin/AdminLogin'
 import AdminLayout from './admin/AdminLayout'
+import ScrollToTop from './components/ScrollToTop'
 
 export default function App() {
   return (
     <ToastProvider>
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/speakers" element={<Speakers />} />

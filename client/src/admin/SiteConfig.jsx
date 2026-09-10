@@ -222,6 +222,24 @@ export default function SiteConfig() {
           <SaveBtn onClick={() => saveKeys(['contactEmail','contactPhone','contact_whatsapp'])} saving={saving} />
         </Section>
 
+        {/* ── Giving & Payment Details ── */}
+        <Section id="giving" open={open} onToggle={setOpen} title="Giving & Payment Details"
+          icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>}>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
+            Shown to donors after they submit the Give form, as the account to transfer their gift to.
+          </div>
+          <div className="admin-form-grid-2" style={{ gap: '0 1rem' }}>
+            <FG label="Bank Name"><input {...inp('bank_name')} placeholder="First Bank Nigeria" /></FG>
+            <FG label="Account Name"><input {...inp('account_name')} placeholder="Holy Spirit Outpouring Conference" /></FG>
+            <FG label="Account Number"><input {...inp('account_number')} placeholder="0123456789" /></FG>
+            <FG label="Sort Code / Branch Code (optional)"><input {...inp('sort_code')} /></FG>
+          </div>
+          <FG label="Additional Payment Instructions">
+            <textarea className="form-textarea" {...ta('giving_info')} rows={2} placeholder="Please use your full name as payment reference. Allow 24–48 hours for confirmation." />
+          </FG>
+          <SaveBtn onClick={() => saveKeys(['bank_name','account_name','account_number','sort_code','giving_info'])} saving={saving} />
+        </Section>
+
         {/* ── 4. Social Media ── */}
         <Section id="social" open={open} onToggle={setOpen} title="Social Media Links"
           icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>}>

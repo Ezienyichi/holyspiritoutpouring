@@ -86,11 +86,12 @@ input, textarea, select { font-family: var(--font-body); }
 .form-group { margin-bottom: 1rem; }
 .form-label { display: block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.4rem; }
 .form-input, .form-textarea, .form-select {
-  width: 100%; background: var(--navy); border: 1px solid var(--navy-border);
+  width: 100%; background: var(--navy); border: 2px solid rgba(255,255,255,0.3);
   border-radius: var(--radius-sm); color: var(--text-light); font-size: 0.9rem;
-  padding: 0.65rem 0.9rem; transition: border-color var(--transition);
+  padding: 0.65rem 0.9rem; transition: border-color var(--transition), box-shadow var(--transition);
 }
 .form-input:focus, .form-textarea:focus, .form-select:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(232,98,42,0.12); }
+.form-input::placeholder, .form-textarea::placeholder { color: rgba(255,255,255,0.3); }
 .form-textarea { resize: vertical; min-height: 100px; }
 .form-select option { background: var(--navy-mid); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -462,9 +463,6 @@ input, textarea, select { font-family: var(--font-body); }
 .hero-content { position: relative; z-index: 10; max-width: 600px; margin-left: 6%; padding: 5rem 2rem 4rem 0; text-align: left; }
 
 /* ===== NAVBAR — UPDATED ===== */
-.nav-logo { font-family: var(--font-display); font-size: 1.45rem; font-weight: 800; color: var(--navy); display: flex; align-items: center; gap: 0.4rem; text-decoration: none; }
-.nav-logo-text { color: var(--navy); }
-.nav-logo .accent { color: var(--orange); font-size: 0.85em; vertical-align: super; font-style: normal; }
 .nav-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 0.4rem; color: white; width: 40px; height: 40px; align-items: center; justify-content: center; }
 .nav-hamburger svg { width: 28px; height: 28px; }
 .mobile-menu { display: none; background: rgba(10,18,35,0.97); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
@@ -657,10 +655,10 @@ input, textarea, select { font-family: var(--font-body); }
 @media (max-width: 480px) { .team-grid-sub-6 { grid-template-columns: repeat(2, 1fr); } }
 
 /* ===== GIVE PAGE — CUSTOM AMOUNT INPUTS ===== */
-.give-amount-input { width: 100%; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); border-radius: 8px; padding: 12px 16px; color: white; font-size: 15px; font-family: var(--font-body); transition: border-color var(--transition); }
+.give-amount-input { width: 100%; background: rgba(255,255,255,0.12); border: 2px solid rgba(255,255,255,0.3); border-radius: 8px; padding: 12px 16px; color: white; font-size: 15px; font-family: var(--font-body); transition: border-color var(--transition), box-shadow var(--transition); }
 .give-amount-input:focus { border-color: #E8622A; outline: none; box-shadow: 0 0 0 3px rgba(232,98,42,0.15); }
 .give-amount-input::placeholder { color: rgba(255,255,255,0.45); }
-.give-reason-input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 12px 16px; color: white; font-size: 14px; font-family: var(--font-body); transition: border-color var(--transition); }
+.give-reason-input { width: 100%; background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.3); border-radius: 8px; padding: 12px 16px; color: white; font-size: 14px; font-family: var(--font-body); transition: border-color var(--transition), box-shadow var(--transition); }
 .give-reason-input:focus { border-color: #E8622A; outline: none; box-shadow: 0 0 0 3px rgba(232,98,42,0.15); }
 .give-reason-input::placeholder { color: rgba(255,255,255,0.35); }
 
@@ -936,7 +934,7 @@ body { background: #FFFFFF; color: #040102; }
 .reg-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .reg-form-group { display: flex; flex-direction: column; margin-bottom: 1.25rem; }
 .reg-field-label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); display: block; margin-bottom: 6px; }
-.reg-input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 12px 16px; color: white; font-size: 14px; font-family: var(--font-body); transition: border-color var(--transition), box-shadow var(--transition); }
+.reg-input { width: 100%; background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.3); border-radius: 8px; padding: 12px 16px; color: white; font-size: 14px; font-family: var(--font-body); transition: border-color var(--transition), box-shadow var(--transition); }
 .reg-input:focus { border-color: #E8622A; outline: none; box-shadow: 0 0 0 3px rgba(232,98,42,0.15); }
 .reg-input::placeholder { color: rgba(255,255,255,0.35); }
 .reg-attendance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.25rem; }
@@ -1109,3 +1107,29 @@ body { background: #FFFFFF; color: #040102; }
   }
   .sch-tab.active { font-size: 12px; }
 }
+
+/* ===== ADMIN LOGIN — VISIBLE INPUT BORDERS ===== */
+.admin-login-input { border: 2px solid rgba(255,255,255,0.3) !important; transition: border-color 0.2s, box-shadow 0.2s; }
+.admin-login-input:focus { border-color: #c90505 !important; box-shadow: 0 0 0 3px rgba(201,5,5,0.15); }
+
+/* ===== LIVE PAGE — COMPACT SCHEDULE, SCROLLABLE ON MOBILE =====
+   The schedule card had no height cap, so on days with several sessions
+   it grew as tall as (or taller than) the video, making the video feel
+   small by comparison. Capping it also fixes mobile, where the page's
+   outer 100vh/overflow:hidden shell (needed for the desktop chat layout)
+   was clipping content instead of scrolling it. */
+.live-today-schedule { max-height: 420px; overflow-y: auto; }
+@media (max-width: 768px) {
+  .live-page-shell { height: auto !important; overflow: visible !important; }
+  .live-layout { height: auto !important; }
+  .live-main { overflow-y: visible !important; }
+  .chat-panel { height: 480px; border-left: none; border-top: 1px solid var(--navy-border); }
+}
+
+/* ===== HOME GALLERY GRID — RESPONSIVE (3 / 2 / 2 COLUMNS) ===== */
+.home-gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; width: 100%; }
+@media (max-width: 1023px) { .home-gallery-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .home-gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; } }
+.home-gallery-card { border-radius: 12px; overflow: hidden; position: relative; aspect-ratio: 16/9; background: #162032; display: block; }
+@media (max-width: 767px) { .home-gallery-card { aspect-ratio: 4/3; } }
+.home-gallery-title { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); margin-top: 6px; padding-left: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

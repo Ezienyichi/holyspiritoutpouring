@@ -80,7 +80,7 @@ export default function Live() {
   const isActive = !!status?.isActive && !!status?.videoId
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+    <div className="live-page-shell" style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
       <Navbar />
       <div className="live-layout" style={{ flex: 1, overflow: 'hidden' }}>
         <div className="live-main">
