@@ -119,17 +119,19 @@ export default function Dashboard() {
             {recentReg.length === 0
               ? <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>No registrations yet.</p>
               : (
-                <table className="admin-table">
-                  <thead><tr><th>Name</th><th>Email</th></tr></thead>
-                  <tbody>
-                    {recentReg.map(r => (
-                      <tr key={r.id}>
-                        <td>{r.firstName} {r.lastName}</td>
-                        <td style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{r.email}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <div style={{ overflowX: 'auto' }}>
+                  <table className="admin-table">
+                    <thead><tr><th>Name</th><th>Email</th></tr></thead>
+                    <tbody>
+                      {recentReg.map(r => (
+                        <tr key={r.id}>
+                          <td>{r.firstName} {r.lastName}</td>
+                          <td style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{r.email}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
           </div>
         )}
@@ -156,18 +158,20 @@ export default function Dashboard() {
             {recentGiving.length === 0
               ? <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>No gifts yet.</p>
               : (
-                <table className="admin-table">
-                  <thead><tr><th>Name</th><th>Amount</th><th>Tier</th></tr></thead>
-                  <tbody>
-                    {recentGiving.map(g => (
-                      <tr key={g.id}>
-                        <td>{g.name || 'Anonymous'}</td>
-                        <td style={{ color: 'var(--orange)' }}>₦{(g.amount || 0).toLocaleString()}</td>
-                        <td style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{g.tier}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <div style={{ overflowX: 'auto' }}>
+                  <table className="admin-table">
+                    <thead><tr><th>Name</th><th>Amount</th><th>Tier</th></tr></thead>
+                    <tbody>
+                      {recentGiving.map(g => (
+                        <tr key={g.id}>
+                          <td>{g.name || 'Anonymous'}</td>
+                          <td style={{ color: 'var(--orange)' }}>₦{(g.amount || 0).toLocaleString()}</td>
+                          <td style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{g.tier}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
         </div>
         )}

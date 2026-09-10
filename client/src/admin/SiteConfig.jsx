@@ -172,7 +172,7 @@ export default function SiteConfig() {
         {/* ── 2. Conference Details ── */}
         <Section id="conference" open={open} onToggle={setOpen} title="Conference Details"
           icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 1rem' }}>
+          <div className="admin-form-grid-2" style={{ gap: '0 1rem' }}>
             <FG label="Conference Name"><input {...inp('conference_name')} /></FG>
             <FG label="Conference Year"><input {...inp('conference_year')} /></FG>
             <FG label="Conference Dates" hint="e.g. August 15–17, 2025"><input {...inp('conference_dates')} /></FG>
@@ -319,7 +319,7 @@ export default function SiteConfig() {
             </div>
             <Toggle value={config.registration_open} onChange={set('registration_open')} labelOn="OPEN" labelOff="CLOSED" colorOn="#4af78a" />
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 1rem' }}>
+          <div className="admin-form-grid-2" style={{ gap: '0 1rem' }}>
             <FG label="Registration Deadline"><input type="date" {...inp('registration_deadline')} /></FG>
             <FG label={`Max Attendees${regCount != null ? ` (${regCount} registered so far)` : ''}`}>
               <input type="number" {...inp('max_attendees')} placeholder="10000" />

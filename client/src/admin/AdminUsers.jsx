@@ -79,13 +79,13 @@ export default function AdminUsers() {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+      <div className="admin-header-row">
         <h2 className="admin-page-title" style={{ margin: 0 }}>User Management</h2>
         <button className="btn btn-orange" onClick={openAdd}>+ Add User</button>
       </div>
 
       {loading ? <div className="loading-state">Loading users…</div> : (
-        <div className="admin-card">
+        <div className="admin-card" style={{ overflowX: 'auto' }}>
           <table className="admin-table">
             <thead>
               <tr>

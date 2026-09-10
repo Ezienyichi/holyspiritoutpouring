@@ -165,7 +165,7 @@ export default function AdminPreviousEvents() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <div className="admin-header-row">
         <h2 className="admin-page-title" style={{ margin: 0 }}>Previous Events</h2>
         <button className="btn btn-orange" onClick={openNew}>+ Add Event</button>
       </div>
@@ -209,7 +209,7 @@ export default function AdminPreviousEvents() {
           <div className="modal-box" style={{ maxWidth: 620, maxHeight: '90vh', overflowY: 'auto' }}>
             <h3 className="modal-title">{modal === 'new' ? 'Add Previous Event' : 'Edit Event'}</h3>
             <form onSubmit={e => e.preventDefault()}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <div className="admin-form-grid-2" style={{ gap: '0.75rem' }}>
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label">Year *</label>
                   <input className="form-input" value={form.year || ''} onChange={e => f('year', e.target.value)} placeholder="2025" />

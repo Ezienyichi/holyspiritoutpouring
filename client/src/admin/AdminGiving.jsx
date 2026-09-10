@@ -38,7 +38,7 @@ export default function AdminGiving() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <div className="admin-header-row">
         <h2 className="admin-page-title" style={{ margin: 0 }}>Giving Records</h2>
         <button className="btn btn-outline" onClick={exportCsv} style={{ fontSize: '0.85rem' }}>Export CSV</button>
       </div>

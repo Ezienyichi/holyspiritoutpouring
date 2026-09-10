@@ -155,7 +155,7 @@ export default function AdminSponsors() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <div className="admin-header-row">
         <h2 className="admin-page-title" style={{ margin: 0 }}>Partners & Sponsors</h2>
         <div style={{ display: 'flex', gap: 8 }}>
           <button className="btn btn-navy" onClick={() => setShowDeleted(v => !v)} style={{ fontSize: '0.82rem' }}>
@@ -228,7 +228,7 @@ export default function AdminSponsors() {
           <div className="modal-box" style={{ maxWidth: 520, maxHeight: '90vh', overflowY: 'auto' }}>
             <h3 className="modal-title">{modal === 'new' ? 'Add Sponsor / Partner' : 'Edit Sponsor'}</h3>
             <form onSubmit={e => e.preventDefault()}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <div className="admin-form-grid-2" style={{ gap: '0.75rem' }}>
                 <div className="form-group" style={{ margin: 0, gridColumn: '1/-1' }}>
                   <label className="form-label">Name *</label>
                   <input className="form-input" value={form.name || ''} onChange={e => f('name', e.target.value)} required placeholder="Sponsor Name" />

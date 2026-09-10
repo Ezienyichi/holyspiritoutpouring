@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Routes, Route, NavLink, useNavigate } from 'react-router-dom'
+import { Routes, Route, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { getToken, clearToken } from '../api'
 import { useToast } from '../context/ToastContext'
 import Dashboard from './Dashboard'
@@ -16,6 +16,8 @@ import AdminPastMinisters from './AdminPastMinisters'
 import AdminPreviousEvents from './AdminPreviousEvents'
 import AdminTestimonials from './AdminTestimonials'
 import AdminUsers from './AdminUsers'
+
+const MOBILE_BREAKPOINT = 1024
 
 function parseJwt(token) {
   try {
@@ -45,9 +47,11 @@ const NAV_ITEMS = [
 
 export default function AdminLayout() {
   const navigate = useNavigate()
+  const location = useLocation()
   const toast = useToast()
   const [user, setUser] = useState(null)
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth <= MOBILE_BREAKPOINT)
 
   useEffect(() => {
     const token = getToken()
@@ -69,6 +73,47 @@ export default function AdminLayout() {
     }
   }, [])
 
+  // Track viewport so we know when the drawer sidebar should apply
+  useEffect(() => {
+    const onResize = () => {
+      const mobile = window.innerWidth <= MOBILE_BREAKPOINT
+      setIsMobile(mobile)
+      if (!mobile) setSidebarOpen(false)
+    }
+    onResize()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  // Close the drawer whenever the route changes
+  useEffect(() => {
+    setSidebarOpen(false)
+  }, [location.pathname])
+
+  // Swipe left to close / swipe right from the edge to open, mobile only
+  useEffect(() => {
+    if (!isMobile) return
+    let startX = 0
+    let startY = 0
+    const onTouchStart = e => {
+      startX = e.touches[0].clientX
+      startY = e.touches[0].clientY
+    }
+    const onTouchEnd = e => {
+      const dx = e.changedTouches[0].clientX - startX
+      const dy = Math.abs(e.changedTouches[0].clientY - startY)
+      if (dy > 80) return
+      if (dx < -60 && sidebarOpen) setSidebarOpen(false)
+      else if (dx > 60 && !sidebarOpen && startX < 30) setSidebarOpen(true)
+    }
+    document.addEventListener('touchstart', onTouchStart, { passive: true })
+    document.addEventListener('touchend', onTouchEnd, { passive: true })
+    return () => {
+      document.removeEventListener('touchstart', onTouchStart)
+      document.removeEventListener('touchend', onTouchEnd)
+    }
+  }, [isMobile, sidebarOpen])
+
   function logout() {
     clearToken()
     window.location.href = '/admin'
@@ -81,67 +126,40 @@ export default function AdminLayout() {
     : (user?.username?.[0] || 'A').toUpperCase()
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--navy)' }}>
+    <div className="admin-layout">
 
-      {/* Mobile overlay */}
-      {mobileOpen && (
-        <div
-          onClick={() => setMobileOpen(false)}
-          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 99 }}
-        />
+      {isMobile && sidebarOpen && (
+        <div className="admin-sidebar-overlay" onClick={() => setSidebarOpen(false)} />
       )}
 
-      {/* SIDEBAR */}
-      <aside style={{
-        width: 240,
-        background: 'var(--navy-mid, #162032)',
-        borderRight: '1px solid var(--navy-border)',
-        position: 'fixed',
-        top: 0, left: 0,
-        height: '100vh',
-        overflowY: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        zIndex: 100,
-        transform: mobileOpen ? 'translateX(0)' : undefined,
-        transition: 'transform 0.25s ease',
-      }}>
-
-        {/* Logo */}
-        <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--navy-border)', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+      <aside className={`admin-sidebar${sidebarOpen ? ' open' : ''}`}>
+        <div className="admin-sidebar-header">
           <svg width="16" height="22" viewBox="0 0 22 28" fill="none">
-            <path d="M11 0C11 0 4 7 4 14C4 17.31 5.45 20.28 7.73 22.36C7.27 21.34 7 20.2 7 19C7 15.69 9.24 12.94 11 11C12.76 12.94 15 15.69 15 19C15 20.2 14.73 21.34 14.27 22.36C16.55 20.28 18 17.31 18 14C18 7 11 0 11 0Z" fill="#E8622A"/>
-            <path d="M11 14C11 14 8 17 8 20C8 21.66 9.34 23 11 23C12.66 23 14 21.66 14 20C14 17 11 14 11 14Z" fill="#C4501F"/>
+            <path d="M11 0C11 0 4 7 4 14C4 17.31 5.45 20.28 7.73 22.36C7.27 21.34 7 20.2 7 19C7 15.69 9.24 12.94 11 11C12.76 12.94 15 15.69 15 19C15 20.2 14.73 21.34 14.27 22.36C16.55 20.28 18 17.31 18 14C18 7 11 0 11 0Z" fill="var(--orange)"/>
+            <path d="M11 14C11 14 8 17 8 20C8 21.66 9.34 23 11 23C12.66 23 14 21.66 14 20C14 17 11 14 11 14Z" fill="var(--orange-dark)"/>
           </svg>
           <span style={{ fontFamily: 'var(--font-display)', color: 'var(--white)', fontWeight: 700, fontSize: '0.95rem' }}>OP25 Admin</span>
+          <button
+            className="admin-sidebar-close"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close menu"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
 
-        {/* Nav */}
-        <nav style={{ flex: 1, padding: '0.5rem 0' }}>
+        <nav className="admin-nav">
           {visibleNav.map(item => (
             <NavLink
               key={item.path}
               to={`/admin/${item.path}`}
-              onClick={() => setMobileOpen(false)}
-              style={({ isActive }) => ({
-                display: 'block',
-                padding: '0.65rem 1.5rem',
-                fontSize: '0.82rem',
-                fontWeight: isActive ? 600 : 400,
-                color: isActive ? 'var(--orange)' : 'var(--text-muted)',
-                background: isActive ? 'rgba(232,98,42,0.08)' : 'transparent',
-                borderLeft: `3px solid ${isActive ? 'var(--orange)' : 'transparent'}`,
-                textDecoration: 'none',
-                transition: 'all 0.15s',
-                cursor: 'pointer',
-              })}
+              className={({ isActive }) => `admin-nav-item${isActive ? ' active' : ''}`}
             >
               {item.label}
             </NavLink>
           ))}
         </nav>
 
-        {/* User + bottom actions */}
         <div style={{ borderTop: '1px solid var(--navy-border)' }}>
           {user && (
             <div style={{ padding: '0.85rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
@@ -156,34 +174,37 @@ export default function AdminLayout() {
               </div>
             </div>
           )}
-          <a href="/" target="_blank" rel="noopener noreferrer" style={{ display: 'block', padding: '0.55rem 1.5rem', fontSize: '0.78rem', color: 'var(--text-muted)', textDecoration: 'none' }}>
+          <a href="/" target="_blank" rel="noopener noreferrer" className="admin-nav-item" style={{ borderLeft: '3px solid transparent' }}>
             View Site ↗
           </a>
-          <button onClick={logout} style={{ display: 'block', width: '100%', padding: '0.55rem 1.5rem', textAlign: 'left', fontSize: '0.78rem', color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>
+          <button onClick={logout} className="admin-logout-btn">
             Logout
           </button>
         </div>
       </aside>
 
-      {/* MAIN CONTENT */}
-      <div style={{ marginLeft: 240, flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-
-        {/* Topbar */}
-        <div style={{ display: 'flex', alignItems: 'center', padding: '0.75rem 1.5rem', borderBottom: '1px solid var(--navy-border)', background: 'var(--navy-mid, #162032)', position: 'sticky', top: 0, zIndex: 10 }}>
+      <div className="admin-content">
+        <div className="admin-topbar">
           <button
-            onClick={() => setMobileOpen(o => !o)}
-            style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px', display: 'none' }}
+            onClick={() => setSidebarOpen(o => !o)}
             className="admin-menu-toggle"
+            aria-label="Open menu"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" width="20" height="20"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
           </button>
-          <div style={{ marginLeft: 'auto', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+          <div className="admin-topbar-title">
             Holy Spirit Outpouring '25
           </div>
+          <button
+            onClick={logout}
+            className="admin-topbar-logout"
+            aria-label="Logout"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </button>
         </div>
 
-        {/* Page content */}
-        <div style={{ flex: 1, padding: '2rem', overflowY: 'auto' }}>
+        <div className="admin-page">
           <Routes>
             <Route path="dashboard"       element={<Dashboard />} />
             <Route path="site-config"     element={<SiteConfig />} />

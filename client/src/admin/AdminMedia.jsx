@@ -166,7 +166,7 @@ export default function AdminMedia() {
                 {uploadError}
               </div>
             )}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+            <div className="admin-form-grid-2" style={{ gap: '0.75rem', marginBottom: '0.75rem' }}>
               <div className="form-group" style={{ margin: 0 }}>
                 <label className="form-label">Title</label>
                 <input className="form-input" placeholder="Media title" value={urlForm.title} onChange={e => setUrlForm(f => ({ ...f, title: e.target.value }))} />
@@ -211,7 +211,7 @@ export default function AdminMedia() {
                 />
               </div>
             )}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
+            <div className="admin-form-grid-2" style={{ gap: '0.75rem', marginBottom: '1rem' }}>
               <div className="form-group" style={{ margin: 0 }}>
                 <label className="form-label">Title *</label>
                 <input className="form-input" placeholder="Video title" value={ytForm.title} onChange={e => setYtForm(f => ({ ...f, title: e.target.value }))} required />

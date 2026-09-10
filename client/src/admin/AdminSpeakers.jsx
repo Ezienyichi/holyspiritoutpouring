@@ -174,7 +174,7 @@ export default function AdminSpeakers() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <div className="admin-header-row">
         <h2 className="admin-page-title" style={{ margin: 0 }}>Team Members</h2>
         <button className="btn btn-orange" onClick={openNew}>+ Add Member</button>
       </div>
@@ -216,7 +216,7 @@ export default function AdminSpeakers() {
           <div className="modal-box" style={{ maxWidth: 620, maxHeight: '90vh', overflowY: 'auto' }}>
             <h3 className="modal-title">{modal === 'new' ? 'Add Speaker' : 'Edit Speaker'}</h3>
             <form onSubmit={e => e.preventDefault()}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <div className="admin-form-grid-2" style={{ gap: '0.75rem' }}>
                 {[['name','Name *'],['title','Title'],['church','Church/Ministry'],['topic','Session Topic']].map(([k,lbl]) => (
                   <div className="form-group" key={k} style={{ margin: 0 }}>
                     <label className="form-label">{lbl}</label>

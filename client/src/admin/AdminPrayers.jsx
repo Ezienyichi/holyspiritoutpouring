@@ -49,7 +49,7 @@ export default function AdminPrayers() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <div className="admin-header-row">
         <h2 className="admin-page-title" style={{ margin: 0 }}>Prayer Requests</h2>
         <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
           {prayers.filter(p => !p.approved).length} pending

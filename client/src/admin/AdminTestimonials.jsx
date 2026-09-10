@@ -61,7 +61,7 @@ export default function AdminTestimonials() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <div className="admin-header-row">
         <h2 className="admin-page-title" style={{ margin: 0 }}>Testimonials</h2>
         <button className="btn btn-orange" onClick={openNew}>+ Add Testimonial</button>
       </div>
@@ -104,7 +104,7 @@ export default function AdminTestimonials() {
           <div className="modal-box" style={{ maxWidth: 520, maxHeight: '90vh', overflowY: 'auto' }}>
             <h3 className="modal-title">{modal === 'new' ? 'Add Testimonial' : 'Edit Testimonial'}</h3>
             <form onSubmit={e => e.preventDefault()}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <div className="admin-form-grid-2" style={{ gap: '0.75rem' }}>
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label">Name</label>
                   <input className="form-input" value={form.name || ''} onChange={e => f('name', e.target.value)} placeholder="John Doe" />
