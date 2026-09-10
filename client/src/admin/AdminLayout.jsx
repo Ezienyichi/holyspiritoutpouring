@@ -10,7 +10,7 @@ import AdminPrayers from './AdminPrayers'
 import AdminMedia from './AdminMedia'
 import AdminGiving from './AdminGiving'
 import AdminRegistrations from './AdminRegistrations'
-import AdminLivestream from './AdminLivestream'
+import AdminLive from './AdminLive'
 import AdminSponsors from './AdminSponsors'
 import AdminPastMinisters from './AdminPastMinisters'
 import AdminPreviousEvents from './AdminPreviousEvents'
@@ -39,7 +39,7 @@ const NAV_ITEMS = [
   { path: 'media',           label: 'Media',              roles: ['super_admin', 'content_manager', 'admin'] },
   { path: 'giving',          label: 'Giving',             roles: ['super_admin', 'admin'] },
   { path: 'registrations',   label: 'Registrations',      roles: ['super_admin', 'admin'] },
-  { path: 'livestream',      label: 'Livestream',         roles: ['super_admin', 'admin'] },
+  { path: 'live',            label: 'Live Stream Control', roles: ['super_admin', 'admin'] },
   { path: 'users',           label: 'Users',              roles: ['super_admin', 'admin'] },
 ]
 
@@ -198,7 +198,7 @@ export default function AdminLayout() {
             <Route path="media"           element={<AdminMedia />} />
             <Route path="giving"          element={<AdminGiving />} />
             <Route path="registrations"   element={<AdminRegistrations />} />
-            <Route path="livestream"      element={<AdminLivestream />} />
+            <Route path="live"            element={<AdminLive />} />
             <Route path="users"           element={<AdminUsers />} />
             <Route index                  element={<Dashboard />} />
           </Routes>

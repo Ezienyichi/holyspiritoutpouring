@@ -91,6 +91,7 @@ app.use('/api/speakers', require('./routes/speakers'));
 app.use('/api/sessions', require('./routes/sessions'));
 app.use('/api/prayers', require('./routes/prayers'));
 app.use('/api/media', require('./routes/media'));
+app.use('/api/live', require('./routes/live'));
 app.use('/api/giving', require('./routes/giving'));
 app.use('/api/registrations', require('./routes/registrations'));
 app.use('/api/chat', require('./routes/chat'));

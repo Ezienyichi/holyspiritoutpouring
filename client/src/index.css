@@ -297,9 +297,13 @@ input, textarea, select { font-family: var(--font-body); }
 .live-badge-wrap { position: absolute; top: 0.75rem; left: 0.75rem; display: flex; align-items: center; gap: 0.35rem; background: rgba(220,30,30,0.9); color: white; padding: 0.25rem 0.65rem; border-radius: 4px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; }
 .live-red-dot { width: 7px; height: 7px; border-radius: 50%; background: white; animation: livePulse 1s ease-in-out infinite; }
 @keyframes livePulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
-.live-offline { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; }
+.live-offline { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; text-align: center; padding: 0 1.5rem; }
 .live-flame { font-size: 3.5rem; animation: flamePulse 2s ease-in-out infinite alternate; }
 @keyframes flamePulse { 0% { transform: scale(1) rotate(-1deg); } 100% { transform: scale(1.06) rotate(1deg); } }
+.live-connected-note { color: var(--text-muted); font-size: 0.78rem; display: flex; align-items: center; gap: 0.4rem; }
+.live-connected-dot { width: 6px; height: 6px; border-radius: 50%; background: #5DCAA5; animation: livePulse 1.6s ease-in-out infinite; }
+.live-unmute-btn { position: absolute; bottom: 0.75rem; right: 0.75rem; background: rgba(13,27,42,0.85); color: white; border: 1px solid rgba(255,255,255,0.25); border-radius: 20px; padding: 0.4rem 0.9rem; font-size: 0.78rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; transition: background 0.15s; }
+.live-unmute-btn:hover { background: rgba(13,27,42,1); }
 .live-today-schedule { background: var(--navy-mid); border: 1px solid var(--navy-border); border-radius: var(--radius-lg); padding: 1.25rem; }
 .live-schedule-title { font-weight: 700; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; }
 /* Chat panel */

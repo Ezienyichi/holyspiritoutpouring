@@ -259,6 +259,10 @@ async function seed() {
     ['footer_tagline', 'Moving in the Spirit. Transforming Nations.'],
     ['copyright_text', ''],
     ['show_social_links', 'true'],
+    ['live_video_id', ''],
+    ['live_is_active', 'false'],
+    ['live_status_message', 'Reconnecting, please stay on this page'],
+    ['live_updated_at', ''],
   ];
   for (const [key, value] of configPairs) {
     await query('INSERT INTO config (key, value) VALUES ($1, $2) ON CONFLICT (key) DO NOTHING', [key, value]);
@@ -505,6 +509,6 @@ async function seed() {
   }
 }
 
-initializeDatabase().catch(err => console.error('[DB init]', err.message));
+const dbReady = initializeDatabase().catch(err => console.error('[DB init]', err.message));
 
-module.exports = { query };
+module.exports = { query, initializeDatabase, dbReady };
