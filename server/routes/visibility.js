@@ -2,7 +2,7 @@ const router = require('express').Router();
 const { query } = require('../db/database');
 const auth = require('../middleware/auth');
 
-const ALLOWED = ['speakers', 'sessions', 'media', 'past_ministers', 'previous_events', 'testimonials'];
+const ALLOWED = ['speakers', 'sessions', 'media', 'past_ministers', 'previous_events', 'testimonials', 'prayers'];
 
 router.patch('/:table/:id/visibility', auth, async (req, res) => {
   try {

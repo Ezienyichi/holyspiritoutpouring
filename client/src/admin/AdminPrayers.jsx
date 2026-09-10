@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { getToken } from '../api'
 import { useToast } from '../context/ToastContext'
+import VisibilityToggle from '../components/VisibilityToggle'
+import { toggleVisibility } from '../utils/visibility'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
@@ -32,6 +34,14 @@ export default function AdminPrayers() {
       toast.success('Prayer Approved', 'The prayer request is now visible on the public prayer wall.')
       load()
     } catch { toast.error('Error', 'Could not approve prayer.') }
+  }
+
+  async function handleToggleVisibility(prayer) {
+    try {
+      const updated = await toggleVisibility('prayers', prayer.id, prayer.visible == 1 || prayer.visible === null)
+      setPrayers(prev => prev.map(p => p.id === prayer.id ? { ...p, visible: updated.visible } : p))
+      toast.success(updated.visible == 1 ? 'Now Visible' : 'Hidden', updated.visible == 1 ? 'This prayer can now appear on the public prayer wall.' : 'This prayer will no longer appear on the public prayer wall.')
+    } catch { toast.error('Error', 'Could not update visibility.') }
   }
 
   async function del(id) {
@@ -79,6 +89,12 @@ export default function AdminPrayers() {
                 </div>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>{p.text}</p>
                 {p.email && <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.3rem' }}>{p.email}</p>}
+                <div style={{ marginTop: '0.6rem' }}>
+                  <VisibilityToggle
+                    isVisible={p.visible == 1 || p.visible === null}
+                    onToggle={() => handleToggleVisibility(p)}
+                  />
+                </div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', flexShrink: 0 }}>
                 {!p.approved && (

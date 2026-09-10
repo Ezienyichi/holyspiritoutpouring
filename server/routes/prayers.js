@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
     const { all } = req.query;
     const result = all
       ? await query('SELECT * FROM prayers ORDER BY "createdAt" DESC')
-      : await query('SELECT * FROM prayers WHERE approved = 1 ORDER BY "createdAt" DESC');
+      : await query('SELECT * FROM prayers WHERE approved = 1 AND (visible = 1 OR visible IS NULL) ORDER BY "createdAt" DESC');
     res.json(result.rows || []);
   } catch (err) {
     console.error('prayers GET:', err.message);

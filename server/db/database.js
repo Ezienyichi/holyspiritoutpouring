@@ -63,6 +63,7 @@ async function initializeDatabase() {
       text TEXT NOT NULL DEFAULT '',
       "prayCount" INTEGER DEFAULT 0,
       approved INTEGER DEFAULT 0,
+      visible INTEGER DEFAULT 1,
       "createdAt" TIMESTAMPTZ DEFAULT NOW()
     )
   `);
@@ -192,6 +193,7 @@ async function initializeDatabase() {
   await query(`ALTER TABLE past_ministers ADD COLUMN IF NOT EXISTS visible INTEGER DEFAULT 1`).catch(() => {});
   await query(`ALTER TABLE previous_events ADD COLUMN IF NOT EXISTS visible INTEGER DEFAULT 1`).catch(() => {});
   await query(`ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS visible INTEGER DEFAULT 1`).catch(() => {});
+  await query(`ALTER TABLE prayers ADD COLUMN IF NOT EXISTS visible INTEGER DEFAULT 1`).catch(() => {});
 
   // deleted column — required by GET routes for soft-delete filtering
   await query(`ALTER TABLE past_ministers ADD COLUMN IF NOT EXISTS deleted BOOLEAN DEFAULT FALSE`).catch(() => {});
