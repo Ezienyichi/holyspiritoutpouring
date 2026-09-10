@@ -199,6 +199,16 @@ async function initializeDatabase() {
   await query(`ALTER TABLE past_ministers ADD COLUMN IF NOT EXISTS deleted BOOLEAN DEFAULT FALSE`).catch(() => {});
   await query(`ALTER TABLE previous_events ADD COLUMN IF NOT EXISTS deleted BOOLEAN DEFAULT FALSE`).catch(() => {});
 
+  // One-time correction: the conference date config was seeded with a stale
+  // 2025 date. Bump it to 2026, but only where it still holds that exact
+  // original value — never overwrite a date an admin has since edited.
+  await query(`UPDATE config SET value = 'August 15–17, 2026' WHERE key = 'dates' AND value = 'August 15–17, 2025'`).catch(() => {});
+  await query(`UPDATE config SET value = 'August 15–17, 2026' WHERE key = 'conference_dates' AND value = 'August 15–17, 2025'`).catch(() => {});
+  await query(`UPDATE config SET value = '2026' WHERE key = 'conference_year' AND value = '2025'`).catch(() => {});
+  await query(`UPDATE config SET value = '2026-08-15T18:00:00' WHERE key = 'countdownDate' AND value = '2025-08-15T18:00:00'`).catch(() => {});
+  await query(`UPDATE config SET value = 'Holy Spirit Outpouring Conference 2026' WHERE key = 'og_title' AND value = 'Holy Spirit Outpouring Conference 2025'`).catch(() => {});
+  await query(`UPDATE config SET value = 'Three days of powerful worship and revival — Port Harcourt, August 15–17, 2026' WHERE key = 'og_description' AND value = 'Three days of powerful worship and revival — Port Harcourt, August 15–17, 2025'`).catch(() => {});
+
   await seed();
 }
 
@@ -206,9 +216,9 @@ async function seed() {
   // Config — always upsert with DO NOTHING to preserve admin changes
   const configPairs = [
     ['title', 'Holy Spirit Outpouring Conference'],
-    ['dates', 'August 15–17, 2025'],
+    ['dates', 'August 15–17, 2026'],
     ['location', '#7A Covenant Avenue, off Stadium Road, Port Harcourt, Nigeria, 500201'],
-    ['countdownDate', '2025-08-15T18:00:00'],
+    ['countdownDate', '2026-08-15T18:00:00'],
     ['isLive', 'false'],
     ['streamUrl', ''],
     ['streamTitle', 'Opening Night — Holy Spirit Outpouring Conference'],
@@ -223,12 +233,15 @@ async function seed() {
     ['site_title', 'Holy Spirit Outpouring Conference'],
     ['site_tagline', 'A Divine Encounter Awaits'],
     ['site_description', 'Join thousands for three days of powerful worship, anointed teaching, and a fresh encounter with the Holy Spirit in Port Harcourt, Nigeria.'],
-    ['site_keywords', 'Holy Spirit, outpouring, conference, revival, Port Harcourt, Nigeria, 2025'],
+    ['site_keywords', 'Holy Spirit, outpouring, conference, revival, Port Harcourt, Nigeria, 2026'],
     ['site_logo_url', ''],
     ['favicon_url', ''],
     ['conference_name', 'Holy Spirit Outpouring Conference'],
-    ['conference_dates', 'August 15–17, 2025'],
-    ['conference_year', '2025'],
+    ['conference_dates', 'August 15–17, 2026'],
+    ['conference_year', '2026'],
+    ['show_dates', 'true'],
+    ['show_countdown', 'true'],
+    ['show_location', 'true'],
     ['venue_name', 'The Arena'],
     ['venue_address', '#7A Covenant Avenue, off Stadium Road'],
     ['venue_city', 'Port Harcourt'],
@@ -253,8 +266,8 @@ async function seed() {
     ['registration_open', 'true'],
     ['registration_deadline', ''],
     ['max_attendees', ''],
-    ['og_title', 'Holy Spirit Outpouring Conference 2025'],
-    ['og_description', 'Three days of powerful worship and revival — Port Harcourt, August 15–17, 2025'],
+    ['og_title', 'Holy Spirit Outpouring Conference 2026'],
+    ['og_description', 'Three days of powerful worship and revival — Port Harcourt, August 15–17, 2026'],
     ['og_image_url', ''],
     ['twitter_card', 'summary_large_image'],
     ['canonical_url', 'https://holyspiritoutpouring-ha9z.vercel.app'],

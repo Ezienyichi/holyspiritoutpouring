@@ -2,20 +2,23 @@ import { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import SessionRow from '../components/SessionRow'
+import { useSiteConfig } from '../hooks/useSiteConfig'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
-const DAYS = [
-  { day: 1, label: 'Day 1 — Aug 15' },
-  { day: 2, label: 'Day 2 — Aug 16' },
-  { day: 3, label: 'Day 3 — Aug 17' },
-]
-
 export default function Schedule() {
+  const { config } = useSiteConfig()
   const [activeDay, setActiveDay] = useState(1)
   const [sessions, setSessions] = useState([])
   const [expanded, setExpanded] = useState(null)
   const [loading, setLoading] = useState(true)
+
+  const year = config?.conference_year || '2026'
+  const DAYS = [
+    { day: 1, label: `Day 1 — Aug 15, ${year}` },
+    { day: 2, label: `Day 2 — Aug 16, ${year}` },
+    { day: 3, label: `Day 3 — Aug 17, ${year}` },
+  ]
 
   useEffect(() => {
     setLoading(true)

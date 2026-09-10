@@ -25,6 +25,11 @@ export default function Navbar() {
   const isLive = config.isLive === 'true' || config.isLive === true
   const annActive = config.announcement_active === 'true' || config.announcement_active === true || config.announcement_active === '1' || Number(config.announcement_active) === 1
 
+  const showDates = config.show_dates !== 'false'
+  const showLocation = config.show_location !== 'false'
+  const dateText = config.conference_dates || 'August 15–17, 2026'
+  const locationText = [config.venue_city, config.venue_state, config.venue_country].filter(Boolean).join(', ') || 'Port Harcourt, Rivers State, Nigeria'
+
   const links = [
     { to: '/', label: 'About' },
     { to: '/team', label: 'Team' },
@@ -63,9 +68,15 @@ export default function Navbar() {
           </button>
         </div>
       )}
-      <div className="nav-topbar">
-        <span className="nav-topbar-pill">August 15–17, 2025 &bull; Port Harcourt, Rivers State, Nigeria</span>
-      </div>
+      {(showDates || showLocation) && (
+        <div className="nav-topbar">
+          <span className="nav-topbar-pill">
+            {showDates && dateText}
+            {showDates && showLocation && ' • '}
+            {showLocation && locationText}
+          </span>
+        </div>
+      )}
       <div className="navbar">
         <Link to="/" className="nav-logo" onClick={() => setMenuOpen(false)}>
           <svg width="22" height="28" viewBox="0 0 22 28" fill="none" style={{ flexShrink: 0 }}>

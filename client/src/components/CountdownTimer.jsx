@@ -11,7 +11,7 @@ function getTimeLeft(target) {
   }
 }
 
-export default function CountdownTimer({ targetDate = '2025-08-15T18:00:00' }) {
+export default function CountdownTimer({ targetDate = '2026-08-15T18:00:00' }) {
   const [time, setTime] = useState(getTimeLeft(targetDate))
 
   useEffect(() => {

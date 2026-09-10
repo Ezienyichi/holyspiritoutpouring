@@ -17,6 +17,12 @@ function HeroSection({ config }) {
   const [isMuted, setIsMuted] = useState(true)
   const [hasInteracted, setHasInteracted] = useState(false)
 
+  const showDates = config.show_dates !== 'false'
+  const showLocation = config.show_location !== 'false'
+  const showCountdown = config.show_countdown !== 'false'
+  const dateText = config.conference_dates || 'August 15–17, 2026'
+  const locationText = [config.venue_city, config.venue_state, config.venue_country].filter(Boolean).join(', ') || 'Port Harcourt, Rivers State, Nigeria'
+
   function toggleMute() {
     setIsMuted(m => !m)
     setHasInteracted(true)
@@ -63,21 +69,31 @@ function HeroSection({ config }) {
           <span className="hero-title-holy">Holy Spirit</span>
           <span className="hero-title-outpouring">Outpouring</span>
         </h1>
-        <div className="hero-location-date">
-          <span className="hl-icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
-          </span>
-          Port Harcourt, Rivers State, Nigeria
-          <span className="hl-bullet">•</span>
-          <span className="hl-icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
-          </span>
-          August 15–17, 2025
-        </div>
+        {(showLocation || showDates) && (
+          <div className="hero-location-date">
+            {showLocation && (
+              <>
+                <span className="hl-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
+                </span>
+                {locationText}
+              </>
+            )}
+            {showLocation && showDates && <span className="hl-bullet">•</span>}
+            {showDates && (
+              <>
+                <span className="hl-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                </span>
+                {dateText}
+              </>
+            )}
+          </div>
+        )}
         <p className="hero-subtitle">
           {config.aboutText1 ? config.aboutText1.slice(0, 140) + '…' : 'Experience three days of powerful worship, anointed teachings, and a fresh encounter with the Holy Spirit. Come expecting the supernatural.'}
         </p>
-        <CountdownTimer targetDate={config.countdownDate || '2025-08-15T18:00:00'} />
+        {showCountdown && <CountdownTimer targetDate={config.countdownDate || '2026-08-15T18:00:00'} />}
         <div className="hero-cta">
           <a href="#register-section" className="btn btn-orange btn-lg" onClick={e => { e.preventDefault(); document.getElementById('register-section')?.scrollIntoView({ behavior: 'smooth' }) }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -467,7 +483,7 @@ function PastMinistersSection({ ministers }) {
 }
 
 /* ── SCHEDULE ────────────────────────────────── */
-function ScheduleSection() {
+function ScheduleSection({ config }) {
   const [day, setDay] = useState(1)
   const [sessions, setSessions] = useState([])
   const [loading, setLoading] = useState(true)
@@ -480,10 +496,11 @@ function ScheduleSection() {
       .catch(() => setLoading(false))
   }, [day])
 
+  const year = config?.conference_year || '2026'
   const tabs = [
-    { day: 1, label: 'Day 1 — Aug 15' },
-    { day: 2, label: 'Day 2 — Aug 16' },
-    { day: 3, label: 'Day 3 — Aug 17' },
+    { day: 1, label: `Day 1 — Aug 15, ${year}` },
+    { day: 2, label: `Day 2 — Aug 16, ${year}` },
+    { day: 3, label: `Day 3 — Aug 17, ${year}` },
   ]
 
   return (
@@ -827,7 +844,7 @@ export default function Home() {
       <SpeakersSection speakers={speakers} />
       <PastMinistersSection ministers={pastMinisters} />
       <PreviousEventsSection events={previousEvents} />
-      <ScheduleSection />
+      <ScheduleSection config={config} />
       <TestimonialsSection testimonials={testimonials} />
       <PrayerSection prayers={prayers} />
       <MediaSection media={media} />

@@ -175,7 +175,7 @@ export default function SiteConfig() {
           <div className="admin-form-grid-2" style={{ gap: '0 1rem' }}>
             <FG label="Conference Name"><input {...inp('conference_name')} /></FG>
             <FG label="Conference Year"><input {...inp('conference_year')} /></FG>
-            <FG label="Conference Dates" hint="e.g. August 15–17, 2025"><input {...inp('conference_dates')} /></FG>
+            <FG label="Conference Dates" hint="e.g. August 15–17, 2026"><input {...inp('conference_dates')} /></FG>
             <FG label="Countdown Target Date"><input type="datetime-local" {...inp('countdownDate')} /></FG>
             <FG label="Venue Name"><input {...inp('venue_name')} /></FG>
             <FG label="Venue Address"><input {...inp('venue_address')} /></FG>
@@ -187,7 +187,30 @@ export default function SiteConfig() {
           <FG label="Google / Bing Maps URL" hint="Wrap the venue address in a map link">
             <input {...inp('venue_map_url')} placeholder="https://maps.google.com/…" />
           </FG>
-          <SaveBtn onClick={() => saveKeys(['conference_name','conference_dates','conference_year','countdownDate','venue_name','venue_address','venue_city','venue_state','venue_country','venue_postal_code','venue_map_url'])} saving={saving} />
+
+          <div className="form-group" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: 10, marginBottom: '0.75rem' }}>
+            <div>
+              <div style={{ fontWeight: 600, color: 'var(--white)', fontSize: '0.85rem' }}>Show Conference Dates</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>Display the conference dates on the hero, navbar and schedule</div>
+            </div>
+            <Toggle value={config.show_dates ?? 'true'} onChange={set('show_dates')} labelOn="Visible" labelOff="Hidden" />
+          </div>
+          <div className="form-group" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: 10, marginBottom: '0.75rem' }}>
+            <div>
+              <div style={{ fontWeight: 600, color: 'var(--white)', fontSize: '0.85rem' }}>Show Countdown Timer</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>Display the days/hours/minutes countdown on the hero</div>
+            </div>
+            <Toggle value={config.show_countdown ?? 'true'} onChange={set('show_countdown')} labelOn="Visible" labelOff="Hidden" />
+          </div>
+          <div className="form-group" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: 10, marginBottom: '1rem' }}>
+            <div>
+              <div style={{ fontWeight: 600, color: 'var(--white)', fontSize: '0.85rem' }}>Show Location</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>Display the venue city/state on the hero and navbar</div>
+            </div>
+            <Toggle value={config.show_location ?? 'true'} onChange={set('show_location')} labelOn="Visible" labelOff="Hidden" />
+          </div>
+
+          <SaveBtn onClick={() => saveKeys(['conference_name','conference_dates','conference_year','countdownDate','venue_name','venue_address','venue_city','venue_state','venue_country','venue_postal_code','venue_map_url','show_dates','show_countdown','show_location'])} saving={saving} />
         </Section>
 
         {/* ── 3. Contact ── */}

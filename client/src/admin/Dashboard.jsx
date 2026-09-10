@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getToken } from '../api'
+import { useSiteConfig } from '../hooks/useSiteConfig'
 
 const BASE_URL = import.meta.env.VITE_API_URL || ''
 
@@ -21,6 +22,7 @@ async function safeFetch(url, fallback) {
 }
 
 export default function Dashboard({ user }) {
+  const { config } = useSiteConfig()
   const role = user?.role || 'admin'
   const isSuperAdmin = role === 'super_admin' || role === 'admin'
 
@@ -99,6 +101,31 @@ export default function Dashboard({ user }) {
         <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
           {role === 'super_admin' ? 'Super Admin' : role === 'content_manager' ? 'Content Manager' : 'Admin'} · Outpouring '25 Dashboard
         </p>
+      </div>
+
+      <div style={{
+        background: 'rgba(201,5,5,0.08)',
+        border: '1px solid rgba(201,5,5,0.2)',
+        borderRadius: '10px',
+        padding: '16px',
+        marginBottom: '1.5rem',
+      }}>
+        <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--orange)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '8px' }}>
+          Conference Details
+        </div>
+        <div style={{ fontSize: '14px', color: 'var(--white)', fontWeight: 600 }}>
+          {config.conference_dates || 'Dates not set'}
+        </div>
+        <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
+          {[config.venue_city, config.venue_state, config.venue_country].filter(Boolean).join(', ') || 'Location not set'}
+        </div>
+        <div style={{ fontSize: '11px', color: 'var(--text-dim)', marginTop: '8px' }}>
+          Dates visible: {config.show_dates !== 'false' ? '✓ Yes' : '✗ Hidden'}
+          &nbsp;|&nbsp;
+          Countdown visible: {config.show_countdown !== 'false' ? '✓ Yes' : '✗ Hidden'}
+          &nbsp;|&nbsp;
+          Location visible: {config.show_location !== 'false' ? '✓ Yes' : '✗ Hidden'}
+        </div>
       </div>
 
       <div className="admin-stat-grid">
