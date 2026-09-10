@@ -158,6 +158,7 @@ export default function AdminPreviousEvents() {
     try {
       const updated = await toggleVisibility('previous_events', event.id, event.visible == 1)
       setEvents(prev => prev.map(e => e.id === event.id ? { ...e, visible: updated.visible } : e))
+      toast.success(updated.visible == 1 ? 'Now Visible' : 'Hidden', updated.visible == 1 ? `${event.title} now appears in the home page carousel.` : `${event.title} no longer appears in the home page carousel.`)
     } catch { toast.error('Error', 'Could not update visibility.') }
   }
 

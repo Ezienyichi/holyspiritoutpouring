@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useOutletContext } from 'react-router-dom'
 import { getToken } from '../api'
 
 const BASE_URL = import.meta.env.VITE_API_URL || ''
@@ -21,8 +20,7 @@ async function safeFetch(url, fallback) {
   }
 }
 
-export default function Dashboard() {
-  const { user } = useOutletContext() || {}
+export default function Dashboard({ user }) {
   const role = user?.role || 'admin'
   const isSuperAdmin = role === 'super_admin' || role === 'admin'
 

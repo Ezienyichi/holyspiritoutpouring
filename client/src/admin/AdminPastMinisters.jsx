@@ -158,6 +158,7 @@ export default function AdminPastMinisters() {
     try {
       const updated = await toggleVisibility('past_ministers', minister.id, minister.visible == 1)
       setMinisters(prev => prev.map(m => m.id === minister.id ? { ...m, visible: updated.visible } : m))
+      toast.success(updated.visible == 1 ? 'Now Visible' : 'Hidden', updated.visible == 1 ? `${minister.name} now appears in the home page carousel.` : `${minister.name} no longer appears in the home page carousel.`)
     } catch { toast.error('Error', 'Could not update visibility.') }
   }
 

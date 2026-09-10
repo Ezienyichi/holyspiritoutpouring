@@ -137,6 +137,7 @@ export default function AdminMedia() {
     try {
       const updated = await toggleVisibility('media', item.id, item.visible == 1)
       setItems(prev => prev.map(m => m.id === item.id ? { ...m, visible: updated.visible } : m))
+      toast.success(updated.visible == 1 ? 'Now Visible' : 'Hidden', updated.visible == 1 ? 'This item now appears in the public gallery.' : 'This item no longer appears in the public gallery.')
     } catch { toast.error('Error', 'Could not update visibility.') }
   }
 

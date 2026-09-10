@@ -167,6 +167,7 @@ export default function AdminSpeakers() {
     try {
       const updated = await toggleVisibility('speakers', speaker.id, speaker.visible == 1)
       setSpeakers(prev => prev.map(s => s.id === speaker.id ? { ...s, visible: updated.visible } : s))
+      toast.success(updated.visible == 1 ? 'Now Visible' : 'Hidden', updated.visible == 1 ? `${speaker.name} is now showing on the website.` : `${speaker.name} is no longer showing on the website.`)
     } catch { toast.error('Error', 'Could not update visibility.') }
   }
 

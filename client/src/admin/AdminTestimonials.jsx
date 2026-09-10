@@ -45,6 +45,7 @@ export default function AdminTestimonials() {
     try {
       const updated = await toggleVisibility('testimonials', testimonial.id, testimonial.visible == 1)
       setTestimonials(prev => prev.map(t => t.id === testimonial.id ? { ...t, visible: updated.visible } : t))
+      toast.success(updated.visible == 1 ? 'Now Visible' : 'Hidden', updated.visible == 1 ? 'This testimonial now appears in the carousel.' : 'This testimonial no longer appears in the carousel.')
     } catch { toast.error('Error', 'Could not update visibility.') }
   }
 

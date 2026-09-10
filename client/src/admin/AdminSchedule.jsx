@@ -65,6 +65,7 @@ export default function AdminSchedule() {
     try {
       const updated = await toggleVisibility('sessions', session.id, session.visible == 1)
       setSessions(prev => prev.map(s => s.id === session.id ? { ...s, visible: updated.visible } : s))
+      toast.success(updated.visible == 1 ? 'Now Visible' : 'Hidden', updated.visible == 1 ? 'This session now appears in the public schedule.' : 'This session no longer appears in the public schedule.')
     } catch { toast.error('Error', 'Could not update visibility.') }
   }
 

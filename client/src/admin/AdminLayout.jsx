@@ -206,7 +206,7 @@ export default function AdminLayout() {
 
         <div className="admin-page">
           <Routes>
-            <Route path="dashboard"       element={<Dashboard />} />
+            <Route path="dashboard"       element={<Dashboard user={user} />} />
             <Route path="site-config"     element={<SiteConfig />} />
             <Route path="speakers"        element={<AdminSpeakers />} />
             <Route path="team-members"    element={<AdminSpeakers />} />
@@ -221,7 +221,7 @@ export default function AdminLayout() {
             <Route path="registrations"   element={<AdminRegistrations />} />
             <Route path="live"            element={<AdminLive />} />
             <Route path="users"           element={<AdminUsers />} />
-            <Route index                  element={<Dashboard />} />
+            <Route index                  element={<Dashboard user={user} />} />
           </Routes>
         </div>
       </div>
