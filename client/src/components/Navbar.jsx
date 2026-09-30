@@ -5,16 +5,9 @@ import { useSiteConfig } from '../hooks/useSiteConfig'
 export default function Navbar() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const { config } = useSiteConfig()
   const [dismissed, setDismissed] = useState(() => sessionStorage.getItem('op25_ann_dismissed') === '1')
-
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 10)
-    window.addEventListener('scroll', fn)
-    return () => window.removeEventListener('scroll', fn)
-  }, [])
 
   useEffect(() => {
     if (menuOpen) document.body.style.overflow = 'hidden'
@@ -53,7 +46,7 @@ export default function Navbar() {
   }
 
   return (
-    <header className={`nav-wrapper${scrolled ? ' scrolled' : ''}`}>
+    <header className="nav-wrapper">
       {config.announcement_text && annActive && !dismissed && (
         <div style={{
           width: '100%', background: '#E8622A', color: 'white',
