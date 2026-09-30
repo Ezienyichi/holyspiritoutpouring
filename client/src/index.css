@@ -114,6 +114,7 @@ input, textarea, select { font-family: var(--font-body); }
 .nav-link-live { color: var(--orange) !important; font-weight: 600; display: flex; align-items: center; gap: 0.35rem; }
 .live-pulse { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--orange); animation: navLivePulse 1.4s ease-in-out infinite; }
 @keyframes navLivePulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(1.5); } }
+@keyframes blink { from { opacity: 1; } to { opacity: 0.3; } }
 .nav-register { background: #c90505; color: white; padding: 10px 20px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: all var(--transition); display: flex; align-items: center; gap: 0.3rem; margin-left: 0.5rem; }
 .nav-register:hover { background: var(--orange-dark); transform: translateY(-1px); }
 

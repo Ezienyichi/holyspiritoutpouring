@@ -1,211 +1,262 @@
-import { useState, useEffect, useRef } from 'react'
-import { api } from '../api'
+import { useState, useEffect } from 'react'
 import { useToast } from '../context/ToastContext'
-import SaveButton from '../components/SaveButton'
 
-function extractYouTubeId(input) {
-  if (!input) return null
-  const trimmed = input.trim()
-  if (/^[A-Za-z0-9_-]{11}$/.test(trimmed)) return trimmed
+const BASE_URL = import.meta.env.VITE_API_URL || ''
 
-  let url
-  try {
-    url = new URL(trimmed)
-  } catch {
-    return null
-  }
-
-  const host = url.hostname.replace(/^www\./, '').replace(/^m\./, '')
-
-  if (host === 'youtu.be') {
-    const id = url.pathname.slice(1).split('/')[0]
-    return /^[A-Za-z0-9_-]{11}$/.test(id) ? id : null
-  }
-  if (host === 'youtube.com' || host === 'music.youtube.com') {
-    if (url.pathname === '/watch') {
-      const id = url.searchParams.get('v')
-      return id && /^[A-Za-z0-9_-]{11}$/.test(id) ? id : null
-    }
-    const liveMatch = url.pathname.match(/^\/live\/([A-Za-z0-9_-]{11})/)
-    if (liveMatch) return liveMatch[1]
-    const embedMatch = url.pathname.match(/^\/embed\/([A-Za-z0-9_-]{11})/)
-    if (embedMatch) return embedMatch[1]
-  }
-  return null
+const inputStyle = {
+  width: '100%',
+  background: 'rgba(255,255,255,0.06)',
+  border: '2px solid rgba(255,255,255,0.2)',
+  borderRadius: '8px',
+  padding: '12px 16px',
+  color: 'white',
+  fontSize: '14px',
+  outline: 'none',
+  boxSizing: 'border-box',
 }
 
-const EMPTY_LIVE = { videoId: '', isActive: false, statusMessage: '', updatedAt: null }
+const labelStyle = {
+  display: 'block',
+  fontSize: '12px',
+  fontWeight: '700',
+  color: 'rgba(255,255,255,0.6)',
+  marginBottom: '6px',
+  letterSpacing: '0.08em',
+  textTransform: 'uppercase',
+}
+
+const hintStyle = {
+  fontSize: '11px',
+  color: 'rgba(255,255,255,0.3)',
+  marginTop: '6px',
+}
 
 export default function AdminLive() {
   const toast = useToast()
-  const [live, setLive] = useState(EMPTY_LIVE)
+  const [form, setForm] = useState({
+    youtube_channel_id: '',
+    youtube_channel_url: '',
+    stream_url: '',
+    stream_title: '',
+    is_live: 0,
+  })
   const [loading, setLoading] = useState(true)
-  const [draftUrl, setDraftUrl] = useState('')
-  const [draftMessage, setDraftMessage] = useState('')
-  const [goingLive, setGoingLive] = useState(false)
-  const [ending, setEnding] = useState(false)
-  const [error, setError] = useState('')
-  const initialized = useRef(false)
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    api.get('/live/status')
+    fetch(`${BASE_URL}/api/config`)
+      .then(r => r.ok ? r.json() : {})
       .then(d => {
-        setLive(d)
-        if (!initialized.current) {
-          setDraftUrl(d.videoId || '')
-          setDraftMessage(d.statusMessage || '')
-          initialized.current = true
-        }
+        setForm({
+          youtube_channel_id: d.youtube_channel_id || '',
+          youtube_channel_url: d.youtube_channel_url || '',
+          stream_url: d.stream_url || '',
+          stream_title: d.stream_title || '',
+          is_live: d.is_live == 1 ? 1 : 0,
+        })
+        setLoading(false)
       })
-      .catch(() => {})
-      .finally(() => setLoading(false))
+      .catch(() => setLoading(false))
   }, [])
 
-  const previewId = extractYouTubeId(draftUrl)
-
-  async function goLive() {
-    setError('')
-    if (!extractYouTubeId(draftUrl)) {
-      setError("Couldn't read a video ID from that link. Paste a youtube.com/watch, youtu.be, /live/, or /embed/ link, or the bare video ID.")
-      return
-    }
-    setGoingLive(true)
+  async function handleSave() {
+    setSaving(true)
     try {
-      const updated = await api.post('/live/update', { url: draftUrl.trim(), isActive: true, statusMessage: draftMessage })
-      setLive(updated)
-      setDraftUrl(updated.videoId)
-      toast.success('You Are Live', 'Viewers are now seeing this stream.')
-    } catch (e) {
-      setError(e.message || 'Could not go live')
+      const token = localStorage.getItem('adminToken')
+      const res = await fetch(`${BASE_URL}/api/config`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          youtube_channel_id: form.youtube_channel_id,
+          youtube_channel_url: form.youtube_channel_url,
+          stream_url: form.stream_url,
+          stream_title: form.stream_title,
+          is_live: form.is_live,
+        }),
+      })
+      if (!res.ok) throw new Error('Save failed')
+      toast.success(
+        'Stream settings saved',
+        form.is_live == 1
+          ? 'Your stream is now LIVE on the website'
+          : 'Stream settings saved. Toggle GO LIVE when ready.'
+      )
+    } catch (err) {
+      toast.error('Save failed', err.message)
     } finally {
-      setGoingLive(false)
+      setSaving(false)
     }
-  }
-
-  async function endStream() {
-    setEnding(true)
-    try {
-      const updated = await api.post('/live/update', { isActive: false, statusMessage: draftMessage })
-      setLive(updated)
-      toast.info('Stream Ended', 'Viewers now see the offline message.')
-    } catch (e) {
-      toast.error('Error', e.message || 'Could not end stream')
-    } finally {
-      setEnding(false)
-    }
-  }
-
-  async function saveMessageOnly() {
-    const updated = await api.post('/live/update', { statusMessage: draftMessage })
-    setLive(updated)
   }
 
   if (loading) return <div className="loading-state">Loading…</div>
 
   return (
-    <div>
-      <h2 className="admin-page-title">Live Stream Control</h2>
+    <div style={{ maxWidth: '640px' }}>
+      <h2 className="admin-page-title" style={{ marginBottom: '0.5rem' }}>Live Stream Control</h2>
+      <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', marginBottom: '2rem' }}>
+        Set your YouTube Channel ID once — the live page automatically shows your stream whenever you go live.
+      </p>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>
-        <div className="admin-card">
-          <h3 style={{ color: 'var(--white)', fontFamily: 'var(--font-display)', marginBottom: '1rem', fontSize: '1rem' }}>Paste Stream Link</h3>
-          <div className="form-group">
-            <label className="form-label">YouTube URL or Video ID</label>
-            <input
-              className="form-input"
-              placeholder="https://www.youtube.com/watch?v=… or bare video ID"
-              value={draftUrl}
-              onChange={e => setDraftUrl(e.target.value)}
-              autoFocus
-              style={{ fontSize: '1rem' }}
-            />
-          </div>
-          {error && (
-            <div style={{ background: 'rgba(201,5,5,0.15)', border: '1px solid rgba(201,5,5,0.3)', borderRadius: 8, padding: '0.6rem 0.9rem', color: '#ff6b6b', fontSize: 13, marginBottom: '0.75rem' }}>
-              {error}
+      <div style={{ background: 'var(--navy-mid)', border: '1px solid var(--navy-border)', borderRadius: '16px', padding: '2rem' }}>
+
+        {/* Stream Status Toggle */}
+        <div style={{
+          background: form.is_live == 1 ? 'rgba(201,5,5,0.1)' : 'rgba(255,255,255,0.04)',
+          border: form.is_live == 1 ? '2px solid rgba(201,5,5,0.4)' : '2px solid rgba(255,255,255,0.08)',
+          borderRadius: '12px',
+          padding: '1.5rem',
+          marginBottom: '1.75rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '1rem',
+          flexWrap: 'wrap',
+        }}>
+          <div>
+            <div style={{ fontSize: '16px', fontWeight: '700', color: 'white', marginBottom: '4px' }}>
+              Stream Status
             </div>
-          )}
+            <div style={{ fontSize: '13px', color: form.is_live == 1 ? '#c90505' : 'rgba(255,255,255,0.4)' }}>
+              {form.is_live == 1
+                ? 'LIVE — Visitors can see your stream'
+                : 'OFFLINE — Stream placeholder is showing'}
+            </div>
+          </div>
           <button
-            className="btn"
-            onClick={goLive}
-            disabled={goingLive || !draftUrl.trim()}
-            style={{ background: 'var(--orange)', color: 'white', border: 'none', padding: '0.85rem 2rem', fontSize: '1rem', fontWeight: 700, width: '100%', justifyContent: 'center', marginTop: '0.5rem', cursor: goingLive ? 'not-allowed' : 'pointer' }}
+            onClick={() => setForm(f => ({ ...f, is_live: f.is_live == 1 ? 0 : 1 }))}
+            style={{
+              background: form.is_live == 1 ? '#c90505' : 'rgba(255,255,255,0.1)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '10px',
+              padding: '12px 28px',
+              fontSize: '14px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
           >
-            {goingLive ? 'Going Live…' : '● Go Live With This Link'}
+            <div style={{
+              width: '8px', height: '8px', borderRadius: '50%',
+              background: form.is_live == 1 ? 'white' : 'rgba(255,255,255,0.3)',
+              animation: form.is_live == 1 ? 'blink 1s ease-in-out infinite alternate' : 'none',
+            }} />
+            {form.is_live == 1 ? 'GO OFFLINE' : 'GO LIVE'}
           </button>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.6rem' }}>
-            Paste any YouTube link (watch, youtu.be, /live/, /embed/) or a bare video ID, then click once — viewers switch immediately, no other steps needed.
+        </div>
+
+        {/* YouTube Channel ID */}
+        <div style={{ marginBottom: '1.25rem' }}>
+          <label style={labelStyle}>YouTube Channel ID</label>
+          <input
+            type="text"
+            value={form.youtube_channel_id}
+            onChange={e => setForm(f => ({ ...f, youtube_channel_id: e.target.value }))}
+            placeholder="UCxxxxxxxxxxxxxxxxxxxxxxxx"
+            style={{ ...inputStyle, fontFamily: 'monospace' }}
+            onFocus={e => e.target.style.borderColor = '#c90505'}
+            onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.2)'}
+          />
+          <p style={hintStyle}>
+            When set, the live page automatically embeds your channel stream whenever you go live on YouTube — no URL needed each time.
+          </p>
+          <p style={{ ...hintStyle, marginTop: '4px' }}>
+            Find your Channel ID: YouTube Studio → Settings → Channel → Basic Info → Channel ID (starts with UC)
           </p>
         </div>
 
-        <div className="admin-card">
-          <h3 style={{ color: 'var(--white)', fontFamily: 'var(--font-display)', marginBottom: '1rem', fontSize: '1rem' }}>Preview Before Publishing</h3>
-          <div style={{ position: 'relative', paddingTop: '56.25%', borderRadius: 12, overflow: 'hidden', background: 'var(--navy)' }}>
-            {previewId ? (
-              <iframe
-                key={previewId}
-                src={`https://www.youtube.com/embed/${previewId}?mute=1`}
-                title="Stream preview"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
-              />
-            ) : (
-              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center', padding: '1rem' }}>
-                Paste a link to preview it here before going live
-              </div>
-            )}
-          </div>
+        {/* YouTube Channel URL */}
+        <div style={{ marginBottom: '1.25rem' }}>
+          <label style={labelStyle}>YouTube Channel URL</label>
+          <input
+            type="url"
+            value={form.youtube_channel_url}
+            onChange={e => setForm(f => ({ ...f, youtube_channel_url: e.target.value }))}
+            placeholder="https://www.youtube.com/@holyspiritoutpouring-o6s"
+            style={inputStyle}
+            onFocus={e => e.target.style.borderColor = '#c90505'}
+            onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.2)'}
+          />
+          <p style={hintStyle}>Used for the Subscribe button on the offline placeholder screen.</p>
         </div>
+
+        {/* Specific Stream URL */}
+        <div style={{ marginBottom: '1.25rem' }}>
+          <label style={labelStyle}>Specific Stream URL <span style={{ color: 'rgba(255,255,255,0.25)', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>(optional override)</span></label>
+          <input
+            type="url"
+            value={form.stream_url}
+            onChange={e => setForm(f => ({ ...f, stream_url: e.target.value }))}
+            placeholder="https://www.youtube.com/watch?v=XXXXXXXXXXX"
+            style={inputStyle}
+            onFocus={e => e.target.style.borderColor = '#c90505'}
+            onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.2)'}
+          />
+          <p style={hintStyle}>
+            Optional: paste a specific YouTube video URL to override the channel embed. Leave empty to use the channel auto-embed. Accepts watch URLs, live URLs, or embed URLs — auto-converted.
+          </p>
+        </div>
+
+        {/* Stream Title */}
+        <div style={{ marginBottom: '1.75rem' }}>
+          <label style={labelStyle}>Stream Title</label>
+          <input
+            type="text"
+            value={form.stream_title}
+            onChange={e => setForm(f => ({ ...f, stream_title: e.target.value }))}
+            placeholder="e.g. Opening Night — Holy Spirit Outpouring 2026"
+            style={inputStyle}
+            onFocus={e => e.target.style.borderColor = '#c90505'}
+            onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.2)'}
+          />
+        </div>
+
+        {/* Save button */}
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          style={{
+            width: '100%',
+            background: saving ? '#7a0303' : '#c90505',
+            color: 'white',
+            border: 'none',
+            borderRadius: '10px',
+            padding: '14px',
+            fontSize: '15px',
+            fontWeight: '700',
+            cursor: saving ? 'not-allowed' : 'pointer',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+          }}
+        >
+          {saving ? 'Saving…' : 'Save Stream Settings'}
+        </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
-        <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <h3 style={{ color: 'var(--white)', fontFamily: 'var(--font-display)', fontSize: '1rem', margin: 0 }}>What Viewers See Right Now</h3>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
-            <div style={{
-              width: 14, height: 14, borderRadius: '50%', marginTop: 4, flexShrink: 0,
-              background: live.isActive ? '#f44444' : 'var(--navy-border)',
-              boxShadow: live.isActive ? '0 0 12px rgba(244,68,68,0.7)' : 'none',
-            }} />
-            <div>
-              <div style={{ fontWeight: 700, color: live.isActive ? '#f44444' : 'var(--text-muted)' }}>
-                {live.isActive ? 'LIVE' : 'OFFLINE'}
-              </div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                {live.isActive
-                  ? `Playing youtube.com/watch?v=${live.videoId}`
-                  : `Showing message: "${live.statusMessage || 'Reconnecting, please stay on this page'}"`}
-              </div>
+      {/* How it works */}
+      <div style={{ marginTop: '2rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', padding: '1.5rem' }}>
+        <div style={{ fontSize: '13px', fontWeight: '700', color: 'rgba(255,255,255,0.5)', marginBottom: '1rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>How to go live</div>
+        {[
+          'Start your YouTube live stream in YouTube Studio',
+          'Come back here and click GO LIVE',
+          'Click Save Stream Settings',
+          'Your website live page now shows your stream automatically',
+          'When the service ends, click GO OFFLINE and Save',
+        ].map((step, i) => (
+          <div key={i} style={{ display: 'flex', gap: '12px', marginBottom: '10px', alignItems: 'flex-start' }}>
+            <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: '#c90505', color: 'white', fontSize: '11px', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '1px' }}>
+              {i + 1}
             </div>
+            <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)', lineHeight: '1.5' }}>{step}</div>
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            Last changed: {live.updatedAt ? new Date(live.updatedAt).toLocaleString() : 'never'}
-          </div>
-          {live.isActive && (
-            <button
-              className="btn"
-              onClick={endStream}
-              disabled={ending}
-              style={{ background: '#f44444', color: 'white', border: 'none', padding: '0.6rem 1.5rem', fontWeight: 700, alignSelf: 'flex-start', cursor: ending ? 'not-allowed' : 'pointer' }}
-            >
-              {ending ? 'Ending…' : '■ End Stream'}
-            </button>
-          )}
-        </div>
-
-        <div className="admin-card">
-          <h3 style={{ color: 'var(--white)', fontFamily: 'var(--font-display)', marginBottom: '1rem', fontSize: '1rem' }}>Off-Air Message</h3>
-          <div className="form-group">
-            <label className="form-label">Shown to viewers while not live</label>
-            <input
-              className="form-input"
-              placeholder="Reconnecting, please stay on this page"
-              value={draftMessage}
-              onChange={e => setDraftMessage(e.target.value)}
-            />
-          </div>
-          <SaveButton onClick={saveMessageOnly} label="Save Message" />
-        </div>
+        ))}
       </div>
     </div>
   )

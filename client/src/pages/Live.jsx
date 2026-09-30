@@ -1,124 +1,144 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
 import SessionRow from '../components/SessionRow'
 import LiveChat from '../components/LiveChat'
-import { useSiteConfig } from '../hooks/useSiteConfig'
 
-const API_BASE = import.meta.env.VITE_API_URL || ''
-const POLL_INTERVAL = 10000
+const BASE_URL = import.meta.env.VITE_API_URL || ''
 
-function buildEmbedUrl(videoId) {
-  const params = new URLSearchParams({
-    autoplay: '1',
-    mute: '1',
-    playsinline: '1',
-    rel: '0',
-    modestbranding: '1',
-    enablejsapi: '1',
-    origin: window.location.origin,
-  })
-  return `https://www.youtube.com/embed/${videoId}?${params.toString()}`
-}
-
-function postPlayerCommand(iframe, func) {
-  try {
-    iframe?.contentWindow?.postMessage(JSON.stringify({ event: 'command', func, args: [] }), '*')
-  } catch {}
+function getEmbedUrl(config) {
+  if (config.stream_url) {
+    const url = config.stream_url
+    const watchMatch = url.match(/youtube\.com\/watch\?v=([^&]+)/)
+    if (watchMatch) return `https://www.youtube.com/embed/${watchMatch[1]}?autoplay=1&rel=0&modestbranding=1`
+    const liveMatch = url.match(/youtube\.com\/live\/([^?]+)/)
+    if (liveMatch) return `https://www.youtube.com/embed/${liveMatch[1]}?autoplay=1&rel=0&modestbranding=1`
+    const shortMatch = url.match(/youtu\.be\/([^?]+)/)
+    if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}?autoplay=1&rel=0&modestbranding=1`
+    if (url.includes('youtube.com/embed/')) return url
+    return url
+  }
+  const channelId = config.youtube_channel_id || 'UCxxxxxxxxxxxxxxxxxxxxxxxxx'
+  return `https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1&rel=0&modestbranding=1`
 }
 
 export default function Live() {
-  const { config } = useSiteConfig()
-  const [status, setStatus] = useState(null)
-  const [muted, setMuted] = useState(true)
+  const [config, setConfig] = useState({})
+  const [isLive, setIsLive] = useState(false)
   const [sessions, setSessions] = useState([])
   const [loadingSessions, setLoadingSessions] = useState(true)
-  const iframeRef = useRef(null)
-  const currentVideoId = useRef(null)
-
-  const poll = useCallback(() => {
-    fetch(`${API_BASE}/api/live/status`, { cache: 'no-store' })
-      .then(r => r.json())
-      .then(setStatus)
-      .catch(() => {})
-  }, [])
 
   useEffect(() => {
-    poll()
-    const t = setInterval(poll, POLL_INTERVAL)
-    return () => clearInterval(t)
-  }, [poll])
-
-  // Swap the existing iframe's src imperatively when the video id changes —
-  // never remounts the iframe or its siblings, so LiveChat stays mounted.
-  useEffect(() => {
-    if (!status?.isActive || !status.videoId) {
-      currentVideoId.current = null
-      return
+    function fetchConfig() {
+      fetch(`${BASE_URL}/api/config`)
+        .then(r => r.ok ? r.json() : {})
+        .then(d => {
+          setConfig(d || {})
+          setIsLive(d?.is_live == 1)
+        })
+        .catch(() => {})
     }
-    if (status.videoId === currentVideoId.current) return
-    currentVideoId.current = status.videoId
-    setMuted(true) // new src = new autoplay context, browsers require muted-first
-    if (iframeRef.current) iframeRef.current.src = buildEmbedUrl(status.videoId)
-  }, [status])
+    fetchConfig()
+    const interval = setInterval(fetchConfig, 30000)
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     const dayMap = { '15': 1, '16': 2, '17': 3 }
     const today = new Date().getDate()
     const day = dayMap[String(today)] || 1
-    fetch(`${API_BASE}/api/sessions?day=${day}`)
+    fetch(`${BASE_URL}/api/sessions?day=${day}`)
       .then(r => r.json())
       .then(d => { setSessions(Array.isArray(d) ? d : []); setLoadingSessions(false) })
       .catch(() => setLoadingSessions(false))
   }, [])
 
-  function handleUnmute() {
-    postPlayerCommand(iframeRef.current, 'unMute')
-    postPlayerCommand(iframeRef.current, 'playVideo')
-    setMuted(false)
-  }
-
-  const isActive = !!status?.isActive && !!status?.videoId
+  const embedUrl = getEmbedUrl(config)
 
   return (
     <div className="live-page-shell" style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
       <Navbar />
       <div className="live-layout" style={{ flex: 1, overflow: 'hidden' }}>
         <div className="live-main">
-          <div className="live-video-wrap">
-            <iframe
-              ref={iframeRef}
-              title="Live Stream"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              style={{ display: isActive ? 'block' : 'none' }}
-            />
 
-            {isActive && (
-              <>
-                <div className="live-badge-wrap">
-                  <div className="live-red-dot" />
-                  LIVE
-                </div>
-                {muted && (
-                  <button className="live-unmute-btn" onClick={handleUnmute}>
-                    🔇 Tap to unmute
-                  </button>
-                )}
-              </>
+          {/* Video player */}
+          <div style={{
+            width: '100%',
+            background: '#000000',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            position: 'relative',
+            aspectRatio: '16/9'
+          }}>
+            {isLive && (
+              <div style={{
+                position: 'absolute', top: '16px', left: '16px', zIndex: 10,
+                background: '#c90505', color: 'white', fontSize: '11px',
+                fontWeight: '800', padding: '5px 14px', borderRadius: '4px',
+                letterSpacing: '0.12em', display: 'flex', alignItems: 'center', gap: '6px'
+              }}>
+                <div style={{
+                  width: '7px', height: '7px', borderRadius: '50%',
+                  background: 'white', animation: 'blink 1s ease-in-out infinite alternate'
+                }} />
+                LIVE
+              </div>
             )}
 
-            {!isActive && (
-              <div className="live-offline">
-                <svg className="live-flame" width="48" height="60" viewBox="0 0 22 28" fill="none"><path d="M11 0C11 0 4 7 4 14C4 17.31 5.45 20.28 7.73 22.36C7.27 21.34 7 20.2 7 19C7 15.69 9.24 12.94 11 11C12.76 12.94 15 15.69 15 19C15 20.2 14.73 21.34 14.27 22.36C16.55 20.28 18 17.31 18 14C18 7 11 0 11 0Z" fill="#E8622A"/><path d="M11 14C11 14 8 17 8 20C8 21.66 9.34 23 11 23C12.66 23 14 21.66 14 20C14 17 11 14 11 14Z" fill="#C4501F"/></svg>
-                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', color: 'var(--white)' }}>
-                  {config.streamTitle || 'Holy Spirit Outpouring Conference'}
-                </h2>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0 }}>
-                  {status?.statusMessage || 'Reconnecting, please stay on this page'}
-                </p>
-                <div className="live-connected-note">
-                  <span className="live-connected-dot" />
-                  You're still connected — this page updates automatically
+            <iframe
+              key={embedUrl}
+              src={embedUrl}
+              style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
+              allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+              allowFullScreen
+              title={config.stream_title || 'Holy Spirit Outpouring Live Stream'}
+            />
+
+            {!isLive && (
+              <div style={{
+                position: 'absolute', inset: 0, background: 'rgba(13,27,42,0.92)',
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                justifyContent: 'center', gap: '20px', zIndex: 5
+              }}>
+                <div style={{
+                  width: '80px', height: '80px', background: '#FF0000',
+                  borderRadius: '50%', display: 'flex', alignItems: 'center',
+                  justifyContent: 'center', opacity: 0.85
+                }}>
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                    <polygon points="5,3 19,12 5,21" />
+                  </svg>
+                </div>
+                <div style={{ textAlign: 'center', padding: '0 2rem' }}>
+                  <div style={{
+                    fontSize: '20px', fontWeight: '700', color: 'white',
+                    marginBottom: '8px', fontFamily: 'Playfair Display, serif'
+                  }}>
+                    {config.stream_title || 'Stream Starting Soon'}
+                  </div>
+                  <div style={{
+                    fontSize: '14px', color: 'rgba(255,255,255,0.5)',
+                    lineHeight: '1.6', marginBottom: '20px'
+                  }}>
+                    The livestream will begin when the service starts.
+                    Subscribe to our YouTube channel to get notified.
+                  </div>
+                  <a
+                    href={config.youtube_channel_url || 'https://www.youtube.com/@holyspiritoutpouring-o6s'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '10px',
+                      background: '#FF0000', color: 'white', textDecoration: 'none',
+                      borderRadius: '8px', padding: '12px 24px',
+                      fontSize: '14px', fontWeight: '700'
+                    }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                      <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.54C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
+                      <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" style={{ fill: 'white' }} />
+                    </svg>
+                    Subscribe on YouTube
+                  </a>
                 </div>
               </div>
             )}
@@ -126,11 +146,14 @@ export default function Live() {
 
           <div className="live-today-schedule">
             <div className="live-schedule-title">Today's Schedule</div>
-            {loadingSessions ? <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Loading…</div> : (
-              <div className="session-list">
-                {sessions.map(s => <SessionRow key={s.id} session={s} />)}
-              </div>
-            )}
+            {loadingSessions
+              ? <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Loading…</div>
+              : (
+                <div className="session-list">
+                  {sessions.map(s => <SessionRow key={s.id} session={s} />)}
+                </div>
+              )
+            }
           </div>
         </div>
 
