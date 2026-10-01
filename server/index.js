@@ -9,18 +9,24 @@ const allowedOrigins = [
   'http://localhost:3000',
   'https://holyspiritoutpouring-ha9z.vercel.app',
   'https://holyspiritoutpouring.vercel.app',
+  'https://holyspiritoutpouring.com.ng',
+  'https://www.holyspiritoutpouring.com.ng',
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    console.log('CORS blocked origin:', origin);
     callback(null, false);
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
+  optionsSuccessStatus: 200,
 }));
+
+app.options('*', cors());
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
