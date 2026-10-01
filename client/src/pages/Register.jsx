@@ -4,6 +4,22 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { useSiteConfig } from '../hooks/useSiteConfig'
 
+function getYouTubeEmbedUrl(url) {
+  if (!url) return null
+  const watchMatch = url.match(/youtube\.com\/watch\?v=([^&]+)/)
+  const shortMatch = url.match(/youtu\.be\/([^?]+)/)
+  const liveMatch = url.match(/youtube\.com\/live\/([^?]+)/)
+  const embedMatch = url.match(/youtube\.com\/embed\/([^?]+)/)
+  const id = watchMatch?.[1] || shortMatch?.[1] || liveMatch?.[1] || embedMatch?.[1]
+  return id
+    ? `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&modestbranding=1&playsinline=1`
+    : null
+}
+
+function isYouTubeUrl(url) {
+  return url && (url.includes('youtube.com') || url.includes('youtu.be'))
+}
+
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
 const ATTENDANCE_OPTIONS = [
@@ -97,12 +113,67 @@ export default function Register() {
   return (
     <>
       <Navbar />
-      <div className="page-banner">
-        <div className="container">
-          <span className="page-banner-label">Join Us</span>
-          <h1 className="page-banner-title">Register for Outpouring '25</h1>
-          <p className="page-banner-subtitle">Secure your place at the most transformative conference of the year. Registration is free.</p>
-        </div>
+
+      {/* ── Registration Banner ── */}
+      <div style={{ width: '100%', position: 'relative', overflow: 'hidden', background: '#0D1B2A', marginTop: '70px' }}>
+        {config.register_banner_url ? (
+          config.register_banner_type === 'video' ? (
+            /* Video banner */
+            <div style={{ position: 'relative', width: '100%', paddingBottom: '40%', height: 0, overflow: 'hidden', background: '#000' }}>
+              {isYouTubeUrl(config.register_banner_url) ? (
+                <iframe
+                  src={getYouTubeEmbedUrl(config.register_banner_url)}
+                  style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '177.78vh', minWidth: '100%', minHeight: '56.25vw', height: '100%', border: 'none', pointerEvents: 'none' }}
+                  allow="autoplay; muted; loop; playsinline"
+                  title="Registration Banner"
+                />
+              ) : (
+                <video src={config.register_banner_url} autoPlay muted loop playsInline
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+              )}
+              <div style={{ position: 'absolute', inset: 0, background: 'rgba(13,27,42,0.55)', zIndex: 2 }} />
+              <div style={{ position: 'absolute', inset: 0, zIndex: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '2rem' }}>
+                <div style={{ background: '#c90505', color: 'white', fontSize: '11px', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '5px 16px', borderRadius: '100px', marginBottom: '1rem', display: 'inline-block' }}>Registration Open</div>
+                <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(1.5rem, 4vw, 2.8rem)', fontWeight: '700', color: 'white', marginBottom: '0.5rem', textShadow: '0 2px 12px rgba(0,0,0,0.6)' }}>
+                  {config.register_banner_title || 'Join Us at Outpouring 2026'}
+                </h1>
+                <p style={{ fontSize: 'clamp(13px, 2vw, 16px)', color: 'rgba(255,255,255,0.85)', textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}>
+                  {config.register_banner_subtitle || 'August 15–17, 2026 • Port Harcourt'}
+                </p>
+              </div>
+            </div>
+          ) : (
+            /* Image / flyer banner */
+            <div style={{ position: 'relative', width: '100%', paddingBottom: '40%', height: 0, overflow: 'hidden', background: '#0D1B2A' }}>
+              <img src={config.register_banner_url} alt="Registration Banner"
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                onError={e => { e.target.style.display = 'none' }} />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(13,27,42,0.1) 0%, rgba(13,27,42,0.65) 100%)', zIndex: 2 }} />
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 3, padding: '2rem', textAlign: 'center' }}>
+                <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(1.4rem, 3.5vw, 2.5rem)', fontWeight: '700', color: 'white', marginBottom: '0.25rem', textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}>
+                  {config.register_banner_title || 'Join Us at Outpouring 2026'}
+                </h1>
+                <p style={{ fontSize: 'clamp(12px, 1.8vw, 15px)', color: 'rgba(255,255,255,0.9)', textShadow: '0 1px 6px rgba(0,0,0,0.8)' }}>
+                  {config.register_banner_subtitle || 'August 15–17, 2026 • Port Harcourt'}
+                </p>
+              </div>
+            </div>
+          )
+        ) : (
+          /* Default banner (no media set) */
+          <div style={{ width: '100%', padding: '5rem 1.5rem 3.5rem', background: 'linear-gradient(135deg, #0D1B2A 0%, #1a0a2e 100%)', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at center, rgba(201,5,5,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <div style={{ display: 'inline-block', background: '#c90505', color: 'white', fontSize: '11px', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '5px 16px', borderRadius: '100px', marginBottom: '1.25rem' }}>Registration Now Open</div>
+              <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(1.8rem, 5vw, 3.2rem)', fontWeight: '700', color: 'white', marginBottom: '0.75rem' }}>
+                {config.register_banner_title || 'Join Us at Outpouring 2026'}
+              </h1>
+              <p style={{ fontSize: 'clamp(13px, 2vw, 16px)', color: 'rgba(255,255,255,0.6)', maxWidth: '500px', margin: '0 auto' }}>
+                {config.register_banner_subtitle || 'August 15–17, 2026 • Port Harcourt, Rivers State'}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {submitted ? <SuccessState /> : !registrationOpen ? (

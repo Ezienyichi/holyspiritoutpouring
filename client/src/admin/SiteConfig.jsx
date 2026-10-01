@@ -107,6 +107,7 @@ export default function SiteConfig() {
   const [saving, setSaving] = useState(false)
   const [open, setOpen] = useState('general')
   const [regCount, setRegCount] = useState(null)
+  const [uploadingBanner, setUploadingBanner] = useState(false)
 
   useEffect(() => {
     fetch(API_BASE + '/api/config')
@@ -367,6 +368,107 @@ export default function SiteConfig() {
             </FG>
           </div>
           <SaveBtn onClick={() => saveKeys(['registration_open','registration_deadline','max_attendees'])} saving={saving} />
+        </Section>
+
+        {/* ── Registration Page Banner ── */}
+        <Section id="reg-banner" open={open} onToggle={setOpen} title="Registration Page Banner"
+          icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="18" height="14" rx="2"/><line x1="3" y1="20" x2="21" y2="20"/></svg>}>
+
+          {/* Banner type */}
+          <div className="form-group">
+            <label className="form-label">Banner Type</label>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              {[{ value: 'image', label: 'Image / Flyer' }, { value: 'video', label: 'Video' }].map(opt => (
+                <button key={opt.value} type="button"
+                  onClick={() => set('register_banner_type')(opt.value)}
+                  style={{
+                    flex: 1, padding: '10px 16px', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '700', transition: 'all 0.2s',
+                    border: (config.register_banner_type || 'image') === opt.value ? '2px solid #c90505' : '2px solid rgba(255,255,255,0.12)',
+                    background: (config.register_banner_type || 'image') === opt.value ? 'rgba(201,5,5,0.12)' : 'rgba(255,255,255,0.04)',
+                    color: (config.register_banner_type || 'image') === opt.value ? '#c90505' : 'rgba(255,255,255,0.5)',
+                  }}
+                >{opt.label}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* URL input */}
+          <FG label={(config.register_banner_type || 'image') === 'video' ? 'Video URL (YouTube or direct)' : 'Image / Flyer URL'}>
+            <input type="url" {...inp('register_banner_url')}
+              placeholder={(config.register_banner_type || 'image') === 'video'
+                ? 'https://www.youtube.com/watch?v=…'
+                : 'https://res.cloudinary.com/…/your-flyer.jpg'} />
+          </FG>
+
+          {/* Upload from computer */}
+          <div className="form-group">
+            <label className="form-label">Or Upload from Computer</label>
+            <label style={{
+              display: 'flex', alignItems: 'center', gap: '10px', width: '100%',
+              background: 'rgba(255,255,255,0.04)', border: '2px dashed rgba(255,255,255,0.15)',
+              borderRadius: '8px', padding: '16px', cursor: uploadingBanner ? 'not-allowed' : 'pointer',
+              boxSizing: 'border-box', opacity: uploadingBanner ? 0.6 : 1,
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <div>
+                <div style={{ fontSize: '13px', fontWeight: '600', color: 'rgba(255,255,255,0.6)' }}>
+                  {uploadingBanner ? 'Uploading…' : `Click to upload ${(config.register_banner_type || 'image') === 'video' ? 'a video file' : 'an image or flyer'}`}
+                </div>
+                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', marginTop: '2px' }}>
+                  {(config.register_banner_type || 'image') === 'video' ? 'MP4, MOV, WEBM — max 50MB' : 'JPG, PNG, WEBP — Recommended: 1920×800px'}
+                </div>
+              </div>
+              <input type="file"
+                accept={(config.register_banner_type || 'image') === 'video' ? 'video/mp4,video/mov,video/webm' : 'image/jpeg,image/png,image/webp'}
+                style={{ display: 'none' }}
+                disabled={uploadingBanner}
+                onChange={async e => {
+                  const file = e.target.files?.[0]
+                  if (!file) return
+                  setUploadingBanner(true)
+                  try {
+                    const token = localStorage.getItem('adminToken')
+                    const fd = new FormData()
+                    fd.append('image', file)
+                    const res = await fetch(`${API_BASE}/api/media/upload`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd })
+                    if (!res.ok) throw new Error('Upload failed')
+                    const data = await res.json()
+                    if (data.url) set('register_banner_url')(data.url)
+                  } catch (err) {
+                    toast.error('Upload failed', err.message)
+                  } finally {
+                    setUploadingBanner(false)
+                    e.target.value = ''
+                  }
+                }}
+              />
+            </label>
+          </div>
+
+          {/* Image preview */}
+          {config.register_banner_url && (config.register_banner_type || 'image') === 'image' && (
+            <div className="form-group">
+              <label className="form-label">Preview</label>
+              <div style={{ position: 'relative', paddingBottom: '40%', height: 0, borderRadius: '10px', overflow: 'hidden', background: '#0D1B2A' }}>
+                <img src={config.register_banner_url} alt="Banner preview"
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                  onError={e => e.target.style.display = 'none'} />
+              </div>
+            </div>
+          )}
+
+          <FG label="Banner Heading Text">
+            <input {...inp('register_banner_title')} placeholder="Join Us at Outpouring 2026" />
+          </FG>
+          <FG label="Banner Subtitle Text">
+            <input {...inp('register_banner_subtitle')} placeholder="August 15–17, 2026 • Port Harcourt, Rivers State" />
+          </FG>
+
+          <SaveBtn onClick={() => saveKeys(['register_banner_type','register_banner_url','register_banner_title','register_banner_subtitle'])} saving={saving} />
         </Section>
 
         {/* ── 9. Announcements ── */}
