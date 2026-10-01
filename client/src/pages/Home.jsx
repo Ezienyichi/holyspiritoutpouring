@@ -712,7 +712,7 @@ function HomeVideoCard({ item }) {
   return (
     <div>
       <div
-        style={{ position: 'relative', paddingBottom: '56.25%', borderRadius: '12px', overflow: 'hidden', background: '#162032', transition: 'transform 0.25s ease, box-shadow 0.25s ease' }}
+        style={{ position: 'relative', paddingBottom: '56.25%', height: 0, borderRadius: '12px', overflow: 'hidden', background: '#162032', transition: 'transform 0.25s ease, box-shadow 0.25s ease' }}
         onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.25)' }}
         onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '' }}
       >
@@ -761,7 +761,7 @@ function MediaSection({ media }) {
                 ? <HomeVideoCard key={item.id} item={item} />
                 : (
                   <div key={item.id}>
-                    <div style={{ position: 'relative', paddingBottom: '56.25%', borderRadius: '12px', overflow: 'hidden', background: '#162032' }}>
+                    <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, borderRadius: '12px', overflow: 'hidden', background: '#162032' }}>
                       <img
                         src={item.url}
                         alt={item.title || item.caption}
