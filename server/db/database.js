@@ -205,7 +205,7 @@ async function initializeDatabase() {
   await query(`UPDATE config SET value = 'August 15–17, 2026' WHERE key = 'dates' AND value = 'August 15–17, 2025'`).catch(() => {});
   await query(`UPDATE config SET value = 'August 15–17, 2026' WHERE key = 'conference_dates' AND value = 'August 15–17, 2025'`).catch(() => {});
   await query(`UPDATE config SET value = '2026' WHERE key = 'conference_year' AND value = '2025'`).catch(() => {});
-  await query(`UPDATE config SET value = '2026-08-15T18:00:00' WHERE key = 'countdownDate' AND value = '2025-08-15T18:00:00'`).catch(() => {});
+  await query(`UPDATE config SET value = '2027-08-15T18:00:00' WHERE key = 'countdownDate' AND value IN ('2025-08-15T18:00:00','2026-08-15T18:00:00')`).catch(() => {});
   await query(`UPDATE config SET value = 'Holy Spirit Outpouring Conference 2026' WHERE key = 'og_title' AND value = 'Holy Spirit Outpouring Conference 2025'`).catch(() => {});
   await query(`UPDATE config SET value = 'Three days of powerful worship and revival — Port Harcourt, August 15–17, 2026' WHERE key = 'og_description' AND value = 'Three days of powerful worship and revival — Port Harcourt, August 15–17, 2025'`).catch(() => {});
 
@@ -218,7 +218,7 @@ async function seed() {
     ['title', 'Holy Spirit Outpouring Conference'],
     ['dates', 'August 15–17, 2026'],
     ['location', '#7A Covenant Avenue, off Stadium Road, Port Harcourt, Nigeria, 500201'],
-    ['countdownDate', '2026-08-15T18:00:00'],
+    ['countdownDate', '2027-08-15T18:00:00'],
     ['isLive', 'false'],
     ['streamUrl', ''],
     ['streamTitle', 'Opening Night — Holy Spirit Outpouring Conference'],

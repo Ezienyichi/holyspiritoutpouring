@@ -5,7 +5,6 @@ import { apiFetch } from '../utils/api'
 import Carousel3D from '../components/Carousel3D'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
-import CountdownTimer from '../components/CountdownTimer'
 import SpeakerCard from '../components/SpeakerCard'
 import SessionRow from '../components/SessionRow'
 import PrayerCard from '../components/PrayerCard'
@@ -22,6 +21,27 @@ function HeroSection({ config }) {
   const showCountdown = config.show_countdown !== 'false'
   const dateText = config.conference_dates || 'August 15–17, 2026'
   const locationText = [config.venue_city, config.venue_state, config.venue_country].filter(Boolean).join(', ') || 'Port Harcourt, Rivers State, Nigeria'
+
+  const cdTarget = config.countdownDate || '2027-08-15T18:00:00'
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+  const [cdExpired, setCdExpired] = useState(false)
+
+  useEffect(() => {
+    function tick() {
+      const diff = new Date(cdTarget) - Date.now()
+      if (diff <= 0) { setCdExpired(true); return }
+      setCdExpired(false)
+      setTimeLeft({
+        days: Math.floor(diff / 86400000),
+        hours: Math.floor((diff % 86400000) / 3600000),
+        minutes: Math.floor((diff % 3600000) / 60000),
+        seconds: Math.floor((diff % 60000) / 1000),
+      })
+    }
+    tick()
+    const timer = setInterval(tick, 1000)
+    return () => clearInterval(timer)
+  }, [cdTarget])
 
   function toggleMute() {
     setIsMuted(m => !m)
@@ -93,7 +113,21 @@ function HeroSection({ config }) {
         <p className="hero-subtitle">
           {config.aboutText1 ? config.aboutText1.slice(0, 140) + '…' : 'Experience three days of powerful worship, anointed teachings, and a fresh encounter with the Holy Spirit. Come expecting the supernatural.'}
         </p>
-        {showCountdown && <CountdownTimer targetDate={config.countdownDate || '2026-08-15T18:00:00'} />}
+        {showCountdown && !cdExpired && (
+          <div className="countdown">
+            {[
+              { value: timeLeft.days, label: 'DAYS' },
+              { value: timeLeft.hours, label: 'HRS' },
+              { value: timeLeft.minutes, label: 'MIN' },
+              { value: timeLeft.seconds, label: 'SEC' },
+            ].map(u => (
+              <div key={u.label} className="countdown-unit">
+                <span className="countdown-num">{String(u.value).padStart(2, '0')}</span>
+                <span className="countdown-lbl">{u.label}</span>
+              </div>
+            ))}
+          </div>
+        )}
         <div className="hero-cta">
           <Link to="/register" className="btn btn-orange btn-lg">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -677,20 +711,21 @@ function HomeVideoCard({ item }) {
   const watchUrl = item.youtubeUrl || (ytId ? `https://www.youtube.com/watch?v=${ytId}` : '#')
   return (
     <div>
-      <a
-        href={watchUrl} target="_blank" rel="noopener noreferrer"
-        className="home-gallery-card"
-        style={{ cursor: 'pointer', transition: 'all 0.25s ease', textDecoration: 'none' }}
+      <div
+        style={{ position: 'relative', paddingBottom: '56.25%', borderRadius: '12px', overflow: 'hidden', background: '#162032', transition: 'transform 0.25s ease, box-shadow 0.25s ease' }}
         onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.25)' }}
         onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '' }}
       >
-        <img src={thumb} alt={item.title || item.caption} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} onError={e => { e.target.style.display = 'none' }} />
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.15)' }}>
-          <div className="yt-play-btn" style={{ width: 44, height: 44, borderRadius: '50%', background: '#FF0000', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(0,0,0,0.4)' }}>
+        <img src={thumb} alt={item.title || item.caption} loading="lazy" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} onError={e => { e.target.style.display = 'none' }} />
+        <a
+          href={watchUrl} target="_blank" rel="noopener noreferrer"
+          style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.15)', textDecoration: 'none' }}
+        >
+          <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#FF0000', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(0,0,0,0.4)' }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg>
           </div>
-        </div>
-      </a>
+        </a>
+      </div>
       {(item.title || item.caption) && <p className="home-gallery-title">{item.title || item.caption}</p>}
     </div>
   )
@@ -726,12 +761,12 @@ function MediaSection({ media }) {
                 ? <HomeVideoCard key={item.id} item={item} />
                 : (
                   <div key={item.id}>
-                    <div className="home-gallery-card">
+                    <div style={{ position: 'relative', paddingBottom: '56.25%', borderRadius: '12px', overflow: 'hidden', background: '#162032' }}>
                       <img
                         src={item.url}
                         alt={item.title || item.caption}
                         loading="lazy"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                         onError={e => { e.target.style.display = 'none' }}
                       />
                     </div>
@@ -748,7 +783,6 @@ function MediaSection({ media }) {
           </Link>
         </div>
       </div>
-      <style>{`.yt-play-btn:hover { transform: translate(-50%,-60%) scale(1.1) !important; box-shadow: 0 4px 20px rgba(255,0,0,0.5) !important; }`}</style>
     </section>
   )
 }
