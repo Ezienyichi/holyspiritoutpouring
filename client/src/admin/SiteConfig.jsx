@@ -165,7 +165,43 @@ export default function SiteConfig() {
           <FG label="SEO Keywords" hint="Comma separated: Holy Spirit, Revival, Conference, Nigeria">
             <input {...inp('site_keywords')} />
           </FG>
-          <FG label="Logo URL"><input {...inp('site_logo_url')} placeholder="https://…" /></FG>
+          <FG label="Logo Image URL" hint="Paste a URL or upload below. PNG with transparent background recommended.">
+            <input {...inp('site_logo_url')} placeholder="https://…" />
+          </FG>
+          <FG label="Upload Logo from Computer">
+            <label style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%', background: 'rgba(255,255,255,0.04)', border: '2px dashed rgba(255,255,255,0.15)', borderRadius: '8px', padding: '14px 16px', cursor: 'pointer', boxSizing: 'border-box' }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = '#c90505'}
+              onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)' }}>Click to upload — PNG/JPG/SVG, max 2MB</span>
+              <input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" style={{ display: 'none' }}
+                onChange={async e => {
+                  const file = e.target.files?.[0]
+                  if (!file) return
+                  const token = localStorage.getItem('adminToken')
+                  const fd = new FormData()
+                  fd.append('image', file)
+                  try {
+                    const res = await fetch(API_BASE + '/api/media/upload', { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd })
+                    if (!res.ok) throw new Error('Upload failed')
+                    const data = await res.json()
+                    if (data.url) set('site_logo_url')(data.url)
+                  } catch {}
+                }} />
+            </label>
+          </FG>
+          {config.site_logo_url && (
+            <FG label="Logo Preview">
+              <div style={{ background: '#0D1B2A', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', padding: '16px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <img src={config.site_logo_url} alt="Logo preview" style={{ height: '48px', width: 'auto', objectFit: 'contain', maxWidth: '200px' }} onError={e => { e.target.style.display = 'none' }} />
+                <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>Shown in navbar &amp; footer</span>
+              </div>
+              <button type="button" onClick={() => set('site_logo_url')('')}
+                style={{ marginTop: '8px', background: 'rgba(201,5,5,0.1)', border: '1px solid rgba(201,5,5,0.3)', borderRadius: '6px', padding: '6px 14px', color: '#c90505', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>
+                Remove Logo — Use Text
+              </button>
+            </FG>
+          )}
           <FG label="Favicon URL"><input {...inp('favicon_url')} placeholder="https://…" /></FG>
           <FG label="Facebook Meta Pixel ID" hint="Paste your Pixel ID from Meta Events Manager (e.g. 1234567890123456). Leave blank to disable tracking.">
             <input {...inp('meta_pixel_id')} placeholder="e.g. 1234567890123456" style={{ fontFamily: 'monospace' }} />

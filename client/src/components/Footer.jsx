@@ -25,11 +25,17 @@ export default function Footer() {
         <div className="footer-grid">
           <div>
             <div className="footer-logo">
-              <svg width="20" height="26" viewBox="0 0 22 28" fill="none" style={{ flexShrink: 0 }}>
-                <path d="M11 0C11 0 4 7 4 14C4 17.31 5.45 20.28 7.73 22.36C7.27 21.34 7 20.2 7 19C7 15.69 9.24 12.94 11 11C12.76 12.94 15 15.69 15 19C15 20.2 14.73 21.34 14.27 22.36C16.55 20.28 18 17.31 18 14C18 7 11 0 11 0Z" fill="#E8622A"/>
-                <path d="M11 14C11 14 8 17 8 20C8 21.66 9.34 23 11 23C12.66 23 14 21.66 14 20C14 17 11 14 11 14Z" fill="#C4501F"/>
-              </svg>
-              utpouring<span className="accent">'25</span>
+              {config.site_logo_url ? (
+                <img src={config.site_logo_url} alt="Site Logo" style={{ height: '40px', width: 'auto', objectFit: 'contain', maxWidth: '160px', display: 'block' }} onError={e => { e.target.style.display = 'none' }} />
+              ) : (
+                <>
+                  <svg width="20" height="26" viewBox="0 0 22 28" fill="none" style={{ flexShrink: 0 }}>
+                    <path d="M11 0C11 0 4 7 4 14C4 17.31 5.45 20.28 7.73 22.36C7.27 21.34 7 20.2 7 19C7 15.69 9.24 12.94 11 11C12.76 12.94 15 15.69 15 19C15 20.2 14.73 21.34 14.27 22.36C16.55 20.28 18 17.31 18 14C18 7 11 0 11 0Z" fill="#E8622A"/>
+                    <path d="M11 14C11 14 8 17 8 20C8 21.66 9.34 23 11 23C12.66 23 14 21.66 14 20C14 17 11 14 11 14Z" fill="#C4501F"/>
+                  </svg>
+                  utpouring<span className="accent">'25</span>
+                </>
+              )}
             </div>
             <p className="footer-desc">{tagline}</p>
           </div>

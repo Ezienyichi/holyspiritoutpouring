@@ -5,16 +5,16 @@ import Footer from '../components/Footer'
 import { useSiteConfig } from '../hooks/useSiteConfig'
 import { trackRegistration } from '../utils/metaPixel'
 
-function getYouTubeEmbedUrl(url) {
+function getYouTubeEmbedUrl(url, muted = true) {
   if (!url) return null
   const watchMatch = url.match(/youtube\.com\/watch\?v=([^&]+)/)
   const shortMatch = url.match(/youtu\.be\/([^?]+)/)
   const liveMatch = url.match(/youtube\.com\/live\/([^?]+)/)
   const embedMatch = url.match(/youtube\.com\/embed\/([^?]+)/)
   const id = watchMatch?.[1] || shortMatch?.[1] || liveMatch?.[1] || embedMatch?.[1]
-  return id
-    ? `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&modestbranding=1&playsinline=1`
-    : null
+  if (!id) return url
+  const muteParam = muted ? '&mute=1' : '&mute=0'
+  return `https://www.youtube.com/embed/${id}?autoplay=1${muteParam}&loop=1&playlist=${id}&rel=0&modestbranding=1&playsinline=1`
 }
 
 function isYouTubeUrl(url) {
@@ -115,67 +115,63 @@ export default function Register() {
     <>
       <Navbar />
 
-      {/* ── Registration Banner ── */}
-      <div style={{ width: '100%', position: 'relative', overflow: 'hidden', background: '#0D1B2A', marginTop: '70px' }}>
+      {/* ── Registration Banner — Part A: Media only, no text overlay ── */}
+      <div style={{ width: '100%', overflow: 'hidden', background: '#0D1B2A', marginTop: '70px' }}>
         {config.register_banner_url ? (
           config.register_banner_type === 'video' ? (
-            /* Video banner */
-            <div style={{ position: 'relative', width: '100%', paddingBottom: '40%', height: 0, overflow: 'hidden', background: '#000' }}>
+            <div className="register-banner-media" style={{ position: 'relative', width: '100%', paddingBottom: 'clamp(45%, 45vw, 500px)', overflow: 'hidden', background: '#000', minHeight: '220px' }}>
               {isYouTubeUrl(config.register_banner_url) ? (
                 <iframe
-                  src={getYouTubeEmbedUrl(config.register_banner_url)}
-                  style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '177.78vh', minWidth: '100%', minHeight: '56.25vw', height: '100%', border: 'none', pointerEvents: 'none' }}
-                  allow="autoplay; muted; loop; playsinline"
-                  title="Registration Banner"
+                  key={config.register_banner_url}
+                  src={getYouTubeEmbedUrl(config.register_banner_url, false)}
+                  style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '177.78vh', minWidth: '100%', minHeight: '56.25vw', height: '100%', border: 'none', display: 'block' }}
+                  allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+                  allowFullScreen
+                  title="Registration banner video"
                 />
               ) : (
-                <video src={config.register_banner_url} autoPlay muted loop playsInline
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                <video key={config.register_banner_url} autoPlay loop playsInline
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}>
+                  <source src={config.register_banner_url} />
+                </video>
               )}
-              <div style={{ position: 'absolute', inset: 0, background: 'rgba(13,27,42,0.55)', zIndex: 2 }} />
-              <div style={{ position: 'absolute', inset: 0, zIndex: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '2rem' }}>
-                <div style={{ background: '#c90505', color: 'white', fontSize: '11px', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '5px 16px', borderRadius: '100px', marginBottom: '1rem', display: 'inline-block' }}>Registration Open</div>
-                <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(1.5rem, 4vw, 2.8rem)', fontWeight: '700', color: 'white', marginBottom: '0.5rem', textShadow: '0 2px 12px rgba(0,0,0,0.6)' }}>
-                  {config.register_banner_title || 'Join Us at Outpouring 2026'}
-                </h1>
-                <p style={{ fontSize: 'clamp(13px, 2vw, 16px)', color: 'rgba(255,255,255,0.85)', textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}>
-                  {config.register_banner_subtitle || 'August 15–17, 2026 • Port Harcourt'}
-                </p>
-              </div>
             </div>
           ) : (
-            /* Image / flyer banner */
-            <div style={{ position: 'relative', width: '100%', paddingBottom: '40%', height: 0, overflow: 'hidden', background: '#0D1B2A' }}>
+            <div className="register-banner-media" style={{ position: 'relative', width: '100%', paddingBottom: 'clamp(45%, 45vw, 500px)', overflow: 'hidden', background: '#0D1B2A', minHeight: '220px' }}>
               <img src={config.register_banner_url} alt="Registration Banner"
-                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
                 onError={e => { e.target.style.display = 'none' }} />
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(13,27,42,0.1) 0%, rgba(13,27,42,0.65) 100%)', zIndex: 2 }} />
-              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 3, padding: '2rem', textAlign: 'center' }}>
-                <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(1.4rem, 3.5vw, 2.5rem)', fontWeight: '700', color: 'white', marginBottom: '0.25rem', textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}>
-                  {config.register_banner_title || 'Join Us at Outpouring 2026'}
-                </h1>
-                <p style={{ fontSize: 'clamp(12px, 1.8vw, 15px)', color: 'rgba(255,255,255,0.9)', textShadow: '0 1px 6px rgba(0,0,0,0.8)' }}>
-                  {config.register_banner_subtitle || 'August 15–17, 2026 • Port Harcourt'}
-                </p>
-              </div>
             </div>
           )
         ) : (
-          /* Default banner (no media set) */
-          <div style={{ width: '100%', padding: '5rem 1.5rem 3.5rem', background: 'linear-gradient(135deg, #0D1B2A 0%, #1a0a2e 100%)', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at center, rgba(201,5,5,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
-            <div style={{ position: 'relative', zIndex: 1 }}>
-              <div style={{ display: 'inline-block', background: '#c90505', color: 'white', fontSize: '11px', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '5px 16px', borderRadius: '100px', marginBottom: '1.25rem' }}>Registration Now Open</div>
-              <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(1.8rem, 5vw, 3.2rem)', fontWeight: '700', color: 'white', marginBottom: '0.75rem' }}>
+          /* Default banner — no media set */
+          <div style={{ width: '100%', minHeight: '220px', background: 'linear-gradient(135deg, #0D1B2A 0%, #1a0a2e 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at center, rgba(201,5,5,0.15) 0%, transparent 70%)', pointerEvents: 'none' }} />
+            <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', padding: '3rem 1.5rem' }}>
+              <div style={{ display: 'inline-block', background: '#c90505', color: 'white', fontSize: '11px', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '5px 16px', borderRadius: '100px', marginBottom: '1rem' }}>Registration Open</div>
+              <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(1.6rem, 5vw, 3rem)', fontWeight: '700', color: 'white', margin: '0 0 0.5rem' }}>
                 {config.register_banner_title || 'Join Us at Outpouring 2026'}
               </h1>
-              <p style={{ fontSize: 'clamp(13px, 2vw, 16px)', color: 'rgba(255,255,255,0.6)', maxWidth: '500px', margin: '0 auto' }}>
-                {config.register_banner_subtitle || 'August 15–17, 2026 • Port Harcourt, Rivers State'}
+              <p style={{ fontSize: 'clamp(13px, 2vw, 16px)', color: 'rgba(255,255,255,0.65)', margin: 0 }}>
+                {config.register_banner_subtitle || 'August 15–17, 2026 • Port Harcourt'}
               </p>
             </div>
           </div>
         )}
       </div>
+
+      {/* ── Registration Banner — Part B: Text below media ── */}
+      {config.register_banner_url && (
+        <div style={{ width: '100%', background: '#0D1B2A', padding: 'clamp(1.5rem, 4vw, 2.5rem) 1.5rem', textAlign: 'center' }}>
+          <div style={{ display: 'inline-block', background: '#c90505', color: 'white', fontSize: '11px', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '5px 16px', borderRadius: '100px', marginBottom: '1rem' }}>Registration Open</div>
+          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(1.6rem, 5vw, 3rem)', fontWeight: '700', color: 'white', marginBottom: '0.5rem', lineHeight: '1.2' }}>
+            {config.register_banner_title || 'Join Us at Outpouring 2026'}
+          </h1>
+          <p style={{ fontSize: 'clamp(13px, 2vw, 16px)', color: 'rgba(255,255,255,0.65)', margin: '0 auto', maxWidth: '500px', lineHeight: '1.6' }}>
+            {config.register_banner_subtitle || 'August 15–17, 2026 • Port Harcourt, Rivers State'}
+          </p>
+        </div>
+      )}
 
       {submitted ? <SuccessState /> : !registrationOpen ? (
         <section className="section section-dark" style={{ minHeight: '50vh', display: 'flex', alignItems: 'center' }}>
@@ -200,7 +196,7 @@ export default function Register() {
               <form onSubmit={handleSubmit}>
 
                 {/* First Name + Last Name */}
-                <div className="reg-form-row">
+                <div className="reg-form-row reg-form-row-responsive">
                   <div className="reg-form-group">
                     <label className="reg-field-label">First Name *</label>
                     <input className="reg-input" placeholder="Enter your first name" value={form.firstName} onChange={set('firstName')} required />
@@ -212,7 +208,7 @@ export default function Register() {
                 </div>
 
                 {/* Email + Phone */}
-                <div className="reg-form-row">
+                <div className="reg-form-row reg-form-row-responsive">
                   <div className="reg-form-group">
                     <label className="reg-field-label">Email Address *</label>
                     <input className="reg-input" type="email" placeholder="your@email.com" value={form.email} onChange={set('email')} required />
@@ -224,7 +220,7 @@ export default function Register() {
                 </div>
 
                 {/* Location + Church */}
-                <div className="reg-form-row">
+                <div className="reg-form-row reg-form-row-responsive">
                   <div className="reg-form-group">
                     <label className="reg-field-label">Location (City & State) *</label>
                     <input className="reg-input" placeholder="e.g. Port Harcourt, Rivers State" value={form.location} onChange={set('location')} required />
@@ -238,7 +234,7 @@ export default function Register() {
                 {/* Attendance Type */}
                 <div className="reg-form-group">
                   <label className="reg-field-label">Will you be attending virtually or onsite? *</label>
-                  <div className="reg-attendance-grid">
+                  <div className="reg-attendance-grid reg-attendance-grid-stack">
                     {ATTENDANCE_OPTIONS.map(opt => (
                       <label
                         key={opt.value}
@@ -264,7 +260,7 @@ export default function Register() {
                 <button
                   type="submit"
                   className="btn btn-orange"
-                  style={{ width: '100%', justifyContent: 'center', padding: '16px', fontSize: '16px', fontWeight: 700, marginTop: '0.5rem' }}
+                  style={{ width: '100%', justifyContent: 'center', padding: '16px', fontSize: '16px', fontWeight: 700, marginTop: '0.5rem', minHeight: '52px' }}
                   disabled={loading}
                 >
                   {loading ? 'Registering…' : (
