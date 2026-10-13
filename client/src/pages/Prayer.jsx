@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import PrayerCard from '../components/PrayerCard'
+import { trackPrayerSubmit } from '../utils/metaPixel'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
@@ -31,6 +32,7 @@ export default function Prayer() {
     const res = await fetch(API_BASE + '/api/prayers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
     const newPrayer = await res.json()
     setSubmitted(true)
+    trackPrayerSubmit({ content_category: form.category })
     setForm({ name: '', email: '', category: 'Other', text: '' })
     setTimeout(() => setSubmitted(false), 5000)
   }

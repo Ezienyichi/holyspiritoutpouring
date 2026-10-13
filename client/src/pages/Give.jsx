@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { useSiteConfig } from '../hooks/useSiteConfig'
 import { useToast } from '../context/ToastContext'
+import { trackGiving } from '../utils/metaPixel'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 const AMOUNT_PILLS = [5000, 10000, 25000, 50000, 100000]
@@ -62,6 +63,7 @@ export default function Give() {
         body: JSON.stringify({ name: form.name, amount: Number(form.amount), tier: 'Custom', reason_for_giving: form.reason ? `${form.reason} (${form.location})` : form.location }),
       })
       setStep(2)
+      trackGiving({ value: Number(form.amount), currency: 'NGN', content_name: 'Conference Giving' })
     } catch {
       toast.error('Something Went Wrong', 'Could not submit your details. Please try again.')
     } finally {

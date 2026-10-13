@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useEffect } from 'react'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { ToastProvider } from './context/ToastContext'
 import Home from './pages/Home'
 import Speakers from './pages/Speakers'
@@ -11,12 +12,38 @@ import Live from './pages/Live'
 import AdminLogin from './admin/AdminLogin'
 import AdminLayout from './admin/AdminLayout'
 import ScrollToTop from './components/ScrollToTop'
+import { initMetaPixel } from './utils/initPixel'
+import { trackPageView } from './utils/metaPixel'
+
+const API_BASE = import.meta.env.VITE_API_URL || ''
+
+function PageTracker() {
+  const location = useLocation()
+  useEffect(() => {
+    trackPageView()
+  }, [location.pathname])
+  return null
+}
+
+function PixelInit() {
+  useEffect(() => {
+    fetch(API_BASE + '/api/config')
+      .then(r => r.json())
+      .then(d => {
+        if (d && d.meta_pixel_id) initMetaPixel(d.meta_pixel_id)
+      })
+      .catch(() => {})
+  }, [])
+  return null
+}
 
 export default function App() {
   return (
     <ToastProvider>
     <BrowserRouter>
+      <PixelInit />
       <ScrollToTop />
+      <PageTracker />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/speakers" element={<Speakers />} />

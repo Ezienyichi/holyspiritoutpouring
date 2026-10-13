@@ -167,7 +167,10 @@ export default function SiteConfig() {
           </FG>
           <FG label="Logo URL"><input {...inp('site_logo_url')} placeholder="https://…" /></FG>
           <FG label="Favicon URL"><input {...inp('favicon_url')} placeholder="https://…" /></FG>
-          <SaveBtn onClick={() => saveKeys(['site_title','site_tagline','site_description','site_keywords','site_logo_url','favicon_url'])} saving={saving} />
+          <FG label="Facebook Meta Pixel ID" hint="Paste your Pixel ID from Meta Events Manager (e.g. 1234567890123456). Leave blank to disable tracking.">
+            <input {...inp('meta_pixel_id')} placeholder="e.g. 1234567890123456" style={{ fontFamily: 'monospace' }} />
+          </FG>
+          <SaveBtn onClick={() => saveKeys(['site_title','site_tagline','site_description','site_keywords','site_logo_url','favicon_url','meta_pixel_id'])} saving={saving} />
         </Section>
 
         {/* ── 2. Conference Details ── */}

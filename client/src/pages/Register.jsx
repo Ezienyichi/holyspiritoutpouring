@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { useSiteConfig } from '../hooks/useSiteConfig'
+import { trackRegistration } from '../utils/metaPixel'
 
 function getYouTubeEmbedUrl(url) {
   if (!url) return null
@@ -101,7 +102,7 @@ export default function Register() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       })
-      if (res.ok) { setSubmitted(true) }
+      if (res.ok) { setSubmitted(true); trackRegistration({ content_name: 'Outpouring Conference', status: form.attendanceType }) }
       else { const d = await res.json(); setError(d.error || 'Registration failed. Please try again.') }
     } catch {
       setError('Network error. Please check your connection and try again.')

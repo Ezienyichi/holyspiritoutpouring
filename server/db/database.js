@@ -287,6 +287,7 @@ async function seed() {
     ['register_banner_url', ''],
     ['register_banner_title', 'Join Us at Outpouring 2026'],
     ['register_banner_subtitle', 'August 15–17, 2026 • Port Harcourt, Rivers State'],
+    ['meta_pixel_id', ''],
   ];
   for (const [key, value] of configPairs) {
     await query('INSERT INTO config (key, value) VALUES ($1, $2) ON CONFLICT (key) DO NOTHING', [key, value]);
