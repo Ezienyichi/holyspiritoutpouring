@@ -246,6 +246,7 @@ const FEATURES = [
 ]
 
 function AboutSection({ config }) {
+  const navigate = useNavigate()
   const heading = config.about_heading || 'A Divine Gathering for Such a Time'
   const attendees = config.about_stats_attendees || '10K+'
 
@@ -288,20 +289,33 @@ function AboutSection({ config }) {
             </div>
           </div>
 
-          <div className="about-img-wrap">
-            <div className="about-img">
-              {config.about_image_url ? (
-                <img src={config.about_image_url} alt="Conference Flyer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#CCCCCC" strokeWidth="1.5" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                  <span style={{ color: '#BBBBBB', fontSize: '0.85rem' }}>Conference Flyer</span>
-                </div>
-              )}
+          <div>
+            <div className="about-img-wrap">
+              <div className="about-img">
+                {config.about_image_url ? (
+                  <img src={config.about_image_url} alt="Conference Flyer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#CCCCCC" strokeWidth="1.5" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <span style={{ color: '#BBBBBB', fontSize: '0.85rem' }}>Conference Flyer</span>
+                  </div>
+                )}
+              </div>
+              <div className="about-stat-card">
+                <span className="stat-num">{attendees}</span>
+                <div className="stat-lbl">Expected Attendees</div>
+              </div>
             </div>
-            <div className="about-stat-card">
-              <span className="stat-num">{attendees}</span>
-              <div className="stat-lbl">Expected Attendees</div>
+            <div style={{ marginTop: '1.25rem' }}>
+              <button
+                onClick={() => navigate('/register')}
+                style={{ width: '100%', background: '#c90505', color: 'white', border: 'none', borderRadius: '10px', padding: '16px 32px', fontSize: '15px', fontWeight: '700', cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: 'all 0.2s ease', boxShadow: '0 4px 20px rgba(201,5,5,0.35)' }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#a00404'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(201,5,5,0.45)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#c90505'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(201,5,5,0.35)' }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                Register Now — It's Free
+              </button>
             </div>
           </div>
         </div>
@@ -406,6 +420,7 @@ function PreviousEventsSection({ events }) {
 
 /* ── SPEAKERS ────────────────────────────────── */
 function SpeakersSection({ speakers }) {
+  const navigate = useNavigate()
   const [openBioId, setOpenBioId] = useState(null)
   return (
     <section className="speakers-section">
@@ -421,11 +436,24 @@ function SpeakersSection({ speakers }) {
             <SpeakerCard key={s.id} speaker={s} index={i} openBioId={openBioId} setOpenBioId={setOpenBioId} />
           ))}
         </div>
-        <div className="text-center" style={{ marginTop: '2.5rem' }}>
-          <Link to="/team" className="btn btn-navy">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '2.5rem' }}>
+          <button
+            onClick={() => navigate('/register')}
+            style={{ flex: '1 1 200px', maxWidth: '280px', background: '#c90505', color: 'white', border: 'none', borderRadius: '10px', padding: '14px 32px', fontSize: '14px', fontWeight: '700', cursor: 'pointer', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s ease' }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#a00404'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#c90505'; e.currentTarget.style.transform = 'translateY(0)' }}
+          >
+            Register to Meet Them
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+          <button
+            onClick={() => navigate('/speakers')}
+            style={{ flex: '1 1 200px', maxWidth: '280px', background: 'transparent', color: '#040102', border: '2px solid #040102', borderRadius: '10px', padding: '14px 32px', fontSize: '14px', fontWeight: '600', cursor: 'pointer', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s ease' }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#040102'; e.currentTarget.style.color = 'white' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#040102' }}
+          >
             View All Speakers
-          </Link>
+          </button>
         </div>
       </div>
     </section>
@@ -518,6 +546,7 @@ function PastMinistersSection({ ministers }) {
 
 /* ── SCHEDULE ────────────────────────────────── */
 function ScheduleSection({ config }) {
+  const navigate = useNavigate()
   const [day, setDay] = useState(1)
   const [sessions, setSessions] = useState([])
   const [loading, setLoading] = useState(true)
@@ -558,11 +587,25 @@ function ScheduleSection({ config }) {
             {sessions.map(s => <SessionRow key={s.id} session={s} />)}
           </div>
         )}
-        <div className="text-center" style={{ marginTop: '2.5rem' }}>
-          <Link to="/schedule" className="btn btn-navy">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            View Full Schedule
-          </Link>
+        <div style={{ display: 'flex', gap: '12px', marginTop: '2rem', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => navigate('/register')}
+            style={{ flex: '1 1 200px', background: '#c90505', color: 'white', border: 'none', borderRadius: '10px', padding: '14px 24px', fontSize: '14px', fontWeight: '700', cursor: 'pointer', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s ease' }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#a00404'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#c90505'; e.currentTarget.style.transform = 'translateY(0)' }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            Register to Attend
+          </button>
+          <button
+            onClick={() => navigate('/schedule')}
+            style={{ flex: '1 1 200px', background: 'transparent', color: 'white', border: '2px solid rgba(255,255,255,0.3)', borderRadius: '10px', padding: '14px 24px', fontSize: '14px', fontWeight: '600', cursor: 'pointer', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s ease' }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'white'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'; e.currentTarget.style.background = 'transparent' }}
+          >
+            Full Schedule
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
         </div>
       </div>
     </section>
@@ -879,6 +922,50 @@ function GiveSection() {
   )
 }
 
+/* ── REGISTER CTA ────────────────────────────── */
+function RegisterCTASection() {
+  const navigate = useNavigate()
+  return (
+    <section style={{ background: 'linear-gradient(135deg, #c90505 0%, #8B0000 100%)', padding: 'clamp(3rem, 6vw, 5rem) 1.5rem', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'relative', zIndex: 1, maxWidth: '600px', margin: '0 auto' }}>
+        <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.7)', marginBottom: '1rem' }}>
+          Join Thousands of Believers
+        </div>
+        <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(1.8rem, 5vw, 3rem)', fontWeight: '700', color: 'white', marginBottom: '1rem', lineHeight: '1.2' }}>
+          Secure Your Place at Outpouring 2026
+        </h2>
+        <p style={{ fontSize: 'clamp(14px, 2vw, 16px)', color: 'rgba(255,255,255,0.8)', marginBottom: '2rem', lineHeight: '1.7' }}>
+          Registration is completely free. Attend in person in Port Harcourt or watch the global livestream from anywhere.
+        </p>
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => navigate('/register')}
+            style={{ flex: '1 1 200px', maxWidth: '280px', background: 'white', color: '#c90505', border: 'none', borderRadius: '10px', padding: '16px 36px', fontSize: '15px', fontWeight: '800', cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: 'all 0.2s ease', boxShadow: '0 4px 20px rgba(0,0,0,0.2)' }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,0,0,0.3)' }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)' }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c90505" strokeWidth="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            Register Free Now
+          </button>
+          <button
+            onClick={() => navigate('/live')}
+            style={{ flex: '1 1 200px', maxWidth: '280px', background: 'transparent', color: 'white', border: '2px solid rgba(255,255,255,0.5)', borderRadius: '10px', padding: '16px 36px', fontSize: '15px', fontWeight: '600', cursor: 'pointer', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: 'all 0.2s ease' }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'white'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)' }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)'; e.currentTarget.style.background = 'transparent' }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><polygon points="5,3 19,12 5,21"/></svg>
+            Watch Live
+          </button>
+        </div>
+        <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginTop: '1.5rem' }}>
+          August 15–17, 2026 • Port Harcourt, Rivers State, Nigeria
+        </p>
+      </div>
+    </section>
+  )
+}
+
 /* ── HOME (root) ─────────────────────────────── */
 export default function Home() {
   const { config } = useSiteConfig()
@@ -927,6 +1014,7 @@ export default function Home() {
       <PrayerSection prayers={prayers} />
       <MediaSection media={media} />
       <GiveSection />
+      <RegisterCTASection />
       <Footer />
     </>
   )
