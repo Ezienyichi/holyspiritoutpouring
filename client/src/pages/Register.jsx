@@ -137,9 +137,9 @@ export default function Register() {
               )}
             </div>
           ) : (
-            <div className="register-banner-media" style={{ position: 'relative', width: '100%', paddingBottom: 'clamp(45%, 45vw, 500px)', overflow: 'hidden', background: '#0D1B2A', minHeight: '220px' }}>
+            <div className="register-flyer" style={{ position: 'relative', width: '100%', lineHeight: 0, overflow: 'hidden', background: '#0D1B2A' }}>
               <img src={config.register_banner_url} alt="Registration Banner"
-                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
+                style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'contain', maxWidth: '100%', verticalAlign: 'bottom' }}
                 onError={e => { e.target.style.display = 'none' }} />
             </div>
           )
@@ -162,12 +162,12 @@ export default function Register() {
 
       {/* ── Registration Banner — Part B: Text below media ── */}
       {config.register_banner_url && (
-        <div style={{ width: '100%', background: '#0D1B2A', padding: 'clamp(1.5rem, 4vw, 2.5rem) 1.5rem', textAlign: 'center' }}>
+        <div className="register-banner-text" style={{ width: '100%', background: '#0D1B2A', padding: 'clamp(1.25rem, 4vw, 2.5rem) clamp(1rem, 4vw, 2rem)', textAlign: 'center', boxSizing: 'border-box' }}>
           <div style={{ display: 'inline-block', background: '#c90505', color: 'white', fontSize: '11px', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '5px 16px', borderRadius: '100px', marginBottom: '1rem' }}>Registration Open</div>
-          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(1.6rem, 5vw, 3rem)', fontWeight: '700', color: 'white', marginBottom: '0.5rem', lineHeight: '1.2' }}>
+          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(1.4rem, 5vw, 2.8rem)', fontWeight: '700', color: 'white', marginBottom: '0.5rem', lineHeight: '1.25', wordBreak: 'break-word', padding: '0 0.5rem' }}>
             {config.register_banner_title || 'Join Us at Outpouring 2026'}
           </h1>
-          <p style={{ fontSize: 'clamp(13px, 2vw, 16px)', color: 'rgba(255,255,255,0.65)', margin: '0 auto', maxWidth: '500px', lineHeight: '1.6' }}>
+          <p style={{ fontSize: 'clamp(12px, 3.5vw, 16px)', color: 'rgba(255,255,255,0.65)', margin: '0 auto', maxWidth: '500px', lineHeight: '1.6', padding: '0 0.5rem', wordBreak: 'break-word' }}>
             {config.register_banner_subtitle || 'August 15–17, 2026 • Port Harcourt, Rivers State'}
           </p>
         </div>
