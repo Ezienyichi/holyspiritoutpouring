@@ -1157,3 +1157,8 @@ body { background: #FFFFFF; color: #040102; }
   /* Attendance cards stack vertically on mobile */
   .reg-attendance-grid-stack { flex-direction: column !important; }
 }
+
+/* ===== REGISTER PAGE — NAVBAR OFFSET ===== */
+@media (max-width: 768px) {
+  .register-page-top { padding-top: 60px !important; }
+}

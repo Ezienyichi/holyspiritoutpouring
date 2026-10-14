@@ -116,7 +116,7 @@ export default function Register() {
       <Navbar />
 
       {/* ── Registration Banner — Part A: Media only, no text overlay ── */}
-      <div style={{ width: '100%', overflow: 'hidden', background: '#0D1B2A', marginTop: '70px' }}>
+      <div className="register-page-top" style={{ width: '100%', overflow: 'hidden', background: '#0D1B2A', paddingTop: '70px' }}>
         {config.register_banner_url ? (
           config.register_banner_type === 'video' ? (
             <div className="register-banner-media" style={{ position: 'relative', width: '100%', paddingBottom: 'clamp(45%, 45vw, 500px)', overflow: 'hidden', background: '#000', minHeight: '220px' }}>
