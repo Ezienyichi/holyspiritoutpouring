@@ -13,11 +13,10 @@ export default function Schedule() {
   const [expanded, setExpanded] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  const year = config?.conference_year || '2026'
   const DAYS = [
-    { day: 1, label: `Day 1 — Aug 15, ${year}` },
-    { day: 2, label: `Day 2 — Aug 16, ${year}` },
-    { day: 3, label: `Day 3 — Aug 17, ${year}` },
+    { day: 1, label: 'Day 1' },
+    { day: 2, label: 'Day 2' },
+    { day: 3, label: 'Day 3' },
   ]
 
   useEffect(() => {

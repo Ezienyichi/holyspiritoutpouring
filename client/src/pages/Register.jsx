@@ -150,10 +150,10 @@ export default function Register() {
             <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', padding: '3rem 1.5rem' }}>
               <div style={{ display: 'inline-block', background: '#c90505', color: 'white', fontSize: '11px', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '5px 16px', borderRadius: '100px', marginBottom: '1rem' }}>Registration Open</div>
               <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(1.6rem, 5vw, 3rem)', fontWeight: '700', color: 'white', margin: '0 0 0.5rem' }}>
-                {config.register_banner_title || 'Join Us at Outpouring 2026'}
+                {config.register_banner_title || 'Join Us at Outpouring'}
               </h1>
               <p style={{ fontSize: 'clamp(13px, 2vw, 16px)', color: 'rgba(255,255,255,0.65)', margin: 0 }}>
-                {config.register_banner_subtitle || 'August 15–17, 2026 • Port Harcourt'}
+                {config.register_banner_subtitle || ''}
               </p>
             </div>
           </div>
@@ -165,10 +165,10 @@ export default function Register() {
         <div className="register-banner-text" style={{ width: '100%', background: '#0D1B2A', padding: 'clamp(1.25rem, 4vw, 2.5rem) clamp(1rem, 4vw, 2rem)', textAlign: 'center', boxSizing: 'border-box' }}>
           <div style={{ display: 'inline-block', background: '#c90505', color: 'white', fontSize: '11px', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '5px 16px', borderRadius: '100px', marginBottom: '1rem' }}>Registration Open</div>
           <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(1.4rem, 5vw, 2.8rem)', fontWeight: '700', color: 'white', marginBottom: '0.5rem', lineHeight: '1.25', wordBreak: 'break-word', padding: '0 0.5rem' }}>
-            {config.register_banner_title || 'Join Us at Outpouring 2026'}
+            {config.register_banner_title || 'Join Us at Outpouring'}
           </h1>
           <p style={{ fontSize: 'clamp(12px, 3.5vw, 16px)', color: 'rgba(255,255,255,0.65)', margin: '0 auto', maxWidth: '500px', lineHeight: '1.6', padding: '0 0.5rem', wordBreak: 'break-word' }}>
-            {config.register_banner_subtitle || 'August 15–17, 2026 • Port Harcourt, Rivers State'}
+            {config.register_banner_subtitle || ''}
           </p>
         </div>
       )}

@@ -20,7 +20,7 @@ export default function Navbar() {
 
   const showDates = config.show_dates !== 'false'
   const showLocation = config.show_location !== 'false'
-  const dateText = config.conference_dates || 'August 15–17, 2026'
+  const dateText = config.conference_dates || ''
   const locationText = [config.venue_city, config.venue_state, config.venue_country].filter(Boolean).join(', ') || 'Port Harcourt, Rivers State, Nigeria'
 
   const links = [

@@ -80,7 +80,7 @@ export default function AdminSchedule() {
 
       <div className="schedule-tabs" style={{ marginBottom: '1.5rem' }}>
         {DAYS.map(d => (
-          <button key={d} className={`sch-tab${activeDay === d ? ' active' : ''}`} onClick={() => setActiveDay(d)}>Day {d} — Aug {14 + d}</button>
+          <button key={d} className={`sch-tab${activeDay === d ? ' active' : ''}`} onClick={() => setActiveDay(d)}>Day {d}</button>
         ))}
       </div>
 
@@ -122,7 +122,7 @@ export default function AdminSchedule() {
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label">Day</label>
                   <select className="form-select" value={form.day} onChange={e => f('day', Number(e.target.value))}>
-                    {DAYS.map(d => <option key={d} value={d}>Day {d} — Aug {14 + d}</option>)}
+                    {DAYS.map(d => <option key={d} value={d}>Day {d}</option>)}
                   </select>
                 </div>
                 <div className="form-group" style={{ margin: 0 }}>

@@ -19,15 +19,16 @@ function HeroSection({ config }) {
   const showDates = config.show_dates !== 'false'
   const showLocation = config.show_location !== 'false'
   const showCountdown = config.show_countdown !== 'false'
-  const dateText = config.conference_dates || 'August 15–17, 2026'
+  const dateText = config.conference_dates || ''
   const locationText = [config.venue_city, config.venue_state, config.venue_country].filter(Boolean).join(', ') || 'Port Harcourt, Rivers State, Nigeria'
 
-  const cdTarget = config.countdownDate || '2027-08-15T18:00:00'
+  const cdTarget = config.countdownDate || config.countdown_date || ''
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   const [cdExpired, setCdExpired] = useState(false)
 
   useEffect(() => {
     function tick() {
+      if (!cdTarget) { setCdExpired(false); return }
       const diff = new Date(cdTarget) - Date.now()
       if (diff <= 0) { setCdExpired(true); return }
       setCdExpired(false)
@@ -176,7 +177,7 @@ const FALLBACK_EVENTS = [
   { id:5, year:'2022', title:'Outpouring 2022', tagline:'Fire Across the Nation', image_url:'', highlights_url:'' },
   { id:6, year:'2023', title:'Outpouring 2023', tagline:'Generation of Power', image_url:'', highlights_url:'' },
   { id:7, year:'2024', title:'Outpouring 2024', tagline:'Heaven Came Down', image_url:'', highlights_url:'' },
-  { id:8, year:'2025', title:'Outpouring 2025', tagline:'The Greatest Yet — August 15–17', image_url:'', highlights_url:'' },
+  { id:8, year:'2025', title:'Outpouring 2025', tagline:'The Greatest Yet', image_url:'', highlights_url:'' },
 ]
 
 /* ── SPONSORS STRIP ──────────────────────────── */
@@ -559,11 +560,10 @@ function ScheduleSection({ config }) {
       .catch(() => setLoading(false))
   }, [day])
 
-  const year = config?.conference_year || '2026'
-  const tabs = [
-    { day: 1, label: `Day 1 — Aug 15, ${year}` },
-    { day: 2, label: `Day 2 — Aug 16, ${year}` },
-    { day: 3, label: `Day 3 — Aug 17, ${year}` },
+  const DAYS = [
+    { day: 1, label: 'Day 1' },
+    { day: 2, label: 'Day 2' },
+    { day: 3, label: 'Day 3' },
   ]
 
   return (
@@ -577,7 +577,7 @@ function ScheduleSection({ config }) {
         </div>
         <div className="schedule-tabs">
           <div className="schedule-tabs-inner">
-            {tabs.map(t => (
+            {DAYS.map(t => (
               <button key={t.day} className={`sch-tab${day === t.day ? ' active' : ''}`} onClick={() => setDay(t.day)}>{t.label}</button>
             ))}
           </div>
@@ -933,7 +933,7 @@ function RegisterCTASection() {
           Join Thousands of Believers
         </div>
         <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(1.8rem, 5vw, 3rem)', fontWeight: '700', color: 'white', marginBottom: '1rem', lineHeight: '1.2' }}>
-          Secure Your Place at Outpouring 2026
+          {config.conference_dates ? `Secure Your Place at Outpouring — ${config.conference_dates}` : 'Secure Your Place at Outpouring'}
         </h2>
         <p style={{ fontSize: 'clamp(14px, 2vw, 16px)', color: 'rgba(255,255,255,0.8)', marginBottom: '2rem', lineHeight: '1.7' }}>
           Registration is completely free. Attend in person in Port Harcourt or watch the global livestream from anywhere.
@@ -959,7 +959,7 @@ function RegisterCTASection() {
           </button>
         </div>
         <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginTop: '1.5rem' }}>
-          August 15–17, 2026 • Port Harcourt, Rivers State, Nigeria
+          {config.conference_dates ? `${config.conference_dates} • Port Harcourt, Rivers State, Nigeria` : 'Port Harcourt, Rivers State, Nigeria'}
         </p>
       </div>
     </section>
