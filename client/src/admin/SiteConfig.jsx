@@ -206,7 +206,10 @@ export default function SiteConfig() {
           <FG label="Facebook Meta Pixel ID" hint="Paste your Pixel ID from Meta Events Manager (e.g. 1234567890123456). Leave blank to disable tracking.">
             <input {...inp('meta_pixel_id')} placeholder="e.g. 1234567890123456" style={{ fontFamily: 'monospace' }} />
           </FG>
-          <SaveBtn onClick={() => saveKeys(['site_title','site_tagline','site_description','site_keywords','site_logo_url','favicon_url','meta_pixel_id'])} saving={saving} />
+          <FG label="Hero Banner Video URL" hint="YouTube video URL that plays as the home page hero background. e.g. https://www.youtube.com/watch?v=n3KjY4xroNw">
+            <input {...inp('hero_video_url')} placeholder="https://www.youtube.com/watch?v=XXXXXXXXXXX" />
+          </FG>
+          <SaveBtn onClick={() => saveKeys(['site_title','site_tagline','site_description','site_keywords','site_logo_url','favicon_url','meta_pixel_id','hero_video_url'])} saving={saving} />
         </Section>
 
         {/* ── 2. Conference Details ── */}

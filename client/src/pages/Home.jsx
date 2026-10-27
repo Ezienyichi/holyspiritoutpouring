@@ -63,7 +63,9 @@ function HeroSection({ config }) {
     setHasInteracted(true)
   }
 
-  const videoSrc = `https://www.youtube.com/embed/n3KjY4xroNw?autoplay=1&mute=${isMuted ? 1 : 0}&loop=1&playlist=n3KjY4xroNw&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1`
+  const heroVideoUrl = config.hero_video_url || 'https://www.youtube.com/watch?v=n3KjY4xroNw'
+  const heroVideoId = heroVideoUrl.match(/youtube\.com\/watch\?v=([^&]+)/)?.[1] || heroVideoUrl.match(/youtu\.be\/([^?]+)/)?.[1] || 'n3KjY4xroNw'
+  const videoSrc = `https://www.youtube.com/embed/${heroVideoId}?autoplay=1&mute=${isMuted ? 1 : 0}&loop=1&playlist=${heroVideoId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1`
 
   return (
     <section className="hero">
