@@ -923,7 +923,7 @@ function GiveSection() {
 }
 
 /* ── REGISTER CTA ────────────────────────────── */
-function RegisterCTASection() {
+function RegisterCTASection({ config }) {
   const navigate = useNavigate()
   return (
     <section style={{ background: 'linear-gradient(135deg, #c90505 0%, #8B0000 100%)', padding: 'clamp(3rem, 6vw, 5rem) 1.5rem', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
@@ -1014,7 +1014,7 @@ export default function Home() {
       <PrayerSection prayers={prayers} />
       <MediaSection media={media} />
       <GiveSection />
-      <RegisterCTASection />
+      <RegisterCTASection config={config} />
       <Footer />
     </>
   )
