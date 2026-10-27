@@ -24,14 +24,28 @@ function HeroSection({ config }) {
 
   const cdTarget = config.countdownDate || config.countdown_date || ''
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
-  const [cdExpired, setCdExpired] = useState(false)
+  const [countdownActive, setCountdownActive] = useState(false)
 
   useEffect(() => {
+    if (!cdTarget) {
+      setCountdownActive(false)
+      setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+      return
+    }
+    const targetDate = new Date(cdTarget)
+    if (isNaN(targetDate.getTime()) || targetDate <= new Date()) {
+      setCountdownActive(false)
+      setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+      return
+    }
+    setCountdownActive(true)
     function tick() {
-      if (!cdTarget) { setCdExpired(false); return }
-      const diff = new Date(cdTarget) - Date.now()
-      if (diff <= 0) { setCdExpired(true); return }
-      setCdExpired(false)
+      const diff = targetDate - Date.now()
+      if (diff <= 0) {
+        setCountdownActive(false)
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+        return
+      }
       setTimeLeft({
         days: Math.floor(diff / 86400000),
         hours: Math.floor((diff % 86400000) / 3600000),
@@ -114,7 +128,7 @@ function HeroSection({ config }) {
         <p className="hero-subtitle">
           {config.aboutText1 ? config.aboutText1.slice(0, 140) + '…' : 'Experience three days of powerful worship, anointed teachings, and a fresh encounter with the Holy Spirit. Come expecting the supernatural.'}
         </p>
-        {showCountdown && !cdExpired && (
+        {showCountdown && countdownActive && (
           <div className="countdown">
             {[
               { value: timeLeft.days, label: 'DAYS' },
@@ -127,6 +141,11 @@ function HeroSection({ config }) {
                 <span className="countdown-lbl">{u.label}</span>
               </div>
             ))}
+          </div>
+        )}
+        {showCountdown && !countdownActive && (
+          <div style={{ marginBottom: '2.5rem', fontSize: '14px', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.08em' }}>
+            Date to be announced
           </div>
         )}
         <div className="hero-cta">
