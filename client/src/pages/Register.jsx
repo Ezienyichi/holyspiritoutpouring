@@ -137,10 +137,10 @@ export default function Register() {
               )}
             </div>
           ) : (
-            <div className="register-flyer" style={{ position: 'relative', width: '100%', lineHeight: 0, overflow: 'hidden', background: '#0D1B2A' }}>
+            <div className="register-flyer" style={{ position: 'relative', width: '100%', maxWidth: '600px', margin: '0 auto', aspectRatio: '3/4', background: '#0D1B2A', overflow: 'hidden', lineHeight: 0 }}>
               <img src={config.register_banner_url} alt="Registration Banner"
-                style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'contain', maxWidth: '100%', verticalAlign: 'bottom' }}
-                onError={e => { e.target.style.display = 'none' }} />
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+                onError={e => { e.target.parentElement.style.display = 'none' }} />
             </div>
           )
         ) : (
