@@ -137,9 +137,9 @@ export default function Register() {
               )}
             </div>
           ) : (
-            <div className="register-banner-img">
+            <div style={{ width: '100%', background: '#0D1B2A', lineHeight: 0, overflow: 'hidden' }}>
               <img src={config.register_banner_url} alt="Registration Banner"
-                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center', display: 'block' }}
+                style={{ width: '100%', height: 'auto', display: 'block' }}
                 onError={e => { e.target.style.display = 'none' }} />
             </div>
           )
