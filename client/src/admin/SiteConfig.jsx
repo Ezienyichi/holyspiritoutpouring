@@ -178,7 +178,7 @@ export default function SiteConfig() {
                 onChange={async e => {
                   const file = e.target.files?.[0]
                   if (!file) return
-                  const token = localStorage.getItem('adminToken')
+                  const token = localStorage.getItem('op25_token')
                   const fd = new FormData()
                   fd.append('image', file)
                   try {
@@ -473,7 +473,7 @@ export default function SiteConfig() {
                   if (!file) return
                   setUploadingBanner(true)
                   try {
-                    const token = localStorage.getItem('adminToken')
+                    const token = localStorage.getItem('op25_token')
                     const fd = new FormData()
                     fd.append('image', file)
                     const res = await fetch(`${API_BASE}/api/media/upload`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd })

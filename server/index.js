@@ -90,6 +90,35 @@ app.get('/api/debug/counts', async (req, res) => {
   }
 });
 
+// Diagnostic endpoint — lists registered routes and DB status
+app.get('/api/routes', async (req, res) => {
+  let dbOk = false;
+  let dbError = null;
+  try {
+    const { query } = require('./db/database');
+    await query('SELECT 1');
+    dbOk = true;
+  } catch (err) {
+    dbError = err.message;
+  }
+  res.json({
+    database_connected: dbOk,
+    database_error: dbError,
+    database_url_set: !!process.env.DATABASE_URL,
+    routes: [
+      'GET /api/health', 'POST /api/auth/login',
+      'GET /api/speakers', 'POST /api/speakers', 'PUT /api/speakers/:id', 'DELETE /api/speakers/:id',
+      'GET /api/past-ministers', 'POST /api/past-ministers', 'PUT /api/past-ministers/:id',
+      'GET /api/previous-events', 'POST /api/previous-events', 'PUT /api/previous-events/:id',
+      'GET /api/media', 'POST /api/media/upload', 'POST /api/media/upload-image',
+      'GET /api/config', 'PUT /api/config',
+      'GET /api/sessions', 'POST /api/sessions', 'PUT /api/sessions/:id',
+      'GET /api/sponsors', 'POST /api/sponsors', 'PUT /api/sponsors/:id',
+      'GET /api/testimonials', 'POST /api/testimonials',
+    ]
+  });
+});
+
 // API routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/config', require('./routes/config'));

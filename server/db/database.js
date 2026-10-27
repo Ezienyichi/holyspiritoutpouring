@@ -1,16 +1,33 @@
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 
+if (!process.env.DATABASE_URL) {
+  console.error('[DB] DATABASE_URL is not set — all database operations will fail');
+}
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false },
-  max: 3,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 30000,
+  max: 2,
+  idleTimeoutMillis: 10000,
+  connectionTimeoutMillis: 5000,
+  query_timeout: 8000,
+});
+
+pool.on('error', (err) => {
+  console.error('[DB] Idle client error:', err.message);
 });
 
 async function query(text, params) {
-  return pool.query(text, params);
+  if (!process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL is not configured. Set it in Vercel environment variables.');
+  }
+  try {
+    return await pool.query(text, params);
+  } catch (err) {
+    console.error('[DB query error]', err.message, '|', text.slice(0, 80));
+    throw err;
+  }
 }
 
 async function initializeDatabase() {

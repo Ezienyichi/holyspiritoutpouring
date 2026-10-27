@@ -62,7 +62,7 @@ export default function AdminLive() {
   async function handleSave() {
     setSaving(true)
     try {
-      const token = localStorage.getItem('adminToken')
+      const token = localStorage.getItem('op25_token')
       const res = await fetch(`${BASE_URL}/api/config`, {
         method: 'PUT',
         headers: {
